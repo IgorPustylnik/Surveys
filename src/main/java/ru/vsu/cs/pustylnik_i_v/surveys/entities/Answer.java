@@ -2,22 +2,17 @@ package ru.vsu.cs.pustylnik_i_v.surveys.entities;
 
 public class Answer {
 
-    private int id;
     private int sessionId;
     private int optionId;
 
-    public Answer(int id, int sessionId, int optionId) {
-        this.id = id;
+    public Answer(int sessionId, int optionId) {
         this.sessionId = sessionId;
         this.optionId = optionId;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
+    public Answer getSelf() {
+        return this;
     }
 
     public int getSessionId() {

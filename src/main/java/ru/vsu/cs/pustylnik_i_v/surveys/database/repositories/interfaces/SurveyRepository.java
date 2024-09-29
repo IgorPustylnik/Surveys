@@ -1,11 +1,13 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.repositories.interfaces;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Survey;
+
+import java.util.Date;
 
 public interface SurveyRepository {
     Survey getSurveyById(int id);
 
-    void addSurvey(Survey s);
+    void addSurvey(String name, String description, Integer categoryId, Date createdAt);
 
     void updateSurvey(Survey s);
 

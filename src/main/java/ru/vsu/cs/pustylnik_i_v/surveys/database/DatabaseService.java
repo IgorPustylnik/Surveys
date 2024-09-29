@@ -2,6 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.enums.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 
 import java.util.Date;
 
@@ -9,19 +10,19 @@ public interface DatabaseService {
 
     /// Create
 
-    void addAdmin(String email);
+    void addAdmin(int userId, String email) throws UserNotFoundException;
 
-    void addAnswer(int questionId, int optionId);
+    void addAnswer(int sessionId, int optionId) throws SessionNotFoundException, OptionNotFoundException;
 
     void addCategory(String name);
 
-    void addOption(int questionId, String description);
+    void addOption(int questionId, String description) throws QuestionNotFoundException;
 
-    void addQuestion(int surveyId, String text, QuestionType questionType);
+    void addQuestion(int surveyId, String text, QuestionType questionType) throws SurveyNotFoundException;
 
-    void addSession(int surveyId, Integer userId, Date startedAt, Date finishedAt);
+    void addSession(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException, UserNotFoundException;
 
-    void addSurvey(String name, String description, Date createdAt);
+    void addSurvey(String name, String description, Integer categoryId, Date createdAt);
 
     void addUser(String name, String password);
 
@@ -46,8 +47,6 @@ public interface DatabaseService {
     /// Update
 
     void updateAdmin(Admin admin);
-
-    void updateAnswer(Answer answer);
 
     void updateCategory(Category category);
 

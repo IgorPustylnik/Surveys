@@ -7,12 +7,14 @@ public class Survey {
     private int id;
     private String name;
     private String description;
+    private Integer categoryId;
     private Date createdAt;
 
-    public Survey(int id, String name, String description, Date createdAt) {
+    public Survey(int id, String name, String description, Integer categoryId, Date createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.categoryId = categoryId;
         this.createdAt = createdAt;
     }
 
@@ -38,6 +40,14 @@ public class Survey {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Date getCreatedAt() {
