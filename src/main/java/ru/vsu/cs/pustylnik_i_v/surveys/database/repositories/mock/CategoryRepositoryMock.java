@@ -1,13 +1,14 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.mockdb;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Category;
-import ru.vsu.cs.pustylnik_i_v.surveys.repositories.CategoryRepository;
-
-import java.util.HashMap;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.CategoryRepository;
 
 public class CategoryRepositoryMock implements CategoryRepository {
 
-    private HashMap<Integer, Category> categories;
+    private final DBTableImitation<Category, Integer> categories = new DBTableImitation<>(1000,
+            params -> new Category(0, (String) params[0]),
+            Category::getId);
 
     @Override
     public Category getCategoryById(int id) {
@@ -15,8 +16,8 @@ public class CategoryRepositoryMock implements CategoryRepository {
     }
 
     @Override
-    public void addCategory(Category c) {
-        categories.put(c.getId(), c);
+    public void addCategory(String name) {
+        categories.add(name);
     }
 
     @Override

@@ -1,13 +1,15 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.mockdb;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Admin;
-import ru.vsu.cs.pustylnik_i_v.surveys.repositories.AdminRepository;
-
-import java.util.HashMap;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.AdminRepository;
 
 public class AdminRepositoryMock implements AdminRepository {
 
-    private HashMap<Integer, Admin> admins;
+    private final DBTableImitation<Admin, Integer> admins = new DBTableImitation<>(
+            1000,
+            params -> new Admin((Integer) params[0], (String) params[1]),
+            Admin::getUserId);
 
     @Override
     public Admin getAdminByUserId(int userId) {
@@ -15,8 +17,8 @@ public class AdminRepositoryMock implements AdminRepository {
     }
 
     @Override
-    public void addAdmin(Admin a) {
-        admins.put(a.getUserId(), a);
+    public void addAdmin(int userId, String password) {
+        admins.add(userId, password);
     }
 
     @Override

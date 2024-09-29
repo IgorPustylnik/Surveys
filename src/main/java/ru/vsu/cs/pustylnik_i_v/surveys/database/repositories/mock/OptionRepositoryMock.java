@@ -1,13 +1,14 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.mockdb;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Option;
-import ru.vsu.cs.pustylnik_i_v.surveys.repositories.OptionRepository;
-
-import java.util.HashMap;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.OptionRepository;
 
 public class OptionRepositoryMock implements OptionRepository {
 
-    private HashMap<Integer, Option> options;
+    private final DBTableImitation<Option, Integer> options = new DBTableImitation<>(1000,
+            params -> (new Option(0, (Integer) params[0], (String) params[1])),
+            Option::getId);
 
     @Override
     public Option getOptionById(int id) {
@@ -15,8 +16,8 @@ public class OptionRepositoryMock implements OptionRepository {
     }
 
     @Override
-    public void addOption(Option o) {
-        options.put(o.getId(), o);
+    public void addOption(int questionId, String description) {
+        options.add(questionId, description);
     }
 
     @Override

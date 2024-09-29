@@ -1,13 +1,16 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.mockdb;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Session;
-import ru.vsu.cs.pustylnik_i_v.surveys.repositories.SessionRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.SessionRepository;
 
-import java.util.HashMap;
+import java.util.Date;
 
 public class SessionRepositoryMock implements SessionRepository {
 
-    private HashMap<Integer, Session> sessions;
+    private final DBTableImitation<Session, Integer> sessions = new DBTableImitation<>(1000,
+            params -> (new Session(0, (Integer) params[0], (Integer) params[1], (Date) params[2], (Date) params[3])),
+            Session::getId);
 
     @Override
     public Session getSessionById(int id) {
@@ -15,8 +18,8 @@ public class SessionRepositoryMock implements SessionRepository {
     }
 
     @Override
-    public void addSession(Session s) {
-        sessions.put(s.getId(), s);
+    public void addSession(int surveyId, Integer userId, Date startedAt, Date finishedAt) {
+        sessions.add(surveyId, userId, startedAt, finishedAt);
     }
 
     @Override

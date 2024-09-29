@@ -1,13 +1,14 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.mockdb;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.User;
-import ru.vsu.cs.pustylnik_i_v.surveys.repositories.UserRepository;
-
-import java.util.HashMap;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.UserRepository;
 
 public class UserRepositoryMock implements UserRepository {
 
-    private HashMap<Integer, User> users;
+    private final DBTableImitation<User, Integer> users = new DBTableImitation<>(1000,
+            params -> (new User(0, (String) params[0], (String) params[1])),
+            User::getId);
 
     @Override
     public User getUserById(int id) {
@@ -15,8 +16,8 @@ public class UserRepositoryMock implements UserRepository {
     }
 
     @Override
-    public void addUser(User u) {
-        users.put(u.getId(), u);
+    public void addUser(String name, String password) {
+        users.add(name, password);
     }
 
     @Override

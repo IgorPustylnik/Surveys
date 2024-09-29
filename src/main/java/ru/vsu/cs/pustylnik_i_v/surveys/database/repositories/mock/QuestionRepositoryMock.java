@@ -1,13 +1,15 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.mockdb;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Question;
-import ru.vsu.cs.pustylnik_i_v.surveys.repositories.QuestionRepository;
-
-import java.util.HashMap;
+import ru.vsu.cs.pustylnik_i_v.surveys.enums.QuestionType;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.QuestionRepository;
 
 public class QuestionRepositoryMock implements QuestionRepository {
 
-    private HashMap<Integer, Question> questions;
+    private final DBTableImitation<Question, Integer> questions = new DBTableImitation<>(1000,
+            params -> (new Question(0, (Integer) params[0], (String) params[1], (QuestionType) params[2])),
+            Question::getId);
 
     @Override
     public Question getQuestionById(int id) {
@@ -15,8 +17,8 @@ public class QuestionRepositoryMock implements QuestionRepository {
     }
 
     @Override
-    public void addQuestion(Question q) {
-        questions.put(q.getId(), q);
+    public void addQuestion(int surveyId, String text, QuestionType type) {
+        questions.add(surveyId, text, type);
     }
 
     @Override
