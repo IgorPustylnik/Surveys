@@ -1,11 +1,12 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.repositories;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.entities.Option;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.QuestionNotFoundException;
 
 public interface OptionRepository {
     public Option getOptionById(int id);
 
-    public void addOption(Option o);
+    public void addOption(Option o) throws QuestionNotFoundException;
 
     public void updateOption(Option o);
 
