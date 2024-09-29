@@ -1,12 +1,21 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.entities;
 
-public class Admin extends User {
+public class Admin {
 
+    private int userId;
     private String email;
 
-    public Admin(int id, String name, String email, String password) {
-        super(id, name, password);
+    public Admin(int userId, String email) {
+        this.userId = userId;
         this.email = email;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {

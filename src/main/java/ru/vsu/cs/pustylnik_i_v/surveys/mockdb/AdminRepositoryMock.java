@@ -10,30 +10,28 @@ public class AdminRepositoryMock implements AdminRepository {
     private HashMap<Integer, Admin> admins;
 
     @Override
-    public Admin getAdminById(int id) {
-        return admins.get(id);
+    public Admin getAdminByUserId(int userId) {
+        return admins.get(userId);
     }
 
     @Override
     public void addAdmin(Admin a) {
-        admins.put(a.getId(), a);
+        admins.put(a.getUserId(), a);
     }
 
     @Override
     public void updateAdmin(Admin a) {
-        admins.get(a.getId()).setEmail(a.getEmail());
-        admins.get(a.getId()).setName(a.getName());
-        admins.get(a.getId()).setPassword(a.getPassword());
+        admins.get(a.getUserId()).setEmail(a.getEmail());
     }
 
     @Override
-    public void deleteAdmin(int id) {
-        admins.remove(id);
+    public void deleteAdmin(int userId) {
+        admins.remove(userId);
     }
 
     @Override
-    public boolean exists(int id) {
-        return admins.containsKey(id);
+    public boolean exists(int userId) {
+        return admins.containsKey(userId);
     }
 
 }
