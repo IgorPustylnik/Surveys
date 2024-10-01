@@ -10,11 +10,11 @@ public class Admin {
         this.email = email;
     }
 
-    public int getUserId() {
+    public int getId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setId(int userId) {
         this.userId = userId;
     }
 

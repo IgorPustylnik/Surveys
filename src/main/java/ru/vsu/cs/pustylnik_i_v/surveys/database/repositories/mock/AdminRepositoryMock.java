@@ -2,7 +2,6 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Admin;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.AdminRepository;
 
 import java.util.List;
@@ -14,7 +13,8 @@ public class AdminRepositoryMock implements AdminRepository {
 
     @Override
     public Admin getAdminByUserId(int userId) {
-        List<Admin> query = admins.get(Admin::getUserId, userId);
+        System.out.println(userId);
+        List<Admin> query = admins.get(Admin::getId, userId);
         if (query.isEmpty()) {
             return null;
         }
@@ -28,17 +28,17 @@ public class AdminRepositoryMock implements AdminRepository {
 
     @Override
     public void updateAdmin(Admin a) {
-        admins.get(Admin::getUserId, a.getUserId()).get(0).setEmail(a.getEmail());
+        admins.get(Admin::getId, a.getId()).get(0).setEmail(a.getEmail());
     }
 
     @Override
     public void deleteAdmin(int userId) {
-        admins.remove(Admin::getUserId, userId);
+        admins.remove(Admin::getId, userId);
     }
 
     @Override
     public boolean exists(int userId) {
-        return admins.contains(Admin::getUserId, userId);
+        return admins.contains(Admin::getId, userId);
     }
 
 }
