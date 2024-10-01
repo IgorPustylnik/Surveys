@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.AnswerRe
 
 public class AnswerRepositoryMock implements AnswerRepository {
 
-    private final DBTableImitation<Answer> answers = new DBTableImitation<>(1000,
+    private final DBTableImitation<Answer> answers = new DBTableImitation<>(
             params -> new Answer((Integer) params[0], (Integer) params[1]));
 
     @Override

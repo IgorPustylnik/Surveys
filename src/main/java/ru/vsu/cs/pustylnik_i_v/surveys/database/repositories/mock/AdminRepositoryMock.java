@@ -10,7 +10,6 @@ import java.util.List;
 public class AdminRepositoryMock implements AdminRepository {
 
     private final DBTableImitation<Admin> admins = new DBTableImitation<>(
-            1000,
             params -> new Admin((Integer) params[0], (String) params[1]));
 
     @Override

@@ -10,12 +10,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DBTableImitation<T> {
+    private static final int DEFAULT_SIZE = 1000;
     private final T[] data;
     private int currentIndex = 0;
     private final Function<Object[], T> constructorFunction;
 
-    public DBTableImitation(int size, Function<Object[], T> constructorFunction) {
-        data = (T[]) new Object[size];
+    public DBTableImitation(Function<Object[], T> constructorFunction) {
+        data = (T[]) new Object[DEFAULT_SIZE];
         this.constructorFunction = constructorFunction;
     }
 

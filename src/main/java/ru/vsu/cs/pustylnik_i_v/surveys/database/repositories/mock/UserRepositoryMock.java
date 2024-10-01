@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UserRepositoryMock implements UserRepository {
 
-    private final DBTableImitation<User> users = new DBTableImitation<>(1000,
+    private final DBTableImitation<User> users = new DBTableImitation<>(
             params -> (new User(0, (String) params[0], (String) params[1])));
 
     @Override

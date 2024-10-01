@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class SessionRepositoryMock implements SessionRepository {
 
-    private final DBTableImitation<Session> sessions = new DBTableImitation<>(1000,
+    private final DBTableImitation<Session> sessions = new DBTableImitation<>(
             params -> (new Session(0, (Integer) params[0], (Integer) params[1], (Date) params[2], (Date) params[3])));
 
     @Override

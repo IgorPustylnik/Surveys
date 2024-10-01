@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CategoryRepositoryMock implements CategoryRepository {
 
-    private final DBTableImitation<Category> categories = new DBTableImitation<>(1000,
+    private final DBTableImitation<Category> categories = new DBTableImitation<>(
             params -> new Category(0, (String) params[0]));
 
     @Override

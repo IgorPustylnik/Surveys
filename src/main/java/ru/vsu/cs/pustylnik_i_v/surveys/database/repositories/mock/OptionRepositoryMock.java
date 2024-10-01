@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.OptionRe
 
 public class OptionRepositoryMock implements OptionRepository {
 
-    private final DBTableImitation<Option> options = new DBTableImitation<>(1000,
+    private final DBTableImitation<Option> options = new DBTableImitation<>(
             params -> (new Option(0, (Integer) params[0], (String) params[1])));
 
     @Override

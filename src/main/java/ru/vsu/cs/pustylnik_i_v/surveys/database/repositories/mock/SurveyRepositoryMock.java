@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SurveyRepositoryMock implements SurveyRepository {
 
-    private final DBTableImitation<Survey> surveys = new DBTableImitation<>(1000,
+    private final DBTableImitation<Survey> surveys = new DBTableImitation<>(
             params -> (new Survey(0, (String) params[0], (String) params[1], (Integer) params[2], (Date) params[3])));
 
     @Override
