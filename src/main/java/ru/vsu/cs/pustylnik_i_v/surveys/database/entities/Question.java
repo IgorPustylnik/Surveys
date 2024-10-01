@@ -1,6 +1,6 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.entities;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.entities;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.enums.QuestionType;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 
 public class Question {
 

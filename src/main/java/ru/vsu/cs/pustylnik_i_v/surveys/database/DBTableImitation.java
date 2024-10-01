@@ -2,19 +2,21 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public class DBTableImitation<T, K> {
+public class DBTableImitation<T> {
     private final T[] data;
     private int currentIndex = 0;
     private final Function<Object[], T> constructorFunction;
-    private final Function<T, K> keyExtractor;
 
-    @SuppressWarnings("unchecked")
-    public DBTableImitation(int size, Function<Object[], T> constructorFunction, Function<T, K> keyExtractor) {
+    public DBTableImitation(int size, Function<Object[], T> constructorFunction) {
         data = (T[]) new Object[size];
         this.constructorFunction = constructorFunction;
-        this.keyExtractor = keyExtractor;
     }
 
     public void add(Object... args) {
@@ -22,22 +24,20 @@ public class DBTableImitation<T, K> {
             throw new RuntimeException("Index out of bounds");
         } else {
             T newInstance = constructorFunction.apply(args);
-
             try {
                 Method setIdMethod = newInstance.getClass().getMethod("setId", Integer.class);
                 setIdMethod.invoke(newInstance, currentIndex);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
-
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
             data[currentIndex] = newInstance;
             currentIndex++;
         }
     }
 
-
-    public void remove(K key) {
+    public void remove(Function<T, ?> keyFunction, Object key) {
         for (int i = 0; i < currentIndex; i++) {
             T element = data[i];
-            if (element != null && keyExtractor.apply(element).equals(key)) {
+            if (element != null && keyFunction.apply(element).equals(key)) {
                 data[i] = null;
                 return;
             }
@@ -45,21 +45,27 @@ public class DBTableImitation<T, K> {
         throw new RuntimeException("Element with key " + key + " not found");
     }
 
-
-    public T get(K key) {
+    public List<T> get(Function<T, ?> keyFunction, Object key) {
+        List<T> result = new ArrayList<>();
         for (int i = 0; i < currentIndex; i++) {
             T element = data[i];
-            if (element != null && keyExtractor.apply(element).equals(key)) {
-                return element;
+            if (element != null && keyFunction.apply(element).equals(key)) {
+                result.add(element);
             }
         }
-        return null;
+        return result;
     }
 
-    public boolean containsKey(K key) {
+    public List<T> getAll() {
+        return Arrays.stream(data)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public boolean contains(Function<T, ?> keyFunction, Object key) {
         for (int i = 0; i < currentIndex; i++) {
             T element = data[i];
-            if (element != null && keyExtractor.apply(element).equals(key)) {
+            if (element != null && keyFunction.apply(element).equals(key)) {
                 return true;
             }
         }
