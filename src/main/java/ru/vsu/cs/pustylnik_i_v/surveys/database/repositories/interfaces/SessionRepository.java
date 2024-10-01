@@ -1,6 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.entities.Session;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 
 import java.util.Date;
 

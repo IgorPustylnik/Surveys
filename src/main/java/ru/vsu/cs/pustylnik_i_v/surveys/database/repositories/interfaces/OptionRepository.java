@@ -1,6 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.entities.Option;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 
 public interface OptionRepository {
     Option getOptionById(int id);

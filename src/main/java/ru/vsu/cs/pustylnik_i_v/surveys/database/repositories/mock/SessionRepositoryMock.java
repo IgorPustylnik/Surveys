@@ -1,20 +1,19 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
-import ru.vsu.cs.pustylnik_i_v.surveys.entities.Session;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.SessionRepository;
 
 import java.util.Date;
 
 public class SessionRepositoryMock implements SessionRepository {
 
-    private final DBTableImitation<Session, Integer> sessions = new DBTableImitation<>(1000,
-            params -> (new Session(0, (Integer) params[0], (Integer) params[1], (Date) params[2], (Date) params[3])),
-            Session::getId);
+    private final DBTableImitation<Session> sessions = new DBTableImitation<>(1000,
+            params -> (new Session(0, (Integer) params[0], (Integer) params[1], (Date) params[2], (Date) params[3])));
 
     @Override
     public Session getSessionById(int id) {
-        return sessions.get(id);
+        return sessions.get(Session::getId,id).get(0);
     }
 
     @Override
@@ -24,20 +23,20 @@ public class SessionRepositoryMock implements SessionRepository {
 
     @Override
     public void updateSession(Session s) {
-        sessions.get(s.getId()).setSurveyId(s.getSurveyId());
-        sessions.get(s.getId()).setUserId(s.getUserId());
-        sessions.get(s.getId()).setStartedAt(s.getStartedAt());
-        sessions.get(s.getId()).setFinishedAt(s.getFinishedAt());
+        sessions.get(Session::getId,s.getId()).get(0).setSurveyId(s.getSurveyId());
+        sessions.get(Session::getId,s.getId()).get(0).setUserId(s.getUserId());
+        sessions.get(Session::getId,s.getId()).get(0).setStartedAt(s.getStartedAt());
+        sessions.get(Session::getId,s.getId()).get(0).setFinishedAt(s.getFinishedAt());
     }
 
     @Override
     public void deleteSession(int id) {
-        sessions.remove(id);
+        sessions.remove(Session::getId, id);
     }
 
     @Override
     public boolean exists(int id) {
-        return sessions.containsKey(id);
+        return sessions.contains(Session::getId,id);
     }
 
 }

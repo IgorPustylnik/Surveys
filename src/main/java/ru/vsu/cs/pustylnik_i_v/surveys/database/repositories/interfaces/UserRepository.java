@@ -1,15 +1,16 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 
 public interface UserRepository {
-    User getUserById(int id);
+
+    User getUser(String name);
 
     void addUser(String name, String password);
 
     void updateUser(User u);
 
-    void deleteUser(int id);
+    void deleteUser(String name);
 
-    boolean exists(int id);
+    boolean exists(int userId);
 }
