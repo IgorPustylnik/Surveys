@@ -1,10 +1,11 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.service;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.entities.*;
-import ru.vsu.cs.pustylnik_i_v.surveys.enums.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 
 import java.util.Date;
+import java.util.List;
 
 public interface DatabaseService {
 
@@ -28,21 +29,29 @@ public interface DatabaseService {
 
     /// Read
 
+    // Get by key
+
     Admin getAdmin(int userId);
 
     Answer getAnswer(int questionId, int optionId);
 
-    Category getCategory(int categoryId);
+    Category getCategoryById(int categoryId);
+
+    Category getCategoryByName(String name);
 
     Option getOption(int optionId);
 
     Question getQuestion(int questionId);
 
+    List<Question> getQuestions(Integer surveyId);
+
     Session getSession(int sessionId);
 
     Survey getSurvey(int surveyId);
 
-    User getUser(int userId);
+    List<Survey> getSurveys(Integer categoryId);
+
+    User getUser(String name);
 
     /// Update
 
@@ -76,6 +85,6 @@ public interface DatabaseService {
 
     void deleteSurvey(int surveyId);
 
-    void deleteUser(int userId);
+    void deleteUser(String name);
 
 }

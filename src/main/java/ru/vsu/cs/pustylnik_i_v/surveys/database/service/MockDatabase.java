@@ -1,14 +1,24 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.service;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.*;
-import ru.vsu.cs.pustylnik_i_v.surveys.entities.*;
-import ru.vsu.cs.pustylnik_i_v.surveys.enums.QuestionType;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 
 import java.util.Date;
+import java.util.List;
 
 public class MockDatabase implements DatabaseService {
+
+    private static DatabaseService INSTANCE;
+
+    public static DatabaseService getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new MockDatabase();
+        }
+        return INSTANCE;
+    }
 
     private final UserRepository userRepository = new UserRepositoryMock();
     private final AdminRepository adminRepository = new AdminRepositoryMock();
@@ -95,8 +105,13 @@ public class MockDatabase implements DatabaseService {
     }
 
     @Override
-    public Category getCategory(int categoryId) {
+    public Category getCategoryById(int categoryId) {
         return categoryRepository.getCategoryById(categoryId);
+    }
+
+    @Override
+    public Category getCategoryByName(String name) {
+        return categoryRepository.getCategoryByName(name);
     }
 
     @Override
@@ -110,6 +125,11 @@ public class MockDatabase implements DatabaseService {
     }
 
     @Override
+    public List<Question> getQuestions(Integer surveyId) {
+        return questionRepository.getQuestions(surveyId);
+    }
+
+    @Override
     public Session getSession(int sessionId) {
         return sessionRepository.getSessionById(sessionId);
     }
@@ -120,8 +140,13 @@ public class MockDatabase implements DatabaseService {
     }
 
     @Override
-    public User getUser(int userId) {
-        return userRepository.getUserById(userId);
+    public List<Survey> getSurveys(Integer categoryId) {
+        return surveyRepository.getSurveys(categoryId);
+    }
+
+    @Override
+    public User getUser(String name) {
+        return userRepository.getUser(name);
     }
 
     /// Update
@@ -199,7 +224,7 @@ public class MockDatabase implements DatabaseService {
     }
 
     @Override
-    public void deleteUser(int userId) {
-        userRepository.deleteUser(userId);
+    public void deleteUser(String name) {
+        userRepository.deleteUser(name);
     }
 }
