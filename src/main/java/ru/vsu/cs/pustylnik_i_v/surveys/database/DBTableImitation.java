@@ -29,7 +29,7 @@ public class DBTableImitation<T> {
                 Method setIdMethod = newInstance.getClass().getMethod("setId", int.class);
                 setIdMethod.invoke(newInstance, currentIndex);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-                System.out.println("Failed to set id " + constructorFunction);
+                System.err.println("Failed to set id " + constructorFunction);
             }
             data[currentIndex] = newInstance;
             currentIndex++;

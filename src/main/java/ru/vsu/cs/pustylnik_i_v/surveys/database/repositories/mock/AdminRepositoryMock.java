@@ -13,7 +13,6 @@ public class AdminRepositoryMock implements AdminRepository {
 
     @Override
     public Admin getAdminByUserId(int userId) {
-        System.out.println(userId);
         List<Admin> query = admins.get(Admin::getId, userId);
         if (query.isEmpty()) {
             return null;

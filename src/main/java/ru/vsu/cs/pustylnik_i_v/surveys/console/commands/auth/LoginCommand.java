@@ -20,7 +20,6 @@ public class LoginCommand extends AppCommand {
         String password = ConsoleUtils.inputString("your password");
 
         ResponseEntity<AuthBody> response = appData.getService().login(name, password);
-        System.out.println(response);
 
         if (!response.isSuccess()) {
             ConsoleUtils.clear();
