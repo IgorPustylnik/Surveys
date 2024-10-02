@@ -35,7 +35,7 @@ public class CommandFactory {
 
         commands.put(CommandType.LIST_SURVEYS, new ListSurveysCommand());
         commands.put(CommandType.OPEN_SURVEY, new OpenSurveyCommand());
-        commands.put(CommandType.START_SURVEY, new StartSurveyCommand());
+        commands.put(CommandType.OPEN_QUESTION, new OpenQuestionCommand());
         commands.put(CommandType.NEXT_PAGE, new NextPageCommand());
         commands.put(CommandType.PREVIOUS_PAGE, new PreviousPageCommand());
 

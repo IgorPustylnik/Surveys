@@ -19,7 +19,7 @@ public class CreateSurveyCommand extends AppCommand {
         String description = ConsoleUtils.inputString("a description");
         String categoryName = ConsoleUtils.inputString("a category");
 
-        ResponseEntity<?> response = appData.getService().addSurvey(name, description, categoryName);
+        ResponseEntity<Integer> response = appData.getService().addSurveyAndGetId(name, description, categoryName);
 
         if (!response.isSuccess()) {
             System.err.println(response.getMessage());
@@ -28,6 +28,7 @@ public class CreateSurveyCommand extends AppCommand {
         }
 
         System.out.println(response.getMessage());
+        ConsoleUtils.clear();
 
         CommandFactory.getInstance().getCommand(CommandType.MAIN_MENU).execute();
     }

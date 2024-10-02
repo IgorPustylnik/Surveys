@@ -20,12 +20,17 @@ public class ChangePasswordCommand extends AppCommand {
         ResponseEntity<?> response = appData.getService().checkIfPasswordIsCorrect(appData.getLocalUserName(), oldPassword);
 
         if (!response.isSuccess()) {
+            ConsoleUtils.clear();
             System.err.println(response.getMessage());
+            CommandFactory.getInstance().getCommand(CommandType.MAIN_MENU).execute();
+            return;
         }
 
         String newPassword = ConsoleUtils.inputString("your new password");
 
-        appData.getService().changePassword(appData.getLocalUserName(), newPassword);
+        response = appData.getService().updatePassword(appData.getLocalUserName(), newPassword);
+        ConsoleUtils.clear();
+        System.out.println(response.getMessage());
         CommandFactory.getInstance().getCommand(CommandType.MAIN_MENU).execute();
     }
 }

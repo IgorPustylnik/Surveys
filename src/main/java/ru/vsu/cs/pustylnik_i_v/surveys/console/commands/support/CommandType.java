@@ -14,7 +14,8 @@ public enum CommandType {
 
     LIST_SURVEYS,
     OPEN_SURVEY,
-    START_SURVEY,
+    OPEN_QUESTION,
+    SUBMIT_ANSWER,
     PREVIOUS_PAGE,
     NEXT_PAGE,
 

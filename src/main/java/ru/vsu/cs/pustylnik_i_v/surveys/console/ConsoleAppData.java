@@ -6,6 +6,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.service.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.service.SurveysServiceImpl;
 
+import java.util.List;
+
 public class ConsoleAppData {
 
     private static ConsoleAppData instance;
@@ -22,6 +24,10 @@ public class ConsoleAppData {
     // Current survey
     private Survey currentSurvey = null;
     private Integer currentQuestionIndex = 1;
+    private List<Integer> chosenOptionIndices = null;
+
+    // Session
+    private Integer currentSessionId = null;
 
     public SurveysService getService() {
         return surveysService;
@@ -67,6 +73,22 @@ public class ConsoleAppData {
         this.currentSurvey = currentSurvey;
     }
 
+    public Integer getCurrentQuestionIndex() {
+        return currentQuestionIndex;
+    }
+
+    public void setCurrentQuestionIndex(Integer currentQuestionIndex) {
+        this.currentQuestionIndex = currentQuestionIndex;
+    }
+
+    public List<Integer> getChosenOptionIndices() {
+        return chosenOptionIndices;
+    }
+
+    public void setChosenOptionIndices(List<Integer> chosenOptionIndices) {
+        this.chosenOptionIndices = chosenOptionIndices;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -82,4 +104,11 @@ public class ConsoleAppData {
         return instance;
     }
 
+    public Integer getCurrentSessionId() {
+        return currentSessionId;
+    }
+
+    public void setCurrentSessionId(Integer currentSessionId) {
+        this.currentSessionId = currentSessionId;
+    }
 }

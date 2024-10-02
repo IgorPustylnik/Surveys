@@ -20,7 +20,7 @@ public class OpenSurveyCommand extends CommandMenu {
 
     @Override
     public void execute() {
-        commands.add(CommandType.START_SURVEY);
+        commands.add(CommandType.OPEN_QUESTION);
 
         if (appData.getLocalRole() == Role.ADMIN) {
             commands.add(CommandType.EDIT_SURVEY);
