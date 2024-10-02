@@ -21,7 +21,7 @@ public interface DatabaseService {
 
     void addQuestion(int surveyId, String text, QuestionType questionType) throws SurveyNotFoundException;
 
-    void addSession(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException, UserNotFoundException;
+    Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException, UserNotFoundException;
 
     void addSurvey(String name, String description, Integer categoryId, Date createdAt);
 
@@ -40,6 +40,8 @@ public interface DatabaseService {
     Category getCategoryByName(String name);
 
     Option getOption(int optionId);
+
+    List<Option> getOptions(int questionId);
 
     Question getQuestion(int questionId);
 

@@ -17,8 +17,9 @@ public class SessionRepositoryMock implements SessionRepository {
     }
 
     @Override
-    public void addSession(int surveyId, Integer userId, Date startedAt, Date finishedAt) {
+    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) {
         sessions.add(surveyId, userId, startedAt, finishedAt);
+        return sessions.get(Session::getStartedAt, startedAt).get(0).getId();
     }
 
     @Override

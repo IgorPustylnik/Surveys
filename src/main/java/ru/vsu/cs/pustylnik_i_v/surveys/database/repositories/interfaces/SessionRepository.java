@@ -7,7 +7,7 @@ import java.util.Date;
 public interface SessionRepository {
     Session getSessionById(int id);
 
-    void addSession(int surveyId, Integer userId, Date startedAt, Date endedAt);
+    Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt);
 
     void updateSession(Session s);
 

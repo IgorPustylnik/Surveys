@@ -1,5 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.service;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.service.entities.*;
@@ -16,7 +17,7 @@ public interface SurveysService {
 
     ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password);
 
-    ResponseEntity<?> changePassword(String name, String newPassword);
+    ResponseEntity<?> updatePassword(String name, String newPassword);
 
     ResponseEntity<?> addAdmin(String userName, String email);
 
@@ -26,8 +27,14 @@ public interface SurveysService {
 
     ResponseEntity<?> deleteSurvey(Integer surveyId);
 
-    ResponseEntity<?> addSurvey(String name, String description, String categoryName);
+    ResponseEntity<Integer> addSurveyAndGetId(String name, String description, String categoryName);
+
+    ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId);
 
     ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer page);
+
+    ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId);
+
+    ResponseEntity<?> submitAnswer (Integer sessionId, Integer optionId);
 
 }

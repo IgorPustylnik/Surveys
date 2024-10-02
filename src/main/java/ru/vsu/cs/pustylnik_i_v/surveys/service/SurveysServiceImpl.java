@@ -1,11 +1,15 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.service;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.roles.Role;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.service.DatabaseService;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.service.MockDatabase;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.OptionNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.service.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.service.entities.PagedEntity;
@@ -66,12 +70,13 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> changePassword(String name, String newPassword) {
+    public ResponseEntity<?> updatePassword(String name, String newPassword) {
         User user = database.getUser(name);
         if (user == null) {
             return new ResponseEntity<>(false, "User doesn't exist", null);
         }
         user.setPassword(newPassword);
+        database.updateUser(user);
         return new ResponseEntity<>(true, "Password changed", null);
     }
 
@@ -110,8 +115,32 @@ public class SurveysServiceImpl implements SurveysService {
     @Override
     public ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) {
         List<Question> questions = database.getQuestions(surveyId);
+        if (index >= questions.size()) {
+            return new ResponseEntity<>(true, "Survey completed successfully", null);
+        }
         Question question = questions.get(index);
         return new ResponseEntity<>(true, "Question successfully found", new PagedEntity<>(index, questions.size(), question));
+    }
+
+    @Override
+    public ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId) {
+        List<Option> options = database.getOptions(questionId);
+        if (options.isEmpty()) {
+            return new ResponseEntity<>(true, "No questions found", null);
+        }
+        return new ResponseEntity<>(true, "Questions found successfully",options);
+    }
+
+    @Override
+    public ResponseEntity<?> submitAnswer(Integer sessionId, Integer optionId) {
+        try {
+            database.addAnswer(sessionId, optionId);
+        } catch (SessionNotFoundException e) {
+            return new ResponseEntity<>(false, "Session doesn't exist", null);
+        } catch (OptionNotFoundException e) {
+            return new ResponseEntity<>(false, "Option doesn't exist", null);
+        }
+        return new ResponseEntity<>(true, "Answer submitted successfully", null);
     }
 
     @Override
@@ -121,7 +150,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> addSurvey(String name, String description, String categoryName) {
+    public ResponseEntity<Integer> addSurveyAndGetId(String name, String description, String categoryName) {
         if (database.getCategoryByName(categoryName) != null) {
             database.addCategory(categoryName);
         }
@@ -130,9 +159,33 @@ public class SurveysServiceImpl implements SurveysService {
         return new ResponseEntity<>(true, "Survey created successfully", null);
     }
 
+    @Override
+    public ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId) {
+        ResponseEntity<Integer> response = getUserId(userName);
+        if (!response.isSuccess()) {
+            return new ResponseEntity<>(false, "User doesn't exist", null);
+        }
+        Integer userId = response.getBody();
+        try {
+            Integer sessionId = database.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
+            return new ResponseEntity<>(true, "Successfully created a session", sessionId);
+        } catch (SurveyNotFoundException e) {
+            return new ResponseEntity<>(false, "Survey doesn't exist", null);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(false, "User doesn't exist", null);
+        }
+    }
 
-    // Perhaps not needed
-    // TODO: Decide
+    public void createTestSurvey() {
+        database.addCategory("category test");
+
+        database.addSurvey("Test", "description test", 0, Calendar.getInstance().getTime());
+
+    }
+
+
+    /// Internal convenience methods
+
     private ResponseEntity<?> isUserAdmin(String name) {
         User user = database.getUser(name);
         if (user == null) {
@@ -144,6 +197,14 @@ public class SurveysServiceImpl implements SurveysService {
         } else {
             return new ResponseEntity<>(false, "User is not admin", null);
         }
+    }
+
+    private ResponseEntity<Integer> getUserId(String userName) {
+        User user = database.getUser(userName);
+        if (user == null) {
+            return new ResponseEntity<>(false, "User doesn't exist", null);
+        }
+        return new ResponseEntity<>(true, "Successfully found userId", user.getId());
     }
 
     public static SurveysService getInstance() {

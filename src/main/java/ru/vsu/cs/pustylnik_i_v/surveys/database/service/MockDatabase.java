@@ -72,14 +72,14 @@ public class MockDatabase implements DatabaseService {
     }
 
     @Override
-    public void addSession(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException, UserNotFoundException {
+    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException, UserNotFoundException {
         if (!surveyRepository.exists(surveyId)) {
             throw new SurveyNotFoundException(surveyId);
         }
         if (userId != null && !userRepository.exists(userId)) {
             throw new UserNotFoundException(userId);
         }
-        sessionRepository.addSession(surveyId, userId, startedAt, finishedAt);
+        return sessionRepository.addSessionAndGetId(surveyId, userId, startedAt, finishedAt);
     }
 
     @Override
@@ -117,6 +117,11 @@ public class MockDatabase implements DatabaseService {
     @Override
     public Option getOption(int optionId) {
         return optionRepository.getOptionById(optionId);
+    }
+
+    @Override
+    public List<Option> getOptions(int questionId) {
+        return optionRepository.getQuestionOptions(questionId);
     }
 
     @Override

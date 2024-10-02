@@ -4,6 +4,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.interfaces.OptionRepository;
 
+import java.util.List;
+
 public class OptionRepositoryMock implements OptionRepository {
 
     private final DBTableImitation<Option> options = new DBTableImitation<>(
@@ -12,6 +14,11 @@ public class OptionRepositoryMock implements OptionRepository {
     @Override
     public Option getOptionById(int id) {
         return options.get(Option::getId,id).get(0);
+    }
+
+    @Override
+    public List<Option> getQuestionOptions(int questionId) {
+        return options.get(Option::getQuestionId,questionId);
     }
 
     @Override
