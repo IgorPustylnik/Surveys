@@ -1,11 +1,15 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConsoleUtils {
 
     public static Boolean confirm(String subject) {
-        System.out.printf("Are you sure you want to %s? (y/n)", subject);
+        System.out.printf("Are you sure you want to %s? (y/n) ", subject);
 
         Scanner scanner = new Scanner(System.in);
         String response = scanner.nextLine();
@@ -35,6 +39,21 @@ public class ConsoleUtils {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public static List<Integer> inputIntList(String subject) {
+        String input = inputString(subject);
+
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(input);
+
+        List<Integer> numberList = new ArrayList<>();
+
+        while (matcher.find()) {
+            numberList.add(Integer.parseInt(matcher.group()));
+        }
+
+        return numberList;
     }
 
     public static void clear() {
