@@ -1,114 +1,53 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.roles.Role;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandExecutor;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
-import ru.vsu.cs.pustylnik_i_v.surveys.service.SurveysService;
-import ru.vsu.cs.pustylnik_i_v.surveys.service.SurveysServiceImpl;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoServiceImpl;
 
 import java.util.List;
 
 public class ConsoleAppData {
 
-    private static ConsoleAppData instance;
-    private static final SurveysService surveysService = SurveysServiceImpl.getInstance();
+    private final UserInfoService userInfoService;
+    private final SurveysService surveysService;
+    private CommandExecutor commandExecutor;
 
-    private String token = null;
-    private String userName = null;
-    private Role role = Role.ANONYMOUS;
+    // User info
+    public String token = null;
+    public String userName = null;
+    public RoleType roleType = null;
 
     // Surveys list
-    private Category category = null;
-    private Integer currentPageIndex = 1;
+    public Category category = null;
+    public Integer currentPageIndex = 1;
 
     // Current survey
-    private Survey currentSurvey = null;
-    private Integer currentQuestionIndex = 1;
-    private List<Integer> chosenOptionIndices = null;
+    public Survey currentSurvey = null;
+    public Integer currentQuestionIndex = 1;
+    public List<Integer> chosenOptionIndices = null;
 
     // Session
-    private Integer currentSessionId = null;
+    public Integer currentSessionId = null;
 
-    public SurveysService getService() {
+    public ConsoleAppData(UserInfoService userInfoService, SurveysService surveysService) {
+        this.userInfoService = userInfoService;
+        this.surveysService = surveysService;
+        this.commandExecutor = new CommandExecutor(this);
+    }
+
+    public UserInfoService getUserInfoService() {
+        return userInfoService;
+    }
+
+    public SurveysService getSurveysService() {
         return surveysService;
     }
 
-    public void setLocalToken(String token) {
-        this.token = token;
-    }
-
-    public String getLocalToken() {
-        return token;
-    }
-
-    public String getLocalUserName() {
-        return userName;
-    }
-
-    public void setLocalUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Role getLocalRole() {
-        return role;
-    }
-
-    public void setLocalRole(Role role) {
-        this.role = role;
-    }
-
-    public Integer getCurrentPageIndex() {
-        return currentPageIndex;
-    }
-
-    public void setCurrentPageIndex(Integer currentPageIndex) {
-        this.currentPageIndex = currentPageIndex;
-    }
-
-    public Survey getCurrentSurvey() {
-        return currentSurvey;
-    }
-
-    public void setCurrentSurvey(Survey currentSurvey) {
-        this.currentSurvey = currentSurvey;
-    }
-
-    public Integer getCurrentQuestionIndex() {
-        return currentQuestionIndex;
-    }
-
-    public void setCurrentQuestionIndex(Integer currentQuestionIndex) {
-        this.currentQuestionIndex = currentQuestionIndex;
-    }
-
-    public List<Integer> getChosenOptionIndices() {
-        return chosenOptionIndices;
-    }
-
-    public void setChosenOptionIndices(List<Integer> chosenOptionIndices) {
-        this.chosenOptionIndices = chosenOptionIndices;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public static ConsoleAppData getInstance() {
-        if (instance == null) {
-            instance = new ConsoleAppData();
-        }
-        return instance;
-    }
-
-    public Integer getCurrentSessionId() {
-        return currentSessionId;
-    }
-
-    public void setCurrentSessionId(Integer currentSessionId) {
-        this.currentSessionId = currentSessionId;
+    public CommandExecutor getCommandExecutor() {
+        return commandExecutor;
     }
 }

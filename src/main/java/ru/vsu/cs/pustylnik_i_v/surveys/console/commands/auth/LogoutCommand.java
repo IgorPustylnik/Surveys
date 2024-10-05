@@ -1,12 +1,17 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.auth;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.support.CommandFactory;
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.support.CommandType;
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.support.AppCommand;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppData;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandExecutor;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
-import ru.vsu.cs.pustylnik_i_v.surveys.console.roles.Role;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 
 public class LogoutCommand extends AppCommand {
+
+    public LogoutCommand(ConsoleAppData appData) {
+        super(appData);
+    }
 
     @Override
     public String getName() {
@@ -19,19 +24,19 @@ public class LogoutCommand extends AppCommand {
 
         ConsoleUtils.clear();
         if (confirmation == null) {
-            CommandFactory.getInstance().getCommand(CommandType.UNKNOWN).execute();
-            CommandFactory.getInstance().getCommand(CommandType.MAIN_MENU).execute();
+            appData.getCommandExecutor().getCommand(CommandType.UNKNOWN).execute();
+            appData.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 
         if (confirmation) {
-            appData.setLocalToken(null);
-            appData.setLocalUserName(null);
-            appData.setLocalRole(Role.ANONYMOUS);
-            CommandFactory.getInstance().getCommand(CommandType.MAIN_MENU).execute();
+            appData.token = null;
+            appData.userName = null;
+            appData.roleType = null;
+            appData.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 
-        CommandFactory.getInstance().getCommand(CommandType.MAIN_MENU).execute();
+        appData.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
     }
 }

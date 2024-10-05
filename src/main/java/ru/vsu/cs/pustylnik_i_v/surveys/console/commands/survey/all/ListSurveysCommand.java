@@ -1,19 +1,20 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.support.CommandMenu;
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.support.CommandType;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppData;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
-import ru.vsu.cs.pustylnik_i_v.surveys.service.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.service.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListSurveysCommand extends CommandMenu {
 
-    public ListSurveysCommand() {
-        super(new ArrayList<>());
+    public ListSurveysCommand(ConsoleAppData appData) {
+        super(new ArrayList<>(), appData);
         setTitle("Surveys");
     }
 
@@ -26,10 +27,10 @@ public class ListSurveysCommand extends CommandMenu {
     public void execute() {
         commands = new ArrayList<>();
 
-        int currentPage = appData.getCurrentPageIndex();
-        Integer currentCategoryId = appData.getCategory() != null ? appData.getCategory().getId() : null;
+        int currentPage = appData.currentPageIndex;
+        Integer currentCategoryId = appData.category != null ? appData.category.getId() : null;
 
-        ResponseEntity<PagedEntity<List<Survey>>> response = appData.getService().getSurveysPagedList(currentCategoryId, currentPage);
+        ResponseEntity<PagedEntity<List<Survey>>> response = appData.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage);
 
         PagedEntity<List<Survey>> surveysPage = response.getBody();
         int totalPages = surveysPage.getSize();
@@ -62,27 +63,27 @@ public class ListSurveysCommand extends CommandMenu {
         System.out.println();
 
         if (currentPage > 1) {
-            System.out.printf("[%d] %s\n", i++, factory.getCommand(CommandType.PREVIOUS_PAGE).getName());
+            System.out.printf("[%d] %s\n", i++, appData.getCommandExecutor().getCommand(CommandType.PREVIOUS_PAGE).getName());
         }
         if (currentPage < totalPages) {
-            System.out.printf("[%d] %s\n", i++, factory.getCommand(CommandType.NEXT_PAGE).getName());
+            System.out.printf("[%d] %s\n", i++, appData.getCommandExecutor().getCommand(CommandType.NEXT_PAGE).getName());
         }
-        System.out.printf("[%d] %s\n", i, factory.getCommand(CommandType.MAIN_MENU).getName());
+        System.out.printf("[%d] %s\n", i, appData.getCommandExecutor().getCommand(CommandType.MAIN_MENU).getName());
 
         System.out.println("-----------------------------");
 
         Integer input = ConsoleUtils.inputInt("a menu item number");
 
         if (input == null || input > commands.size() - 1 || input < 0) {
-            factory.getCommand(CommandType.UNKNOWN).execute();
+            appData.getCommandExecutor().getCommand(CommandType.UNKNOWN).execute();
             this.execute();
             return;
         }
 
         if (input < surveys.size()) {
-            appData.setCurrentSurvey(surveys.get(input));
+            appData.currentSurvey = surveys.get(input);
         }
         ConsoleUtils.clear();
-        factory.getCommand(commands.get(input)).execute();
+        appData.getCommandExecutor().getCommand(commands.get(input)).execute();
     }
 }
