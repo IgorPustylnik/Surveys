@@ -1,5 +1,7 @@
 CREATE TYPE question_type as ENUM('single', 'multiple');
 
+CREATE TYPE role_type as ENUM('user', 'admin');
+
 CREATE TABLE categories
 (
     id serial PRIMARY KEY,
@@ -37,14 +39,15 @@ CREATE TABLE users
 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) UNIQUE,
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE admins
+CREATE TABLE roles
 (
     user_id SERIAL PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    email VARCHAR(255) NOT NULL
+    role role_type NOT NULL
 );
 
 CREATE TABLE sessions
@@ -55,7 +58,7 @@ CREATE TABLE sessions
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES users(id),
     started_at timestamp NOT NULL,
-    finished_at timestamp NOT NULL
+    finished_at timestamp
 );
 
 CREATE TABLE answers
