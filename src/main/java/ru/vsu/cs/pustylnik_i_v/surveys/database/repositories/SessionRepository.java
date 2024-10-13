@@ -10,7 +10,7 @@ import java.util.Date;
 public interface SessionRepository {
     Session getSessionById(int id) throws SessionNotFoundException;
 
-    Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) throws SurveyNotFoundException, UserNotFoundException;
+    Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt);
 
     void updateSession(Session s) throws SessionNotFoundException;
 

@@ -3,6 +3,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.*;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface SurveysService {
 
     ResponseEntity<?> deleteSurvey(Integer surveyId);
 
-    ResponseEntity<Integer> addSurveyAndGetId(String name, String description, String categoryName);
+    ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName);
 
     ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId);
 
@@ -22,5 +23,9 @@ public interface SurveysService {
     ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId);
 
     ResponseEntity<?> submitAnswer (Integer sessionId, Integer optionId);
+
+    ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType);
+
+    ResponseEntity<String> getCategoryName(Integer categoryId);
 
 }

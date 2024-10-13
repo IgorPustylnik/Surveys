@@ -20,7 +20,7 @@ public class DBTableImitation<T> {
         this.constructorFunction = constructorFunction;
     }
 
-    public void add(Object... args) {
+    public int add(Object... args) {
         if (currentIndex >= data.length) {
             throw new RuntimeException("Index out of bounds");
         } else {
@@ -33,6 +33,7 @@ public class DBTableImitation<T> {
             data[currentIndex] = newInstance;
             currentIndex++;
         }
+        return currentIndex - 1;
     }
 
     public void remove(Function<T, ?> keyFunction, Object key) {

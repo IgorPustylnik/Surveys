@@ -3,6 +3,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.emulation.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SessionRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 
 import java.util.Date;
 

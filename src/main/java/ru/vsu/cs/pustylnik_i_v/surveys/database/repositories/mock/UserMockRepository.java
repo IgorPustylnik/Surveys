@@ -22,6 +22,11 @@ public class UserMockRepository implements UserRepository {
     }
 
     @Override
+    public List<User> getAllUsers() {
+        return users.getAll();
+    }
+
+    @Override
     public void addUser(String name, String password) {
         users.add(name, password);
     }
@@ -44,6 +49,11 @@ public class UserMockRepository implements UserRepository {
     @Override
     public boolean exists(int userId) {
         return users.contains(User::getId, userId);
+    }
+
+    @Override
+    public boolean exists(String name) {
+        return users.contains(User::getName, name);
     }
 
 }

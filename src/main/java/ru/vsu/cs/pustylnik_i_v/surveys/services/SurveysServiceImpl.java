@@ -3,6 +3,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
@@ -44,7 +45,7 @@ public class SurveysServiceImpl implements SurveysService {
         List<Survey> sliced;
 
         List<Survey> surveys = surveyRepository.getSurveys(categoryId);
-        int totalPages = (int) Math.ceil((double) surveys.size() / 7);
+        int totalPages = (int) Math.ceil((double) surveys.size() / maxPageElementsAmount);
 
         int fromIndex = maxPageElementsAmount * (page - 1);
         int toIndex = Math.min(fromIndex + maxPageElementsAmount, surveys.size());
@@ -60,7 +61,7 @@ public class SurveysServiceImpl implements SurveysService {
     public ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) {
         List<Question> questions = questionRepository.getQuestions(surveyId);
         if (index >= questions.size()) {
-            return new ResponseEntity<>(true, "Survey completed successfully", null);
+            return new ResponseEntity<>(false, "Survey completed successfully", null);
         }
         Question question = questions.get(index);
         return new ResponseEntity<>(true, "Question successfully found", new PagedEntity<>(index, questions.size(), question));
@@ -88,6 +89,32 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
+    public ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) {
+        questionRepository.addQuestion(surveyId, description, questionType);
+
+        List<Question> questions = questionRepository.getQuestions(surveyId);
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>(false, "Error (couldn't create a question)", null);
+        }
+        Question question = questions.get(questions.size() - 1);
+
+        for (String option : options) {
+            optionRepository.addOption(question.getId(), option);
+        }
+
+        return new ResponseEntity<>(true, "Question created successfully", null);
+    }
+
+    @Override
+    public ResponseEntity<String> getCategoryName(Integer categoryId) {
+        try {
+            return new ResponseEntity<>(true, "Category name found successfully", categoryRepository.getCategoryById(categoryId).getName());
+        } catch (CategoryNotFoundException e) {
+            return new ResponseEntity<>(false, "Category doesn't exist", null);
+        }
+    }
+
+    @Override
     public ResponseEntity<?> deleteSurvey(Integer surveyId) {
         try {
             surveyRepository.deleteSurvey(surveyId);
@@ -98,26 +125,32 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<Integer> addSurveyAndGetId(String name, String description, String categoryName) {
+    public ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName) {
         if (!categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
 
-        Integer id = categoryRepository.getCategoryByName(categoryName).getId();
-        surveyRepository.addSurvey(name, description, id, Calendar.getInstance().getTime());
-        return new ResponseEntity<>(true, "Survey created successfully", null);
+        Integer categoryId = categoryRepository.getCategoryByName(categoryName).getId();
+        Survey newSurvey = surveyRepository.addSurvey(name, description, categoryId, Calendar.getInstance().getTime());
+
+        return new ResponseEntity<>(true, "Survey created successfully", newSurvey);
     }
 
     @Override
     public ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId) {
+        Integer userId = null;
+
         try {
-            Integer userId = userRepository.getUser(userName).getId();
-            Integer sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
-            return new ResponseEntity<>(true, "Successfully created a session", sessionId);
+            userId = userRepository.getUser(userName).getId();
+        } catch (UserNotFoundException ignored) {}
+
+        try {
+            surveyRepository.getSurveyById(surveyId);
         } catch (SurveyNotFoundException e) {
             return new ResponseEntity<>(false, "Survey doesn't exist", null);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(false, "User doesn't exist", null);
         }
+
+        Integer sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
+        return new ResponseEntity<>(true, "Successfully created a session", sessionId);
     }
 }

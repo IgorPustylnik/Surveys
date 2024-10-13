@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface SurveyRepository {
-    void addSurvey(String name, String description, Integer categoryId, Date createdAt);
+    Survey addSurvey(String name, String description, Integer categoryId, Date createdAt);
 
     Survey getSurveyById(int id) throws SurveyNotFoundException;
 

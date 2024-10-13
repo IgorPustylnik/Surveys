@@ -26,8 +26,9 @@ public class SurveyMockRepository implements SurveyRepository {
     }
 
     @Override
-    public void addSurvey(String name, String description, Integer categoryId, Date createdAt) {
-        surveys.add(name, description, categoryId, createdAt);
+    public Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) {
+        int id = surveys.add(name, description, categoryId, createdAt);
+        return surveys.get(Survey::getId, id).get(0);
     }
 
     @Override
