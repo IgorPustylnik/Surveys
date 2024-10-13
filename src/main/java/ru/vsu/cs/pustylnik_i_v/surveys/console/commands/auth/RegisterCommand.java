@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
@@ -20,8 +21,22 @@ public class RegisterCommand extends AppCommand {
 
     @Override
     public void execute() {
-        String name = ConsoleUtils.inputString("your name");
-        String password = ConsoleUtils.inputString("your password");
+        String name, password, validation;
+        do {
+            name = ConsoleUtils.inputString("your username");
+            validation = ValidationUtils.isValidName(name);
+            if (validation != null) {
+                System.err.println(validation);
+            }
+        } while (validation != null);
+
+        do {
+            password = ConsoleUtils.inputString("your password");
+            validation = ValidationUtils.isValidPassword(password);
+            if (validation != null) {
+                System.err.println(validation);
+            }
+        } while (validation != null);
 
         ResponseEntity<AuthBody> response = appContext.getUserInfoService().register(name, password);
 

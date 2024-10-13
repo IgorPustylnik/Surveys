@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
@@ -22,7 +23,15 @@ public class CreateSurveyCommand extends AppCommand {
     public void execute() {
         String name = ConsoleUtils.inputString("a survey name");
         String description = ConsoleUtils.inputString("a description");
-        String categoryName = ConsoleUtils.inputString("a category");
+
+        String categoryName, validation;
+        do {
+            categoryName = ConsoleUtils.inputString("a category name");
+            validation = ValidationUtils.isValidName(categoryName);
+            if (validation != null) {
+                System.err.println(validation);
+            }
+        } while (validation != null);
 
         ResponseEntity<Survey> response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName);
 

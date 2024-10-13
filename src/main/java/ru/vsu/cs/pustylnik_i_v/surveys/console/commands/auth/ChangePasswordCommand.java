@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
 public class ChangePasswordCommand extends AppCommand {
@@ -30,7 +31,14 @@ public class ChangePasswordCommand extends AppCommand {
             return;
         }
 
-        String newPassword = ConsoleUtils.inputString("your new password");
+        String newPassword, validation;
+        do {
+            newPassword = ConsoleUtils.inputString("your new password");
+            validation = ValidationUtils.isValidPassword(newPassword);
+            if (validation != null) {
+                System.err.println(validation);
+            }
+        } while (validation != null);
 
         response = appContext.getUserInfoService().updatePassword(appContext.userName, newPassword);
         ConsoleUtils.clear();
