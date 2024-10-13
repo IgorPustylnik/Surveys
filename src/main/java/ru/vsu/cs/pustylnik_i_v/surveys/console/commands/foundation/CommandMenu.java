@@ -1,6 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppData;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 
 import java.util.List;
@@ -11,8 +11,8 @@ public abstract class CommandMenu extends AppCommand {
 
     protected List<CommandType> commands;
 
-    public CommandMenu(List<CommandType> commands, ConsoleAppData appData) {
-        super(appData);
+    public CommandMenu(List<CommandType> commands, ConsoleAppContext appContext) {
+        super(appContext);
         this.commands = commands;
     }
 
@@ -29,7 +29,7 @@ public abstract class CommandMenu extends AppCommand {
         printMenu(
         commands
                 .stream()
-                .map(type -> appData.getCommandExecutor().getCommand(type).getName())
+                .map(type -> appContext.getCommandExecutor().getCommand(type).getName())
                 .collect(Collectors.toList())
         );
 
@@ -37,13 +37,13 @@ public abstract class CommandMenu extends AppCommand {
 
         if (input == null || input > commands.size() - 1 || input < 0) {
             ConsoleUtils.clear();
-            appData.getCommandExecutor().getCommand(CommandType.UNKNOWN).execute();
+            appContext.getCommandExecutor().getCommand(CommandType.UNKNOWN).execute();
             this.execute();
             return;
         }
 
         ConsoleUtils.clear();
-        appData.getCommandExecutor().getCommand(commands.get(input)).execute();
+        appContext.getCommandExecutor().getCommand(commands.get(input)).execute();
     }
 
     protected void printMenu(List<String> elements) {

@@ -1,13 +1,13 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppData;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 
-public class NextPageCommand extends AppCommand {
+public class NextSurveyPageCommand extends AppCommand {
 
-    public NextPageCommand(ConsoleAppData appData) {
-        super(appData);
+    public NextSurveyPageCommand(ConsoleAppContext appContext) {
+        super(appContext);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class NextPageCommand extends AppCommand {
 
     @Override
     public void execute() {
-        appData.currentPageIndex += 1;
-        appData.getCommandExecutor().getCommand(CommandType.LIST_SURVEYS).execute();
+        appContext.currentPageIndex += 1;
+        appContext.getCommandExecutor().getCommand(CommandType.LIST_SURVEYS).execute();
     }
 }

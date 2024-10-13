@@ -1,16 +1,16 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandExecutor;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoServiceImpl;
 
 import java.util.List;
 
-public class ConsoleAppData {
+public class ConsoleAppContext {
 
     private final UserInfoService userInfoService;
     private final SurveysService surveysService;
@@ -21,19 +21,22 @@ public class ConsoleAppData {
     public String userName = null;
     public RoleType roleType = null;
 
-    // Surveys list
-    public Category category = null;
-    public Integer currentPageIndex = 1;
-
-    // Current survey
+    // Surveys
+    public Category currentCategory = null;
     public Survey currentSurvey = null;
-    public Integer currentQuestionIndex = 1;
+    public Integer currentQuestionIndex = 0;
     public List<Integer> chosenOptionIndices = null;
+
+    // Users
+    public User currentUser = null;
+
+    // Pages
+    public Integer currentPageIndex = 1;
 
     // Session
     public Integer currentSessionId = null;
 
-    public ConsoleAppData(UserInfoService userInfoService, SurveysService surveysService) {
+    public ConsoleAppContext(UserInfoService userInfoService, SurveysService surveysService) {
         this.userInfoService = userInfoService;
         this.surveysService = surveysService;
         this.commandExecutor = new CommandExecutor(this);

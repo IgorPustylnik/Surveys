@@ -1,16 +1,16 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.admin;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppData;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandExecutor;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
 public class CreateSurveyCommand extends AppCommand {
 
-    public CreateSurveyCommand(ConsoleAppData appData) {
-        super(appData);
+    public CreateSurveyCommand(ConsoleAppContext appContext) {
+        super(appContext);
     }
 
     @Override
@@ -24,17 +24,33 @@ public class CreateSurveyCommand extends AppCommand {
         String description = ConsoleUtils.inputString("a description");
         String categoryName = ConsoleUtils.inputString("a category");
 
-        ResponseEntity<Integer> response = appData.getSurveysService().addSurveyAndGetId(name, description, categoryName);
+        ResponseEntity<Survey> response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName);
 
         if (!response.isSuccess()) {
             System.err.println(response.getMessage());
-            appData.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
+            appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 
-        System.out.println(response.getMessage());
-        ConsoleUtils.clear();
+        appContext.currentSurvey = response.getBody();
 
-        appData.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
+        Integer questionsCount = ConsoleUtils.inputInt("questions count");
+
+        if (questionsCount == null || questionsCount < 0) {
+            ConsoleUtils.clear();
+            System.err.println("Please enter a valid number");
+            this.execute();
+            return;
+        }
+
+        for (int i = 0; i < questionsCount; i++) {
+            ConsoleUtils.clear();
+            System.out.printf("Question %d of %d\n", i + 1, questionsCount);
+            appContext.getCommandExecutor().getCommand(CommandType.ADD_QUESTION).execute();
+        }
+
+        ConsoleUtils.clear();
+        System.out.println("All questions were added successfully.");
+        appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
     }
 }
