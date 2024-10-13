@@ -2,6 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
@@ -153,5 +154,17 @@ public class SurveysServiceImpl implements SurveysService {
 
         Integer sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
         return new ResponseEntity<>(true, "Successfully created a session", sessionId);
+    }
+
+    @Override
+    public ResponseEntity<?> finishSession(Integer sessionId) {
+        try {
+            Session session = sessionRepository.getSessionById(sessionId);
+            session.setFinishedAt(Calendar.getInstance().getTime());
+            sessionRepository.updateSession(session);
+            return new ResponseEntity<>(true, "Session finished successfully", null);
+        } catch (SessionNotFoundException e) {
+            return new ResponseEntity<>(false, "Session doesn't exist", null);
+        }
     }
 }

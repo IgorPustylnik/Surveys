@@ -18,6 +18,8 @@ public interface SurveysService {
 
     ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId);
 
+    ResponseEntity<?> finishSession(Integer sessionId);
+
     ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer page);
 
     ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId);

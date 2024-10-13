@@ -103,6 +103,7 @@ public class OpenQuestionCommand extends CommandMenu {
     }
 
     private void goBack() {
+        appContext.getSurveysService().finishSession(appContext.currentSessionId);
         appContext.currentSessionId = null;
         appContext.currentQuestionIndex = 0;
         appContext.getCommandExecutor().getCommand(CommandType.OPEN_SURVEY).execute();
