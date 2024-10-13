@@ -1,45 +1,41 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all;
+package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.admin;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListSurveysCommand extends CommandMenu {
+public class ListUsersCommand extends CommandMenu {
 
-    public ListSurveysCommand(ConsoleAppContext appContext) {
+    public ListUsersCommand(ConsoleAppContext appContext) {
         super(new ArrayList<>(), appContext);
-        setTitle("Surveys");
+        setTitle("Users:");
     }
 
     @Override
     public String getName() {
-        return "Surveys list";
+        return "List all users";
     }
 
     @Override
     public void execute() {
         commands = new ArrayList<>();
 
-        // Reset survey when going back from a survey page
-        appContext.currentSurvey = null;
-
         int currentPage = appContext.currentPageIndex;
-        Integer currentCategoryId = appContext.currentCategory != null ? appContext.currentCategory.getId() : null;
 
-        ResponseEntity<PagedEntity<List<Survey>>> response = appContext.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage);
+        ResponseEntity<PagedEntity<List<User>>> response = appContext.getUserInfoService().getUsersPagedList(currentPage);
 
-        PagedEntity<List<Survey>> surveysPage = response.getBody();
-        int totalPages = surveysPage.getSize();
-        List<Survey> surveys = surveysPage.getPage();
+        PagedEntity<List<User>> usersPage = response.getBody();
+        int totalPages = usersPage.getSize();
+        List<User> users = usersPage.getPage();
 
-        surveys.forEach(s -> commands.add(CommandType.OPEN_SURVEY));
+        users.forEach(s -> commands.add(CommandType.OPEN_USER));
         if (currentPage > 1) {
             commands.add(CommandType.PREVIOUS_SURVEYS_PAGE);
         }
@@ -53,15 +49,15 @@ public class ListSurveysCommand extends CommandMenu {
         System.out.println("-----------------------------");
 
         int i = 0;
-        if (!surveys.isEmpty()) {
-            while (i < surveys.size()) {
-                System.out.printf("[%d] %s\n", i, surveys.get(i).getName());
+        if (!users.isEmpty()) {
+            while (i < users.size()) {
+                System.out.printf("[%d] %s\n", i, users.get(i).getName());
                 i++;
             }
             System.out.println();
             System.out.printf("Page %d out of %d\n", currentPage, totalPages);
         } else {
-            System.out.println("No surveys found");
+            System.out.println("No users found");
         }
         System.out.println();
 
@@ -83,8 +79,8 @@ public class ListSurveysCommand extends CommandMenu {
             return;
         }
 
-        if (input < surveys.size()) {
-            appContext.currentSurvey = surveys.get(input);
+        if (input < users.size()) {
+            appContext.currentUser = users.get(input);
         }
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(commands.get(input)).execute();

@@ -1,17 +1,18 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppData;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
 import java.util.ArrayList;
 
 public class OpenSurveyCommand extends CommandMenu {
 
-    public OpenSurveyCommand(ConsoleAppData appData) {
-        super(new ArrayList<>(), appData);
+    public OpenSurveyCommand(ConsoleAppContext appContext) {
+        super(new ArrayList<>(), appContext);
     }
 
     @Override
@@ -21,17 +22,25 @@ public class OpenSurveyCommand extends CommandMenu {
 
     @Override
     public void execute() {
+        commands = new ArrayList<>();
+
         commands.add(CommandType.OPEN_QUESTION);
 
-        if (appData.roleType == RoleType.ADMIN) {
+        if (appContext.roleType == RoleType.ADMIN) {
             commands.add(CommandType.EDIT_SURVEY);
             commands.add(CommandType.DELETE_SURVEY);
         }
         commands.add(CommandType.LIST_SURVEYS);
-        Survey s = appData.currentSurvey;
+        Survey s = appContext.currentSurvey;
 
-        // TODO: should be category name, not id
-        setTitle(String.format("Survey name: %s\nCategory id: %d\nDescription: %s", s.getName(), s.getCategoryId(), s.getDescription()));
+        ResponseEntity<String> response = appContext.getSurveysService().getCategoryName(s.getCategoryId());
+        String categoryName = response.getBody();
+
+        setTitle(String.format("Survey name: %s\nCategory: %s\nDescription: %s",
+                s.getName(),
+                categoryName != null ? categoryName : "id" + s.getCategoryId(),
+                s.getDescription()));
+
         super.execute();
     }
 
