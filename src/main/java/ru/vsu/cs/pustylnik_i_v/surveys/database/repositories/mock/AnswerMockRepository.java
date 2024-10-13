@@ -11,24 +11,9 @@ public class AnswerMockRepository implements AnswerRepository {
 
     private final DBTableImitation<Answer> answers = new DBTableImitation<>(
             params -> new Answer((Integer) params[0], (Integer) params[1]));
-
-    @Override
-    public Answer getAnswerBySelf(Answer a) throws AnswerNotFoundException {
-        List<Answer> query = answers.get(Answer::getSelf, a);
-        if (query.isEmpty()) {
-            throw new AnswerNotFoundException(a);
-        }
-        return query.get(0);
-    }
-
     @Override
     public void addAnswer(int sessionId, int optionId) {
         answers.add(sessionId, optionId);
-    }
-
-    @Override
-    public void deleteAnswer(int questionId, int optionId) {
-        answers.remove(Answer::getSelf,new Answer(questionId, optionId));
     }
 
     @Override

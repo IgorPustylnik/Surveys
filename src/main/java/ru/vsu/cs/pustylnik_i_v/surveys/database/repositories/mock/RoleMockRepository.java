@@ -38,11 +38,6 @@ public class RoleMockRepository implements RoleRepository {
     }
 
     @Override
-    public void deleteRole(int userId) {
-        roles.remove(Role::getUserId, userId);
-    }
-
-    @Override
     public boolean exists(int userId) {
         return roles.contains(Role::getUserId, userId);
     }

@@ -14,8 +14,6 @@ public interface SurveyRepository {
 
     List<Survey> getSurveys(Integer categoryId) throws CategoryNotFoundException;
 
-    void updateSurvey(Survey s) throws SurveyNotFoundException;
-
     void deleteSurvey(int id) throws SurveyNotFoundException;
 
     boolean exists(int id);

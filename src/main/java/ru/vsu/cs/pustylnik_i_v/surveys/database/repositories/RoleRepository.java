@@ -12,8 +12,6 @@ public interface RoleRepository {
 
     void updateRole(int userId, RoleType roleType) throws UserNotFoundException;
 
-    void deleteRole(int userId);
-
     boolean exists(int userId);
 
 }

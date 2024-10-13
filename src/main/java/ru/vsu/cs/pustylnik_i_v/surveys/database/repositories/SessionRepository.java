@@ -14,7 +14,5 @@ public interface SessionRepository {
 
     void updateSession(Session s) throws SessionNotFoundException;
 
-    void deleteSession(int id) throws SessionNotFoundException;
-
     boolean exists(int id);
 }

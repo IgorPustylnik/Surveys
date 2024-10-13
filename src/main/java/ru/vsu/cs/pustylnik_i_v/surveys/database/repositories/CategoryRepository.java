@@ -10,10 +10,6 @@ public interface CategoryRepository {
 
     void addCategory(String name);
 
-    void updateCategory(Category c) throws CategoryNotFoundException;
-
-    void deleteCategory(int id);
-
     boolean exists(int id);
 
     boolean exists(String name);

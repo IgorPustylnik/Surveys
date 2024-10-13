@@ -38,20 +38,6 @@ public class CategoryMockRepository implements CategoryRepository {
     }
 
     @Override
-    public void updateCategory(Category c) throws CategoryNotFoundException {
-        List<Category> query = categories.get(Category::getId,c.getId());
-        if (query.isEmpty()) {
-            throw new CategoryNotFoundException(c.getId());
-        }
-        query.get(0).setName(c.getName());
-    }
-
-    @Override
-    public void deleteCategory(int id) throws CategoryNotFoundException {
-        categories.remove(Category::getId,id);
-    }
-
-    @Override
     public boolean exists(int id) {
         return categories.contains(Category::getId,id);
     }

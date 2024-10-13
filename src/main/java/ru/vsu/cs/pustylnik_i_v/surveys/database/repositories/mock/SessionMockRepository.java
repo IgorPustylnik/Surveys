@@ -32,11 +32,6 @@ public class SessionMockRepository implements SessionRepository {
     }
 
     @Override
-    public void deleteSession(int id) {
-        sessions.remove(Session::getId, id);
-    }
-
-    @Override
     public boolean exists(int id) {
         return sessions.contains(Session::getId,id);
     }

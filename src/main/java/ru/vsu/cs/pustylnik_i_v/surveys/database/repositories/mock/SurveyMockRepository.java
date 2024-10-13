@@ -32,13 +32,6 @@ public class SurveyMockRepository implements SurveyRepository {
     }
 
     @Override
-    public void updateSurvey(Survey s) {
-        surveys.get(Survey::getId,s.getId()).get(0).setName(s.getName());
-        surveys.get(Survey::getId,s.getId()).get(0).setDescription(s.getDescription());
-        surveys.get(Survey::getId,s.getId()).get(0).setCreatedAt(s.getCreatedAt());
-    }
-
-    @Override
     public void deleteSurvey(int id) {
         surveys.remove(Survey::getId,id);
     }

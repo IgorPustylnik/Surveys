@@ -13,11 +13,6 @@ public class QuestionMockRepository implements QuestionRepository {
             params -> (new Question(0, (Integer) params[0], (String) params[1], (QuestionType) params[2])));
 
     @Override
-    public Question getQuestionById(int id) {
-        return questions.get(Question::getId, id).get(0);
-    }
-
-    @Override
     public List<Question> getQuestions(Integer surveyId) {
         return questions.get(Question::getSurveyId, surveyId);
     }
@@ -25,18 +20,6 @@ public class QuestionMockRepository implements QuestionRepository {
     @Override
     public void addQuestion(int surveyId, String text, QuestionType type) {
         questions.add(surveyId, text, type);
-    }
-
-    @Override
-    public void updateQuestion(Question q) {
-        questions.get(Question::getId, q.getId()).get(0).setSurveyId(q.getSurveyId());
-        questions.get(Question::getId, q.getId()).get(0).setText(q.getText());
-        questions.get(Question::getId, q.getId()).get(0).setType(q.getType());
-    }
-
-    @Override
-    public void deleteQuestion(int id) {
-        questions.remove(Question::getId, id);
     }
 
     @Override

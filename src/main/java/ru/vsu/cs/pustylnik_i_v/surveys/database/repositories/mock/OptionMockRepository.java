@@ -12,11 +12,6 @@ public class OptionMockRepository implements OptionRepository {
             params -> (new Option(0, (Integer) params[0], (String) params[1])));
 
     @Override
-    public Option getOptionById(int id) {
-        return options.get(Option::getId,id).get(0);
-    }
-
-    @Override
     public List<Option> getOptions(int questionId) {
         return options.get(Option::getQuestionId,questionId);
     }
@@ -24,17 +19,6 @@ public class OptionMockRepository implements OptionRepository {
     @Override
     public void addOption(int questionId, String description) {
         options.add(questionId, description);
-    }
-
-    @Override
-    public void updateOption(Option o) {
-        options.get(Option::getId,o.getId()).get(0).setQuestionId(o.getQuestionId());
-        options.get(Option::getId,o.getId()).get(0).setDescription(o.getDescription());
-    }
-
-    @Override
-    public void deleteOption(int id) {
-        options.remove(Option::getId,id);
     }
 
     @Override
