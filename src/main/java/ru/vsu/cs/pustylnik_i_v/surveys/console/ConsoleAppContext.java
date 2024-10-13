@@ -8,13 +8,11 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
 
-import java.util.List;
-
 public class ConsoleAppContext {
 
     private final UserInfoService userInfoService;
     private final SurveysService surveysService;
-    private CommandExecutor commandExecutor;
+    private final CommandExecutor commandExecutor;
 
     // User info
     public String token = null;
@@ -25,13 +23,12 @@ public class ConsoleAppContext {
     public Category currentCategory = null;
     public Survey currentSurvey = null;
     public Integer currentQuestionIndex = 0;
-    public List<Integer> chosenOptionIndices = null;
 
     // Users
-    public User currentUser = null;
+    public User chosenUser = null;
 
     // Pages
-    public Integer currentPageIndex = 1;
+    public Integer currentPageIndex = 0;
 
     // Session
     public Integer currentSessionId = null;

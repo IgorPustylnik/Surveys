@@ -26,6 +26,8 @@ public abstract class CommandMenu extends AppCommand {
 
     @Override
     public void execute() {
+        appContext.currentPageIndex = 0;
+
         printMenu(
         commands
                 .stream()

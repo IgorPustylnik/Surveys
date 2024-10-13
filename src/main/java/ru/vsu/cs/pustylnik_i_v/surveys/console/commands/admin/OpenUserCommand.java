@@ -23,7 +23,7 @@ public class OpenUserCommand extends CommandMenu {
     @Override
     public void execute() {
         commands = new ArrayList<>();
-        User user = appContext.currentUser;
+        User user = appContext.chosenUser;
         ResponseEntity<RoleType> response = appContext.getUserInfoService().getUserRole(user.getName());
         if (!response.isSuccess()) {
             System.err.println(response.getMessage());

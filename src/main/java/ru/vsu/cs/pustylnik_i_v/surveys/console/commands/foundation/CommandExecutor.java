@@ -50,8 +50,8 @@ public class CommandExecutor {
         commands.put(CommandType.OPEN_SURVEY, new OpenSurveyCommand(appContext));
         commands.put(CommandType.OPEN_QUESTION, new OpenQuestionCommand(appContext));
         commands.put(CommandType.ADD_QUESTION, new AddQuestionCommand(appContext));
-        commands.put(CommandType.NEXT_SURVEYS_PAGE, new NextSurveyPageCommand(appContext));
-        commands.put(CommandType.PREVIOUS_SURVEYS_PAGE, new PreviousSurveyPageCommand(appContext));
+        commands.put(CommandType.NEXT_PAGE, new NextPageCommand(appContext));
+        commands.put(CommandType.PREVIOUS_PAGE, new PreviousPageCommand(appContext));
 
         commands.put(CommandType.CREATE_SURVEY, new CreateSurveyCommand(appContext));
         commands.put(CommandType.EDIT_SURVEY, new EditSurveyCommand(appContext));

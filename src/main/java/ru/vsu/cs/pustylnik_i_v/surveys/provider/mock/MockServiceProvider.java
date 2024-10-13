@@ -4,9 +4,9 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysServiceImpl;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.SurveysServiceImpl;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoServiceImpl;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.UserInfoServiceImpl;
 
 public class MockServiceProvider implements ServiceProvider {
 

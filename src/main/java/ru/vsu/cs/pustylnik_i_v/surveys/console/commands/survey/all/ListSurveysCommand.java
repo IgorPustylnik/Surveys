@@ -40,11 +40,11 @@ public class ListSurveysCommand extends CommandMenu {
         List<Survey> surveys = surveysPage.getPage();
 
         surveys.forEach(s -> commands.add(CommandType.OPEN_SURVEY));
-        if (currentPage > 1) {
-            commands.add(CommandType.PREVIOUS_SURVEYS_PAGE);
+        if (currentPage > 0) {
+            commands.add(CommandType.PREVIOUS_PAGE);
         }
-        if (currentPage < totalPages) {
-            commands.add(CommandType.NEXT_SURVEYS_PAGE);
+        if (currentPage < totalPages - 1) {
+            commands.add(CommandType.NEXT_PAGE);
         }
         commands.add(CommandType.MAIN_MENU);
 
@@ -59,17 +59,17 @@ public class ListSurveysCommand extends CommandMenu {
                 i++;
             }
             System.out.println();
-            System.out.printf("Page %d out of %d\n", currentPage, totalPages);
+            System.out.printf("Page %d out of %d\n", currentPage + 1, totalPages);
         } else {
             System.out.println("No surveys found");
         }
         System.out.println();
 
-        if (currentPage > 1) {
-            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.PREVIOUS_SURVEYS_PAGE).getName());
+        if (currentPage > 0) {
+            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.PREVIOUS_PAGE).getName());
         }
-        if (currentPage < totalPages) {
-            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_SURVEYS_PAGE).getName());
+        if (currentPage < totalPages - 1) {
+            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_PAGE).getName());
         }
         System.out.printf("[%d] %s\n", i, appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).getName());
 

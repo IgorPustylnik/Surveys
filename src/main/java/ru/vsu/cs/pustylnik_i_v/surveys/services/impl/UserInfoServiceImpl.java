@@ -1,4 +1,4 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.services;
+package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
@@ -6,6 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.RoleRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.RoleNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
@@ -35,7 +36,15 @@ public class UserInfoServiceImpl implements UserInfoService {
                 return new ResponseEntity<>(false, "Wrong password", new AuthBody(roleType, null));
             }
 
-            return new ResponseEntity<>(true, "Login successful", new AuthBody(roleType, null));
+            String token;
+
+            try {
+                token = AESTokenService.getInstance().encrypt(user);
+            } catch (Exception e) {
+                return new ResponseEntity<>(false, "Failed to generate a token", null);
+            }
+
+            return new ResponseEntity<>(true, "Login successful", new AuthBody(roleType, token));
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(false, "No such user", null);
         } catch (RoleNotFoundException e) {
@@ -50,13 +59,23 @@ public class UserInfoServiceImpl implements UserInfoService {
             return new ResponseEntity<>(false, "Username exists", null);
         } catch (UserNotFoundException e) {
             userRepository.addUser(name, password);
+            User user;
             try {
-                User user = userRepository.getUser(name);
+                user = userRepository.getUser(name);
                 roleRepository.addRole(user.getId(), RoleType.USER);
             } catch (UserNotFoundException ex) {
                 return new ResponseEntity<>(false, "Failed to assign default role", null);
             }
-            return new ResponseEntity<>(true, "Registration successful", new AuthBody(RoleType.USER, null));
+
+            String token;
+
+            try {
+                token = AESTokenService.getInstance().encrypt(user);
+            } catch (Exception ex) {
+                return new ResponseEntity<>(false, "Failed to generate a token", null);
+            }
+
+            return new ResponseEntity<>(true, "Registration successful", new AuthBody(RoleType.USER, token));
         }
     }
 
@@ -108,7 +127,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         List<User> users = userRepository.getAllUsers();
         int totalPages = (int) Math.ceil((double) users.size() / maxPageElementsAmount);
 
-        int fromIndex = maxPageElementsAmount * (page - 1);
+        int fromIndex = maxPageElementsAmount * page;
         int toIndex = Math.min(fromIndex + maxPageElementsAmount, users.size());
 
         sliced = users.subList(fromIndex, toIndex);

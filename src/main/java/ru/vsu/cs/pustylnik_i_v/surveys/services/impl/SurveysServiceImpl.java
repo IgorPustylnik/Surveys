@@ -1,4 +1,4 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.services;
+package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
@@ -6,6 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
@@ -47,7 +48,7 @@ public class SurveysServiceImpl implements SurveysService {
         List<Survey> surveys = surveyRepository.getSurveys(categoryId);
         int totalPages = (int) Math.ceil((double) surveys.size() / maxPageElementsAmount);
 
-        int fromIndex = maxPageElementsAmount * (page - 1);
+        int fromIndex = maxPageElementsAmount * page;
         int toIndex = Math.min(fromIndex + maxPageElementsAmount, surveys.size());
 
         sliced = surveys.subList(fromIndex, toIndex);
