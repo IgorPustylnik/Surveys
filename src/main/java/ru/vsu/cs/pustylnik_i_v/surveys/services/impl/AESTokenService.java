@@ -1,4 +1,6 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.services;
+package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
+
+import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenService;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
