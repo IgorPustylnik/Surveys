@@ -10,7 +10,7 @@ import java.util.List;
 public class UserMockRepository implements UserRepository {
 
     private final DBTableImitation<User> users = new DBTableImitation<>(
-            params -> (new User(0, (String) params[0], (String) params[1], null)));
+            params -> (new User(0, (String) params[0], (String) params[1])));
 
     @Override
     public User getUser(String name) throws UserNotFoundException {
