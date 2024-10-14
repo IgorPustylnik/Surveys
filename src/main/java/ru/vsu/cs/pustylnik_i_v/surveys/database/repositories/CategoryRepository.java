@@ -10,7 +10,5 @@ public interface CategoryRepository {
 
     void addCategory(String name);
 
-    boolean exists(int id);
-
     boolean exists(String name);
 }

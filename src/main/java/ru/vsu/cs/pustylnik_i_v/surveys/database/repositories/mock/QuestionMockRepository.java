@@ -21,14 +21,4 @@ public class QuestionMockRepository implements QuestionRepository {
     public void addQuestion(int surveyId, String text, QuestionType type) {
         questions.add(surveyId, text, type);
     }
-
-    @Override
-    public boolean exists(int id) {
-        return questions.contains(Question::getId, id);
-    }
-
-    public boolean exists(String text) {
-        return questions.contains(Question::getText, text);
-    }
-
 }

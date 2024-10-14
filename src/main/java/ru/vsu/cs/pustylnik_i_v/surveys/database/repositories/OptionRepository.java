@@ -8,6 +8,4 @@ public interface OptionRepository {
     List<Option> getOptions(int questionId);
 
     void addOption(int questionId, String description);
-
-    boolean exists(int id);
 }

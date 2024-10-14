@@ -73,9 +73,9 @@ public class SurveysServiceImpl implements SurveysService {
     public ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId) {
         List<Option> options = optionRepository.getOptions(questionId);
         if (options.isEmpty()) {
-            return new ResponseEntity<>(true, "No questions found", null);
+            return new ResponseEntity<>(true, "No options found", null);
         }
-        return new ResponseEntity<>(true, "Questions found successfully", options);
+        return new ResponseEntity<>(true, "Options found successfully", options);
     }
 
     @Override
@@ -99,6 +99,8 @@ public class SurveysServiceImpl implements SurveysService {
             return new ResponseEntity<>(false, "Error (couldn't create a question)", null);
         }
         Question question = questions.get(questions.size() - 1);
+
+        System.out.println(options);
 
         for (String option : options) {
             optionRepository.addOption(question.getId(), option);

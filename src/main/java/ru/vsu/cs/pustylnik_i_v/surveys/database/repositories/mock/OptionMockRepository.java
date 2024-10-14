@@ -20,10 +20,4 @@ public class OptionMockRepository implements OptionRepository {
     public void addOption(int questionId, String description) {
         options.add(questionId, description);
     }
-
-    @Override
-    public boolean exists(int id) {
-        return options.contains(Option::getId,id);
-    }
-
 }

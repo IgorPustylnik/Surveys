@@ -38,11 +38,6 @@ public class CategoryMockRepository implements CategoryRepository {
     }
 
     @Override
-    public boolean exists(int id) {
-        return categories.contains(Category::getId,id);
-    }
-
-    @Override
     public boolean exists(String name) {
         return categories.contains(Category::getName,name);
     }
