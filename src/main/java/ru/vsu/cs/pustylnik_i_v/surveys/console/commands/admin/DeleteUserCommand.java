@@ -25,7 +25,7 @@ public class DeleteUserCommand extends AppCommand {
             appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
             return;
         }
-        ResponseEntity<?> response = appContext.getUserInfoService().deleteUser(appContext.chosenUser.getName());
+        ResponseEntity<?> response = appContext.getUserInfoService().deleteUser(appContext.selectedUser.getName());
 
         ConsoleUtils.clear();
         if (!response.isSuccess()) {

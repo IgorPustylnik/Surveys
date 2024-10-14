@@ -20,12 +20,15 @@ public class ConsoleAppContext {
     public RoleType roleType = null;
 
     // Surveys
-    public Category currentCategory = null;
     public Survey currentSurvey = null;
     public Integer currentQuestionIndex = 0;
 
+    // Categories
+    public Category selectedCategory = null; // Is being viewed
+    public Category currentCategory = null; // Is saved for filtering surveys
+
     // Users
-    public User chosenUser = null;
+    public User selectedUser = null; // Is being viewed
 
     // Pages
     public Integer currentPageIndex = 0;

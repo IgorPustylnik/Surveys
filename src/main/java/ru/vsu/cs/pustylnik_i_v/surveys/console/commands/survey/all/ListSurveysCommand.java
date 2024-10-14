@@ -15,7 +15,6 @@ public class ListSurveysCommand extends CommandMenu {
 
     public ListSurveysCommand(ConsoleAppContext appContext) {
         super(new ArrayList<>(), appContext);
-        setTitle("Surveys");
     }
 
     @Override
@@ -26,6 +25,12 @@ public class ListSurveysCommand extends CommandMenu {
     @Override
     public void execute() {
         commands = new ArrayList<>();
+
+        if (appContext.currentCategory != null) {
+            setTitle(String.format("Surveys\nChosen category: %s", appContext.currentCategory.getName()));
+        } else {
+            setTitle("Surveys\nNo category chosen");
+        }
 
         // Reset survey when going back from a survey page
         appContext.currentSurvey = null;
@@ -46,6 +51,7 @@ public class ListSurveysCommand extends CommandMenu {
         if (currentPage < totalPages - 1) {
             commands.add(CommandType.NEXT_PAGE);
         }
+        commands.add(CommandType.LIST_CATEGORIES);
         commands.add(CommandType.MAIN_MENU);
 
         System.out.println("-----------------------------");
@@ -71,6 +77,7 @@ public class ListSurveysCommand extends CommandMenu {
         if (currentPage < totalPages - 1) {
             System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_PAGE).getName());
         }
+        System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.LIST_CATEGORIES).getName());
         System.out.printf("[%d] %s\n", i, appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).getName());
 
         System.out.println("-----------------------------");

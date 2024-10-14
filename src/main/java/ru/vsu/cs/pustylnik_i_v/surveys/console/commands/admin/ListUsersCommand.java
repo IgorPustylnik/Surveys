@@ -20,14 +20,14 @@ public class ListUsersCommand extends CommandMenu {
 
     @Override
     public String getName() {
-        return "List all users";
+        return "Users";
     }
 
     @Override
     public void execute() {
         commands = new ArrayList<>();
 
-        appContext.chosenUser = null;
+        appContext.selectedUser = null;
 
         int currentPage = appContext.currentPageIndex;
 
@@ -82,7 +82,7 @@ public class ListUsersCommand extends CommandMenu {
         }
 
         if (input < users.size()) {
-            appContext.chosenUser = users.get(input);
+            appContext.selectedUser = users.get(input);
         }
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(commands.get(input)).execute();

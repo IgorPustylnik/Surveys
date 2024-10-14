@@ -1,20 +1,20 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.CryptoService;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class AESTokenService implements TokenService {
-    private static final AESTokenService INSTANCE = new AESTokenService();
-    private final String SECRET_KEY = "SECRET_KEY123456";
-    private final String ALGORITHM = "AES";
-
-    public static AESTokenService getInstance() {
+public class AESCryptoService implements CryptoService {
+    private static final AESCryptoService INSTANCE = new AESCryptoService();
+    public static AESCryptoService getInstance() {
         return INSTANCE;
     }
+
+    private final String SECRET_KEY = "SECRET_KEY123456";
+    private final String ALGORITHM = "AES";
 
     @Override
     public String encrypt(Object object) throws Exception {

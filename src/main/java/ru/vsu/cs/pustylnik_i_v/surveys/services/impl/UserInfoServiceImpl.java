@@ -39,7 +39,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             String token;
 
             try {
-                token = AESTokenService.getInstance().encrypt(user);
+                token = AESCryptoService.getInstance().encrypt(user);
             } catch (Exception e) {
                 return new ResponseEntity<>(false, "Failed to generate a token", null);
             }
@@ -70,7 +70,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             String token;
 
             try {
-                token = AESTokenService.getInstance().encrypt(user);
+                token = AESCryptoService.getInstance().encrypt(user);
             } catch (Exception ex) {
                 return new ResponseEntity<>(false, "Failed to generate a token", null);
             }
