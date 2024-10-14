@@ -1,11 +1,10 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.emulation.DBTableImitation;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.emulation.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Role;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.RoleRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.RoleNotFoundException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 
 import java.util.List;
 

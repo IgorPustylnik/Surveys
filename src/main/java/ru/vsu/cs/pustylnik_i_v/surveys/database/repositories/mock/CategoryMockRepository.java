@@ -1,6 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.emulation.DBTableImitation;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.emulation.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;

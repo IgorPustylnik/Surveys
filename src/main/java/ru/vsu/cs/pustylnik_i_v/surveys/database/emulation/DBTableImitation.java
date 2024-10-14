@@ -1,4 +1,4 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.emulation;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.emulation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

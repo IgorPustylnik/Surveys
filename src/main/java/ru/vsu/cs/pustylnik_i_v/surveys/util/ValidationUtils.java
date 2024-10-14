@@ -1,10 +1,10 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.console.util;
+package ru.vsu.cs.pustylnik_i_v.surveys.util;
 
 public class ValidationUtils {
 
     public static String isValidName(String name) {
-        if (name == null || name.length() < 3) {
-            return "The name must be at least 3 characters long";
+        if (name == null || name.length() < 2) {
+            return "The name must be at least 2 characters long";
         }
         if (!name.matches("^[a-zA-Z0-9]+$")) {
             return "The name can only contain latin letters and digits";
