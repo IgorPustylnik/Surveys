@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 
 import java.sql.Connection;
@@ -70,6 +71,32 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
             throw new SurveyNotFoundException(id);
         }
         throw new SurveyNotFoundException(id);
+    }
+
+    @Override
+    public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException {
+        String checkQuery = "SELECT COUNT(*) FROM surveys WHERE id = ?";
+        String updateQuery = "UPDATE surveys SET category_id = ? WHERE id = ?";
+
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setInt(1, id);
+                try {
+                    if (!checkStatement.execute()) {
+                        throw new SurveyNotFoundException(id);
+                    }
+                } catch (SQLException e) {
+                    throw new SurveyNotFoundException(id);
+                }
+            }
+
+            try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                updateStatement.setInt(1, categoryId);
+                updateStatement.setInt(2, id);
+
+                updateStatement.executeUpdate();
+            }
+        } catch (SQLException ignored) {}
     }
 
     @Override

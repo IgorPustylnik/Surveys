@@ -1,9 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
@@ -16,7 +13,7 @@ import java.util.List;
 
 public class SurveysServiceImpl implements SurveysService {
 
-    private static final int maxPageElementsAmount = 7;
+    private static final int maxPageElementsAmount = 6;
 
     private final UserRepository userRepository;
     private final SurveyRepository surveyRepository;
@@ -79,6 +76,23 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
+    public ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page) {
+        List<Category> sliced;
+
+        List<Category> surveys = categoryRepository.getAllCategories();
+        int totalPages = (int) Math.ceil((double) surveys.size() / maxPageElementsAmount);
+
+        int fromIndex = maxPageElementsAmount * page;
+        int toIndex = Math.min(fromIndex + maxPageElementsAmount, surveys.size());
+
+        sliced = surveys.subList(fromIndex, toIndex);
+
+        if (totalPages < 1) totalPages = 1;
+
+        return new ResponseEntity<>(true, "Surveys successfully found", new PagedEntity<>(page, totalPages, sliced));
+    }
+
+    @Override
     public ResponseEntity<?> submitAnswer(Integer sessionId, Integer optionId) {
         try {
             answerRepository.addAnswer(sessionId, optionId);
@@ -100,8 +114,6 @@ public class SurveysServiceImpl implements SurveysService {
         }
         Question question = questions.get(questions.size() - 1);
 
-        System.out.println(options);
-
         for (String option : options) {
             optionRepository.addOption(question.getId(), option);
         }
@@ -116,6 +128,16 @@ public class SurveysServiceImpl implements SurveysService {
         } catch (CategoryNotFoundException e) {
             return new ResponseEntity<>(false, "Category doesn't exist", null);
         }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteCategory(Integer categoryId) {
+        try {
+            categoryRepository.deleteCategory(categoryId);
+        } catch (CategoryNotFoundException e) {
+            return new ResponseEntity<>(false, "Category to delete was not found", null);
+        }
+        return new ResponseEntity<>(true, "Category deleted successfully", null);
     }
 
     @Override
@@ -138,6 +160,22 @@ public class SurveysServiceImpl implements SurveysService {
         Survey newSurvey = surveyRepository.addSurvey(name, description, categoryId, Calendar.getInstance().getTime());
 
         return new ResponseEntity<>(true, "Survey created successfully", newSurvey);
+    }
+
+    @Override
+    public ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName) {
+        if (!categoryRepository.exists(categoryName)) {
+            categoryRepository.addCategory(categoryName);
+        }
+
+        Integer categoryId = categoryRepository.getCategoryByName(categoryName).getId();
+        try {
+            surveyRepository.updateSurveyCategoryName(surveyId, categoryId);
+        } catch (SurveyNotFoundException e) {
+            return new ResponseEntity<>(false, "Survey doesn't exist", null);
+        }
+
+        return new ResponseEntity<>(true, "Category set successfully", null);
     }
 
     @Override

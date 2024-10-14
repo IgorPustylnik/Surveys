@@ -23,7 +23,7 @@ public class OpenUserCommand extends CommandMenu {
     @Override
     public void execute() {
         commands = new ArrayList<>();
-        User user = appContext.chosenUser;
+        User user = appContext.selectedUser;
         ResponseEntity<RoleType> response = appContext.getUserInfoService().getUserRole(user.getName());
         if (!response.isSuccess()) {
             System.err.println(response.getMessage());
@@ -32,6 +32,7 @@ public class OpenUserCommand extends CommandMenu {
         setTitle(String.format("Id: %d\nName: %s\nRole: %s", user.getId(), user.getName(), response.getBody()));
 
         commands.add(CommandType.DELETE_USER);
+        commands.add(CommandType.UPDATE_USER_ROLE);
         commands.add(CommandType.LIST_USERS);
         super.execute();
     }

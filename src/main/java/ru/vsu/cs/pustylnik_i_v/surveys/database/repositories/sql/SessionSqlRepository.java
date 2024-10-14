@@ -63,16 +63,12 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
                 statement.setTimestamp(2, new java.sql.Timestamp(startedAt.getTime()));
             }
 
-            statement.executeQuery();
-
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 }
-            } catch (SQLException ignored) {
-            }
-        } catch (SQLException ignored) {
-        }
+            } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {}
         return null;
     }
 

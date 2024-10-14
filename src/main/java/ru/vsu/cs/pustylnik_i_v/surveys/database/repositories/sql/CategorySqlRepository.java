@@ -2,6 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Role;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
@@ -13,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategorySqlRepository extends BaseSqlRepository implements CategoryRepository {
     public CategorySqlRepository(PostgresqlDataSource databaseManager) {
@@ -33,6 +36,8 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
                     return new Category(resultSet.getInt("id"),
                             resultSet.getString("name"));
                 }
+            } catch (SQLException e) {
+                throw new CategoryNotFoundException(id);
             }
 
         } catch (SQLException e) {
@@ -64,6 +69,27 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
     }
 
     @Override
+    public List<Category> getAllCategories() {
+        List<Category> categories = new ArrayList<>();
+
+        String query = "SELECT * FROM categories";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    categories.add(new Category(resultSet.getInt("id"),
+                            resultSet.getString("name")));
+                }
+            }
+        } catch (SQLException ignored) {}
+        return categories;
+    }
+
+    @Override
     public void addCategory(String name) {
         String query = "INSERT INTO categories (name) VALUES (?)";
 
@@ -75,6 +101,22 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
 
             statement.executeQuery();
         } catch (SQLException ignored) {}
+    }
+
+    @Override
+    public void deleteCategory(int id) throws CategoryNotFoundException {
+        String query = "DELETE FROM categories WHERE id = ?";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setInt(1, id);
+
+            statement.execute();
+        } catch (SQLException e) {
+            throw new CategoryNotFoundException(id);
+        }
     }
 
     @Override

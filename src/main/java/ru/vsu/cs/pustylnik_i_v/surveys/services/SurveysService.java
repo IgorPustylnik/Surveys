@@ -1,5 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.services;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
@@ -16,6 +17,8 @@ public interface SurveysService {
 
     ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName);
 
+    ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName);
+
     ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId);
 
     ResponseEntity<?> finishSession(Integer sessionId);
@@ -24,10 +27,14 @@ public interface SurveysService {
 
     ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId);
 
+    ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page);
+
     ResponseEntity<?> submitAnswer (Integer sessionId, Integer optionId);
 
     ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType);
 
     ResponseEntity<String> getCategoryName(Integer categoryId);
+
+    ResponseEntity<?> deleteCategory(Integer categoryId);
 
 }

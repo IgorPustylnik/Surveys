@@ -28,6 +28,7 @@ public class OpenSurveyCommand extends CommandMenu {
 
         if (appContext.roleType == RoleType.ADMIN) {
             commands.add(CommandType.EDIT_SURVEY);
+            commands.add(CommandType.SET_SURVEY_CATEGORY);
             commands.add(CommandType.DELETE_SURVEY);
         }
         commands.add(CommandType.LIST_SURVEYS);
@@ -38,7 +39,7 @@ public class OpenSurveyCommand extends CommandMenu {
 
         setTitle(String.format("Survey name: %s\nCategory: %s\nDescription: %s",
                 s.getName(),
-                categoryName != null ? categoryName : "id" + s.getCategoryId(),
+                categoryName != null ? categoryName : "none",
                 s.getDescription()));
 
         super.execute();

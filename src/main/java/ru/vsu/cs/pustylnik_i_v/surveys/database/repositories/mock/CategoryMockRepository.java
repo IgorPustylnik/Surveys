@@ -31,10 +31,20 @@ public class CategoryMockRepository implements CategoryRepository {
     }
 
     @Override
+    public List<Category> getAllCategories() {
+        return categories.getAll();
+    }
+
+    @Override
     public void addCategory(String name) {
         if (!categories.contains(Category::getName, name)) {
             categories.add(name);
         }
+    }
+
+    @Override
+    public void deleteCategory(int id) {
+        categories.remove(Category::getId, id);
     }
 
     @Override
