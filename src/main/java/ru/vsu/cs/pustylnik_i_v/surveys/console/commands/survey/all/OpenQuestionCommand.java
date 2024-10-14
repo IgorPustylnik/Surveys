@@ -60,7 +60,7 @@ public class OpenQuestionCommand extends CommandMenu {
 
         if (!response1.isSuccess()) {
             ConsoleUtils.clear();
-            System.out.println(response.getMessage());
+            System.err.println(response1.getMessage());
             goBack();
             return;
         }
@@ -68,7 +68,7 @@ public class OpenQuestionCommand extends CommandMenu {
         List<Option> options = response1.getBody();
         if (options == null) {
             ConsoleUtils.clear();
-            System.out.println(response.getMessage());
+            System.err.println(response1.getMessage());
             goBack();
             return;
         }
@@ -81,7 +81,7 @@ public class OpenQuestionCommand extends CommandMenu {
         QuestionType questionType = question.getType();
 
         List<Integer> input = ConsoleUtils.inputIntList(
-                String.format("your answer (%s)", questionType == QuestionType.SINGLE_CHOICE ? "single number" : "multiple numbers divided by spaces"));
+                String.format("your answer (%s)", questionType == QuestionType.SINGLE_CHOICE ? "single number" : "one or multiple numbers divided by spaces"));
 
         if (input.isEmpty()
                 || (questionType == QuestionType.SINGLE_CHOICE && input.size() > 1)

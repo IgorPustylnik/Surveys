@@ -19,6 +19,12 @@ public class DeleteUserCommand extends AppCommand {
 
     @Override
     public void execute() {
+        Boolean confirmation = ConsoleUtils.confirm("delete this user");
+
+        if (confirmation == null || !confirmation) {
+            appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
+            return;
+        }
         ResponseEntity<?> response = appContext.getUserInfoService().deleteUser(appContext.chosenUser.getName());
 
         ConsoleUtils.clear();
