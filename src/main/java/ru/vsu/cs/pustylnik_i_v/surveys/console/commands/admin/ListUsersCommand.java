@@ -41,10 +41,10 @@ public class ListUsersCommand extends CommandMenu {
 
         users.forEach(s -> commands.add(CommandType.OPEN_USER));
         if (currentPage > 0) {
-            commands.add(CommandType.PREVIOUS_PAGE);
+            commands.add(CommandType.PREVIOUS_USERS_PAGE);
         }
         if (currentPage < totalPages - 1) {
-            commands.add(CommandType.NEXT_PAGE);
+            commands.add(CommandType.NEXT_USERS_PAGE);
         }
         commands.add(CommandType.MAIN_MENU);
 
@@ -66,10 +66,10 @@ public class ListUsersCommand extends CommandMenu {
         System.out.println();
 
         if (currentPage > 0) {
-            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.PREVIOUS_PAGE).getName());
+            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.PREVIOUS_USERS_PAGE).getName());
         }
         if (currentPage < totalPages - 1) {
-            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_PAGE).getName());
+            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_USERS_PAGE).getName());
         }
         System.out.printf("[%d] %s\n", i, appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).getName());
 

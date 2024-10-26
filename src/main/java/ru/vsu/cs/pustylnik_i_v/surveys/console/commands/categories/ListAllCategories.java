@@ -45,10 +45,10 @@ public class ListAllCategories extends CommandMenu {
 
         categories.forEach(s -> commands.add(CommandType.OPEN_CATEGORY));
         if (currentPage > 0) {
-            commands.add(CommandType.PREVIOUS_PAGE);
+            commands.add(CommandType.PREVIOUS_SURVEYS_PAGE);
         }
         if (currentPage < totalPages - 1) {
-            commands.add(CommandType.NEXT_PAGE);
+            commands.add(CommandType.NEXT_SURVEYS_PAGE);
         }
         if (appContext.currentCategory != null) {
             commands.add(CommandType.UNCHOOSE_CATEGORY);
@@ -73,10 +73,10 @@ public class ListAllCategories extends CommandMenu {
         System.out.println();
 
         if (currentPage > 0) {
-            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.PREVIOUS_PAGE).getName());
+            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.PREVIOUS_SURVEYS_PAGE).getName());
         }
         if (currentPage < totalPages - 1) {
-            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_PAGE).getName());
+            System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_SURVEYS_PAGE).getName());
         }
 
         if (appContext.currentCategory != null) {

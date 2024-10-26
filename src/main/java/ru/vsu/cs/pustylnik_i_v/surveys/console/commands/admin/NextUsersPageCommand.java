@@ -12,7 +12,7 @@ public class NextUsersPageCommand extends AppCommand {
 
     @Override
     public String getName() {
-        return "Previous page";
+        return "Next page";
     }
 
     @Override

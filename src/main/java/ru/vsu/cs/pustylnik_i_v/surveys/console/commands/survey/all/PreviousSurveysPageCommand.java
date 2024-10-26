@@ -4,9 +4,9 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 
-public class PreviousPageCommand extends AppCommand {
+public class PreviousSurveysPageCommand extends AppCommand {
 
-    public PreviousPageCommand(ConsoleAppContext appContext) {
+    public PreviousSurveysPageCommand(ConsoleAppContext appContext) {
         super(appContext);
     }
 
