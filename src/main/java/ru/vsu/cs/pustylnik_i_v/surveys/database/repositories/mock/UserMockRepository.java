@@ -1,9 +1,11 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.emulation.DBTableImitation;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
 import java.util.List;
 
@@ -24,6 +26,15 @@ public class UserMockRepository implements UserRepository {
     @Override
     public List<User> getAllUsers() {
         return users.getAll();
+    }
+
+    @Override
+    public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) {
+        int fromIndex = perPageAmount * page;
+        List<User> sublist = users.getAll().subList(fromIndex, fromIndex + perPageAmount);
+        int totalPages = (int) Math.ceil((double) users.size() / perPageAmount);
+        if (totalPages < 1) totalPages = 1;
+        return new PagedEntity<>(page,totalPages , sublist);
     }
 
     @Override

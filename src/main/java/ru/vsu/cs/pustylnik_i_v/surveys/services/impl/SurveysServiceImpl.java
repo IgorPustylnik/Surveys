@@ -39,23 +39,11 @@ public class SurveysServiceImpl implements SurveysService {
 
     @Override
     public ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) {
-        List<Survey> sliced;
-
-        List<Survey> surveys = surveyRepository.getSurveys(categoryId);
-        int totalPages = (int) Math.ceil((double) surveys.size() / perPageAmount);
-
-        if (page > totalPages - 1) {
-            return new ResponseEntity<>(false, "Page number is large than the total amount of pages", new PagedEntity<>(0, 0, surveys));
+        PagedEntity<List<Survey>> surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, page, perPageAmount);
+        if (surveysPagedEntity.getPage().isEmpty()) {
+            return new ResponseEntity<>(false, "Surveys not found", surveysPagedEntity);
         }
-
-        int fromIndex = perPageAmount * page;
-        int toIndex = Math.min(fromIndex + perPageAmount, surveys.size());
-
-        sliced = surveys.subList(fromIndex, toIndex);
-
-        if (totalPages < 1) totalPages = 1;
-
-        return new ResponseEntity<>(true, "Surveys successfully found", new PagedEntity<>(page, totalPages, sliced));
+        return new ResponseEntity<>(true, "Surveys successfully found", surveysPagedEntity);
     }
 
     @Override
@@ -91,7 +79,11 @@ public class SurveysServiceImpl implements SurveysService {
 
         if (totalPages < 1) totalPages = 1;
 
-        return new ResponseEntity<>(true, "Surveys successfully found", new PagedEntity<>(page, totalPages, sliced));
+        if (sliced.isEmpty()) {
+            return new ResponseEntity<>(false, "No categories found", new PagedEntity<>(page, totalPages, sliced));
+        }
+
+        return new ResponseEntity<>(true, "Categories successfully found", new PagedEntity<>(page, totalPages, sliced));
     }
 
     @Override
@@ -186,7 +178,8 @@ public class SurveysServiceImpl implements SurveysService {
 
         try {
             userId = userRepository.getUser(userName).getId();
-        } catch (UserNotFoundException ignored) {}
+        } catch (UserNotFoundException ignored) {
+        }
 
         try {
             surveyRepository.getSurveyById(surveyId);

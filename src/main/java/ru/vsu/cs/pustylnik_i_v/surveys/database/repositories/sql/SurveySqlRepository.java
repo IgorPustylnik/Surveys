@@ -1,12 +1,14 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -96,24 +98,58 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
                 updateStatement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
     }
 
     @Override
-    public List<Survey> getSurveys(Integer categoryId) throws CategoryNotFoundException {
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Integer page, Integer perPageAmount) throws CategoryNotFoundException {
         List<Survey> surveys = new ArrayList<>();
 
-        String query = "SELECT * FROM surveys WHERE category_id = ?";
-        String queryAll = "SELECT * FROM surveys";
+        int fromIndex = perPageAmount * page;
+        int totalCount = 0;
+
+        String query = "SELECT * FROM surveys WHERE category_id = ? LIMIT ? OFFSET ?";
+        String queryTotalCount = "SELECT COUNT(*) FROM surveys WHERE category_id = ?";
+
+        String queryAll = "SELECT * FROM surveys LIMIT ? OFFSET ?";
+        String queryTotalCountAll = "SELECT COUNT(*) FROM surveys";
+
+        String queryCheckCategory = "SELECT * FROM categories WHERE id = ?";
 
         try {
             Connection connection = getConnection();
+
             PreparedStatement statement;
+            PreparedStatement statementTotalCount;
+
             if (categoryId != null) {
                 statement = connection.prepareStatement(query);
+                statementTotalCount = connection.prepareStatement(queryTotalCount);
+
                 statement.setInt(1, categoryId);
+                statement.setInt(2, perPageAmount);
+                statement.setInt(3, fromIndex);
+
+                statementTotalCount.setInt(1, categoryId);
+
+
+
+                PreparedStatement statementCheck = connection.prepareStatement(queryCheckCategory);
+
+                statementCheck.setInt(1, categoryId);
+
+                boolean categoryExists = statementCheck.execute();
+
+                if (!categoryExists) {
+                    throw new CategoryNotFoundException(categoryId);
+                }
             } else {
                 statement = connection.prepareStatement(queryAll);
+                statementTotalCount = connection.prepareStatement(queryTotalCountAll);
+
+                statement.setInt(1, perPageAmount);
+                statement.setInt(2, fromIndex);
             }
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -122,12 +158,23 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                             resultSet.getString("name"),
                             resultSet.getString("description"),
                             resultSet.getInt("category_id"),
-                            resultSet.getDate("created_at")));
+                            resultSet.getTimestamp("created_at")));
                 }
             }
+
+            try (ResultSet resultSetTotalCount = statementTotalCount.executeQuery()) {
+                while (resultSetTotalCount.next()) {
+                    totalCount = resultSetTotalCount.getInt(1);
+                }
+            }
+
         } catch (SQLException ignored) {
         }
-        return surveys;
+
+        int totalPages = (int) Math.ceil((double) totalCount / perPageAmount);
+        if (totalPages < 1) totalPages = 1;
+
+        return new PagedEntity<>(page, totalPages, surveys);
     }
 
     @Override

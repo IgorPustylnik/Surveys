@@ -73,4 +73,8 @@ public class DBTableImitation<T> {
         }
         return false;
     }
+
+    public int size() {
+        return currentIndex;
+    }
 }

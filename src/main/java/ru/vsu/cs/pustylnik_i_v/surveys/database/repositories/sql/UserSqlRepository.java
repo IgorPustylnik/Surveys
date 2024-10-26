@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,8 +60,50 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                             resultSet.getString("password")));
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
         return users;
+    }
+
+    @Override
+    public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) {
+        List<User> users = new ArrayList<>();
+
+        int fromIndex = perPageAmount * page;
+        int totalCount = 0;
+
+        String query = "SELECT * FROM users LIMIT ? OFFSET ?";
+        String queryTotalCount = "SELECT COUNT(*) FROM users";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statementTotalCount = connection.prepareStatement(queryTotalCount);
+
+            statement.setInt(1, perPageAmount);
+            statement.setInt(2, fromIndex);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(new User(resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("password")));
+                }
+            }
+
+            try (ResultSet resultSetTotalCount = statementTotalCount.executeQuery()) {
+                while (resultSetTotalCount.next()) {
+                    totalCount = resultSetTotalCount.getInt(1);
+                }
+            }
+
+        } catch (SQLException ignored) {
+        }
+
+        int totalPages = (int) Math.ceil((double) totalCount / perPageAmount);
+        if (totalPages < 1) totalPages = 1;
+
+        return new PagedEntity<>(page, totalPages, users);
     }
 
     @Override
@@ -75,7 +118,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
             statement.setString(2, password);
 
             statement.executeQuery();
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
     }
 
     @Override
@@ -102,7 +146,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
                 updateStatement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
     }
 
     @Override
@@ -116,7 +161,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
             statement.setString(1, name);
 
             statement.execute();
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
     }
 
     @Override
@@ -133,7 +179,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                 return true;
             }
 
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
         return false;
     }
 

@@ -3,6 +3,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface SurveyRepository {
 
     void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException;
 
-    List<Survey> getSurveys(Integer categoryId) throws CategoryNotFoundException;
+    PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Integer page, Integer perPageAmount) throws CategoryNotFoundException;
 
     void deleteSurvey(int id) throws SurveyNotFoundException;
 

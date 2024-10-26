@@ -16,8 +16,6 @@ import java.util.List;
 
 public class UserInfoServiceImpl implements UserInfoService {
 
-    private final static int maxPageElementsAmount = 7;
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
@@ -126,19 +124,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) {
-        List<User> sliced;
-
-        List<User> users = userRepository.getAllUsers();
-        int totalPages = (int) Math.ceil((double) users.size() / perPageAmount);
-
-        int fromIndex = perPageAmount * page;
-        int toIndex = Math.min(fromIndex + perPageAmount, users.size());
-
-        sliced = users.subList(fromIndex, toIndex);
-
-        if (totalPages < 1) totalPages = 1;
-
-        return new ResponseEntity<>(true, "Users successfully found", new PagedEntity<>(page, totalPages, sliced));
+        PagedEntity<List<User>> usersPagedEntity = userRepository.getUsersPagedList(page, perPageAmount);
+        if (usersPagedEntity.getPage().isEmpty()) {
+            return new ResponseEntity<>(false, "Users not found", usersPagedEntity);
+        }
+        return new ResponseEntity<>(true, "Users successfully found", usersPagedEntity);
     }
 
     @Override
@@ -155,7 +145,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             return new ResponseEntity<>(true, "Successfully found user's role", roleType);
 
         } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(false, "User doesn't exist", null);
+            return new ResponseEntity<>(false, "User's role doesn't exist", null);
         }
     }
 }
