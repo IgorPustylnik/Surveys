@@ -13,6 +13,8 @@ import java.util.List;
 
 public class ListUsersCommand extends CommandMenu {
 
+    private static final int perPageAmount = 7;
+
     public ListUsersCommand(ConsoleAppContext appContext) {
         super(new ArrayList<>(), appContext);
         setTitle("Users:");
@@ -31,7 +33,7 @@ public class ListUsersCommand extends CommandMenu {
 
         int currentPage = appContext.currentPageIndex;
 
-        ResponseEntity<PagedEntity<List<User>>> response = appContext.getUserInfoService().getUsersPagedList(currentPage);
+        ResponseEntity<PagedEntity<List<User>>> response = appContext.getUserInfoService().getUsersPagedList(currentPage, perPageAmount);
 
         PagedEntity<List<User>> usersPage = response.getBody();
         int totalPages = usersPage.getSize();

@@ -20,7 +20,7 @@ public interface UserInfoService {
 
     ResponseEntity<?> setRole(String userName, RoleType role);
 
-    ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page);
+    ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount);
 
     ResponseEntity<?> deleteUser(String userName);
 

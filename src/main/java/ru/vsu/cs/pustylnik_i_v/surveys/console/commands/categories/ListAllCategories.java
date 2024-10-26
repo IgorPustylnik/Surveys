@@ -13,6 +13,8 @@ import java.util.List;
 
 public class ListAllCategories extends CommandMenu {
 
+    private static final int perPageAmount = 6;
+
     public ListAllCategories(ConsoleAppContext appContext) {
         super(new ArrayList<>(), appContext);
     }
@@ -35,7 +37,7 @@ public class ListAllCategories extends CommandMenu {
 
         int currentPage = appContext.currentPageIndex;
 
-        ResponseEntity<PagedEntity<List<Category>>> response = appContext.getSurveysService().getCategoriesPagedList(currentPage);
+        ResponseEntity<PagedEntity<List<Category>>> response = appContext.getSurveysService().getCategoriesPagedList(currentPage, perPageAmount);
 
         PagedEntity<List<Category>> categoriesPage = response.getBody();
         int totalPages = categoriesPage.getSize();

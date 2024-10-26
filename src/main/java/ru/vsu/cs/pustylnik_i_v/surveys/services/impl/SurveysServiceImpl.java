@@ -13,8 +13,6 @@ import java.util.List;
 
 public class SurveysServiceImpl implements SurveysService {
 
-    private static final int maxPageElementsAmount = 6;
-
     private final UserRepository userRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
@@ -40,14 +38,18 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page) {
+    public ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) {
         List<Survey> sliced;
 
         List<Survey> surveys = surveyRepository.getSurveys(categoryId);
-        int totalPages = (int) Math.ceil((double) surveys.size() / maxPageElementsAmount);
+        int totalPages = (int) Math.ceil((double) surveys.size() / perPageAmount);
 
-        int fromIndex = maxPageElementsAmount * page;
-        int toIndex = Math.min(fromIndex + maxPageElementsAmount, surveys.size());
+        if (page > totalPages - 1) {
+            return new ResponseEntity<>(false, "Page number is large than the total amount of pages", new PagedEntity<>(0, 0, surveys));
+        }
+
+        int fromIndex = perPageAmount * page;
+        int toIndex = Math.min(fromIndex + perPageAmount, surveys.size());
 
         sliced = surveys.subList(fromIndex, toIndex);
 
@@ -76,14 +78,14 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page) {
+    public ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) {
         List<Category> sliced;
 
         List<Category> surveys = categoryRepository.getAllCategories();
-        int totalPages = (int) Math.ceil((double) surveys.size() / maxPageElementsAmount);
+        int totalPages = (int) Math.ceil((double) surveys.size() / perPageAmount);
 
-        int fromIndex = maxPageElementsAmount * page;
-        int toIndex = Math.min(fromIndex + maxPageElementsAmount, surveys.size());
+        int fromIndex = perPageAmount * page;
+        int toIndex = Math.min(fromIndex + perPageAmount, surveys.size());
 
         sliced = surveys.subList(fromIndex, toIndex);
 

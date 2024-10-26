@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface SurveysService {
 
-    ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page);
+    ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount);
 
     ResponseEntity<?> deleteSurvey(Integer surveyId);
 
@@ -27,7 +27,7 @@ public interface SurveysService {
 
     ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId);
 
-    ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page);
+    ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount);
 
     ResponseEntity<?> submitAnswer (Integer sessionId, Integer optionId);
 

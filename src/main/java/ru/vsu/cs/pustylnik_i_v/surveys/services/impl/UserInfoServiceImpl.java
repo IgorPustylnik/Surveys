@@ -121,14 +121,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page) {
+    public ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) {
         List<User> sliced;
 
         List<User> users = userRepository.getAllUsers();
-        int totalPages = (int) Math.ceil((double) users.size() / maxPageElementsAmount);
+        int totalPages = (int) Math.ceil((double) users.size() / perPageAmount);
 
-        int fromIndex = maxPageElementsAmount * page;
-        int toIndex = Math.min(fromIndex + maxPageElementsAmount, users.size());
+        int fromIndex = perPageAmount * page;
+        int toIndex = Math.min(fromIndex + perPageAmount, users.size());
 
         sliced = users.subList(fromIndex, toIndex);
 

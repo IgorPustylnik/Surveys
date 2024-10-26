@@ -38,7 +38,7 @@ public class ListSurveysCommand extends CommandMenu {
         int currentPage = appContext.currentPageIndex;
         Integer currentCategoryId = appContext.currentCategory != null ? appContext.currentCategory.getId() : null;
 
-        ResponseEntity<PagedEntity<List<Survey>>> response = appContext.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage);
+        ResponseEntity<PagedEntity<List<Survey>>> response = appContext.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage, 5);
 
         PagedEntity<List<Survey>> surveysPage = response.getBody();
         int totalPages = surveysPage.getSize();
