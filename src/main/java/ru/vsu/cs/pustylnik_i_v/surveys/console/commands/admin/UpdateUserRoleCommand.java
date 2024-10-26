@@ -20,7 +20,7 @@ public class UpdateUserRoleCommand extends AppCommand {
 
     @Override
     public void execute() {
-        Integer input = ConsoleUtils.inputInt("role type (1 – USER, 2 – ADMIN)");
+        Integer input = ConsoleUtils.inputInt("role type (1 - USER, 2 - ADMIN)");
 
         if (input == null || (input != 1 && input != 2)) {
             ConsoleUtils.clear();

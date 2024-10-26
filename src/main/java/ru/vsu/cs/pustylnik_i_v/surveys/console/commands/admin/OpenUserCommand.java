@@ -31,8 +31,10 @@ public class OpenUserCommand extends CommandMenu {
 
         setTitle(String.format("Id: %d\nName: %s\nRole: %s", user.getId(), user.getName(), response.getBody()));
 
-        commands.add(CommandType.DELETE_USER);
-        commands.add(CommandType.UPDATE_USER_ROLE);
+        if (!appContext.selectedUser.getName().equals(appContext.userName)) {
+            commands.add(CommandType.DELETE_USER);
+            commands.add(CommandType.UPDATE_USER_ROLE);
+        }
         commands.add(CommandType.LIST_USERS);
         super.execute();
     }
