@@ -1,9 +1,11 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.provider.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenValidationService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.SurveysServiceImpl;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.UserInfoServiceImpl;
@@ -26,6 +28,9 @@ public class MockServiceProvider implements ServiceProvider {
         this.userInfoService = new UserInfoServiceImpl(userRepository, roleRepository);
         this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
+
+        userInfoService.register("admin", "admin");
+        userInfoService.setRole("admin", RoleType.ADMIN);
     }
 
     @Override
@@ -36,5 +41,10 @@ public class MockServiceProvider implements ServiceProvider {
     @Override
     public SurveysService getSurveysService() {
         return surveysService;
+    }
+
+    @Override
+    public TokenValidationService getTokenValidationService() {
+        return null;
     }
 }
