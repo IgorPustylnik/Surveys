@@ -48,6 +48,9 @@ public class ListAllCategories extends CommandMenu {
         if (currentPage < totalPages - 1) {
             commands.add(CommandType.NEXT_PAGE);
         }
+        if (appContext.currentCategory != null) {
+            commands.add(CommandType.UNCHOOSE_CATEGORY);
+        }
         commands.add(CommandType.LIST_SURVEYS);
 
         System.out.println("-----------------------------");
@@ -63,7 +66,7 @@ public class ListAllCategories extends CommandMenu {
             System.out.println();
             System.out.printf("Page %d out of %d\n", currentPage + 1, totalPages);
         } else {
-            System.out.println("No surveys found");
+            System.out.println("No categories found");
         }
         System.out.println();
 
@@ -72,6 +75,10 @@ public class ListAllCategories extends CommandMenu {
         }
         if (currentPage < totalPages - 1) {
             System.out.printf("[%d] %s\n", i++, appContext.getCommandExecutor().getCommand(CommandType.NEXT_PAGE).getName());
+        }
+
+        if (appContext.currentCategory != null) {
+            System.out.printf("[%d] Unselect category\n", i++);
         }
         System.out.printf("[%d] Back\n", i);
 

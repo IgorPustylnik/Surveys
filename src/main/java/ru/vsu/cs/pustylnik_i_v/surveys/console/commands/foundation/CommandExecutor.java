@@ -65,6 +65,7 @@ public class CommandExecutor {
         commands.put(CommandType.NEXT_CATEGORIES_PAGE, new NextCategoriesPageCommand(appContext));
         commands.put(CommandType.OPEN_CATEGORY, new OpenCategoryCommand(appContext));
         commands.put(CommandType.CHOOSE_CATEGORY, new ChooseCategoryCommand(appContext));
+        commands.put(CommandType.UNCHOOSE_CATEGORY, new UnchooseCategoryCommand(appContext));
         commands.put(CommandType.DELETE_CATEGORY, new DeleteCategory(appContext));
 
         commands.put(CommandType.LIST_USERS, new ListUsersCommand(appContext));
