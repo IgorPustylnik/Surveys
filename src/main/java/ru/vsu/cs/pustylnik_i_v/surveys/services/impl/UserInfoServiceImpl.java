@@ -10,6 +10,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.util.HashingUtil;
 
 import java.util.List;
 
@@ -29,11 +30,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResponseEntity<AuthBody> login(String name, String password) {
         try {
             User user = userRepository.getUser(name);
+            String hashedPassword = user.getPassword();
 
             RoleType roleType = roleRepository.getRole(user.getId()).getRoleType();
 
-            if (!user.getPassword().equals(password)) {
-                return new ResponseEntity<>(false, "Wrong password", new AuthBody(roleType, null));
+            if (!HashingUtil.passwordMatch(password, hashedPassword)) {
+                return new ResponseEntity<>(false, "Wrong password", null);
             }
 
             String token;
@@ -58,7 +60,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             userRepository.getUser(name);
             return new ResponseEntity<>(false, "Username exists", null);
         } catch (UserNotFoundException e) {
-            userRepository.addUser(name, password);
+            userRepository.addUser(name, HashingUtil.hashPassword(password));
             User user;
             try {
                 user = userRepository.getUser(name);
@@ -83,7 +85,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password) {
         try {
             User user = userRepository.getUser(name);
-            if (!user.getPassword().equals(password)) {
+            String hashedPassword = user.getPassword();
+            if (!HashingUtil.passwordMatch(password, hashedPassword)) {
                 return new ResponseEntity<>(false, "Password is incorrect", null);
             }
             return new ResponseEntity<>(true, "Password is correct", null);
@@ -96,7 +99,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResponseEntity<?> updatePassword(String name, String newPassword) {
         try {
             User user = userRepository.getUser(name);
-            user.setPassword(newPassword);
+            String hashedPassword = HashingUtil.hashPassword(newPassword);
+            user.setPassword(hashedPassword);
             userRepository.updateUser(user);
             return new ResponseEntity<>(true, "Password changed", null);
         } catch (UserNotFoundException e) {
