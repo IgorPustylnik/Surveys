@@ -24,24 +24,11 @@ public class CommandExecutor {
     }
 
     public Command getCommand(CommandType type) {
-        if (type == CommandType.MAIN_MENU) {
-            if (appContext.roleType == null) {
-                return getCommand(CommandType.ANONYMOUS_MENU);
-            }
-            switch (appContext.roleType) {
-                case USER:
-                    return getCommand(CommandType.USER_MENU);
-                case ADMIN:
-                    return getCommand(CommandType.ADMIN_MENU);
-            }
-        }
         return commands.getOrDefault(type, new UnknownCommand());
     }
 
     private void mapCommands() {
-        commands.put(CommandType.ANONYMOUS_MENU, new AnonymousCommandMenu(appContext));
-        commands.put(CommandType.USER_MENU, new UserCommandMenu(appContext));
-        commands.put(CommandType.ADMIN_MENU, new AdminCommandMenu(appContext));
+        commands.put(CommandType.MAIN_MENU, new MainCommandMenu(appContext));
 
         commands.put(CommandType.LOGIN, new LoginCommand(appContext));
         commands.put(CommandType.REGISTER, new RegisterCommand(appContext));

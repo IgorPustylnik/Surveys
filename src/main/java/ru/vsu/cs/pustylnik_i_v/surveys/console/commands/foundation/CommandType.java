@@ -3,10 +3,6 @@ package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation;
 public enum CommandType {
     MAIN_MENU,
 
-    ANONYMOUS_MENU,
-    USER_MENU,
-    ADMIN_MENU,
-
     LOGIN,
     REGISTER,
     CHANGE_PASSWORD,
