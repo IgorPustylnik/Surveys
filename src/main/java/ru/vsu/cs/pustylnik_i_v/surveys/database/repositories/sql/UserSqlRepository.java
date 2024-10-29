@@ -1,6 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
@@ -22,7 +23,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
     @Override
     public User getUser(String name) throws UserNotFoundException, DatabaseAccessException {
-        String query = "SELECT * FROM users WHERE name = ?";
+        String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
+                "FROM users u JOIN roles r ON u.id = r.user_id AND u.name = ?";
 
         try {
             Connection connection = getConnection();
@@ -31,8 +33,9 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new User(resultSet.getInt("id"),
-                            resultSet.getString("name"),
+                    return new User(resultSet.getInt("user_id"),
+                            resultSet.getString("user_name"),
+                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
                             resultSet.getString("password"));
                 }
             }
@@ -45,7 +48,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
     @Override
     public User getUser(int id) throws UserNotFoundException, DatabaseAccessException {
-        String query = "SELECT * FROM users WHERE id = ?";
+        String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
+                "FROM users u JOIN roles r ON u.id = r.user_id AND u.id = ?";
 
         try {
             Connection connection = getConnection();
@@ -54,8 +58,9 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new User(resultSet.getInt("id"),
-                            resultSet.getString("name"),
+                    return new User(resultSet.getInt("user_id"),
+                            resultSet.getString("user_name"),
+                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
                             resultSet.getString("password"));
                 }
             }
@@ -70,7 +75,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     public List<User> getAllUsers() throws DatabaseAccessException {
         List<User> users = new ArrayList<>();
 
-        String query = "SELECT * FROM users";
+        String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
+                "FROM users u JOIN roles r ON u.id = r.user_id";
 
         try {
             Connection connection = getConnection();
@@ -79,8 +85,9 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 while (resultSet.next()) {
-                    users.add(new User(resultSet.getInt("id"),
-                            resultSet.getString("name"),
+                    users.add(new User(resultSet.getInt("user_id"),
+                            resultSet.getString("user_name"),
+                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
                             resultSet.getString("password")));
                 }
             }
@@ -97,8 +104,9 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
         int fromIndex = perPageAmount * page;
         int totalCount = 0;
 
-        String query = "SELECT * FROM users LIMIT ? OFFSET ?";
-        String queryTotalCount = "SELECT COUNT(*) FROM users";
+        String query = "SELECT u.id as user_id, u.name as user_name, role, password FROM users u JOIN roles r " +
+                "ON u.id = r.user_id LIMIT ? OFFSET ?";
+        String queryTotalCount = "SELECT COUNT(*) FROM users JOIN roles ON users.id = roles.user_id";
 
         try {
             Connection connection = getConnection();
@@ -110,8 +118,9 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    users.add(new User(resultSet.getInt("id"),
-                            resultSet.getString("name"),
+                    users.add(new User(resultSet.getInt("user_id"),
+                            resultSet.getString("user_name"),
+                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
                             resultSet.getString("password")));
                 }
             }
@@ -133,17 +142,31 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     }
 
     @Override
-    public void addUser(String name, String password) throws DatabaseAccessException {
-        String query = "INSERT INTO users (name, password) VALUES (?, ?)";
+    public void addUser(String name, RoleType roleType, String password) throws DatabaseAccessException {
+        String queryAddUser = "INSERT INTO users (name, password) VALUES (?, ?) RETURNING id";
+        String queryAddRole = "INSERT INTO roles (user_id, role) VALUES (?, ?)";
 
         try {
             Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statementAddUser = connection.prepareStatement(queryAddUser);
 
-            statement.setString(1, name);
-            statement.setString(2, password);
+            statementAddUser.setString(1, name);
+            statementAddUser.setString(2, password);
 
-            statement.execute();
+            int userId;
+            try (ResultSet resultSet = statementAddUser.executeQuery()) {
+                if (resultSet.next()) {
+                    userId = resultSet.getInt("id");
+
+                    PreparedStatement statementAddRole = connection.prepareStatement(queryAddRole);
+
+                    statementAddRole.setInt(1, userId);
+                    statementAddRole.setObject(2, roleType.toString().toLowerCase(), java.sql.Types.OTHER);
+
+                    statementAddRole.execute();
+                }
+            }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException(e.getMessage());
         }

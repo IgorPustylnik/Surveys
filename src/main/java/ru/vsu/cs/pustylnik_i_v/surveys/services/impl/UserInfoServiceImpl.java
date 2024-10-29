@@ -2,7 +2,6 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.RoleRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.RoleNotFoundException;
@@ -20,11 +19,9 @@ import java.util.List;
 public class UserInfoServiceImpl implements UserInfoService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
-    public UserInfoServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserInfoServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -51,7 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             User user = userRepository.getUser(name);
             String hashedPassword = user.getPassword();
 
-            RoleType roleType = roleRepository.getRole(user.getId()).getRoleType();
+            RoleType roleType = user.getRole();
 
             if (!HashingUtil.passwordMatch(password, hashedPassword)) {
                 return new ResponseEntity<>(false, "Wrong password", null);
@@ -80,13 +77,12 @@ public class UserInfoServiceImpl implements UserInfoService {
             userRepository.getUser(name);
             return new ResponseEntity<>(false, "Username is taken", null);
         } catch (UserNotFoundException e) {
-            userRepository.addUser(name, HashingUtil.hashPassword(password));
+            userRepository.addUser(name, RoleType.USER, HashingUtil.hashPassword(password));
             User user;
             try {
                 user = userRepository.getUser(name);
-                roleRepository.addRole(user.getId(), RoleType.USER);
             } catch (UserNotFoundException ex) {
-                return new ResponseEntity<>(false, "Failed to assign default role", null);
+                return new ResponseEntity<>(false, "Failed to add user", null);
             }
 
             String token;
@@ -137,12 +133,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResponseEntity<?> setRole(String userName, RoleType role) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(userName);
-            int id = user.getId();
-            if (roleRepository.exists(id)) {
-                roleRepository.updateRole(id, role);
-            } else {
-                roleRepository.addRole(id, role);
-            }
+            user.setRole(role);
+            userRepository.updateUser(user);
             return new ResponseEntity<>(true, "Role set successfully", null);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(false, "User doesn't exist", null);
@@ -168,7 +160,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResponseEntity<RoleType> getUserRole(String userName) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(userName);
-            RoleType roleType = roleRepository.getRole(user.getId()).getRoleType();
+            RoleType roleType = user.getRole();
             return new ResponseEntity<>(true, "Successfully found user's role", roleType);
 
         } catch (UserNotFoundException e) {

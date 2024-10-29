@@ -1,23 +1,25 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.emulation.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.OptionRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
 
 import java.util.List;
 
-public class OptionMockRepository implements OptionRepository {
+public class OptionMockRepository extends BaseMockRepository implements OptionRepository {
 
-    private final DBTableImitation<Option> options = new DBTableImitation<>(
-            params -> (new Option(0, (Integer) params[0], (String) params[1])));
+    public OptionMockRepository(MockDatabaseSource database) {
+        super(database);
+    }
 
     @Override
     public List<Option> getOptions(int questionId) {
-        return options.get(Option::getQuestionId,questionId);
+        return database.options.get(Option::getQuestionId,questionId);
     }
 
     @Override
     public void addOption(int questionId, String description) {
-        options.add(questionId, description);
+        database.options.add(questionId, description);
     }
 }

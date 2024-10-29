@@ -120,15 +120,6 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<String> getCategoryName(Integer categoryId) throws DatabaseAccessException {
-        try {
-            return new ResponseEntity<>(true, "Category name found successfully", categoryRepository.getCategoryById(categoryId).getName());
-        } catch (CategoryNotFoundException e) {
-            return new ResponseEntity<>(false, "Category doesn't exist", null);
-        }
-    }
-
-    @Override
     public ResponseEntity<?> deleteCategory(Integer categoryId) throws DatabaseAccessException {
         try {
             categoryRepository.deleteCategory(categoryId);

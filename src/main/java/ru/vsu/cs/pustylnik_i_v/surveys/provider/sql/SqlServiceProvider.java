@@ -24,12 +24,11 @@ public class SqlServiceProvider implements ServiceProvider {
         CategoryRepository categoryRepository = new CategorySqlRepository(dataSource);
         OptionRepository optionRepository = new OptionSqlRepository(dataSource);
         QuestionRepository questionRepository = new QuestionSqlRepository(dataSource);
-        RoleRepository roleRepository = new RoleSqlRepository(dataSource);
         SessionRepository sessionRepository = new SessionSqlRepository(dataSource);
         SurveyRepository surveyRepository = new SurveySqlRepository(dataSource);
         UserRepository userRepository = new UserSqlRepository(dataSource);
 
-        this.userInfoService = new UserInfoServiceImpl(userRepository, roleRepository);
+        this.userInfoService = new UserInfoServiceImpl(userRepository);
         this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
         this.tokenValidationService = new TokenValidationServiceImpl(userInfoService);

@@ -8,13 +8,15 @@ public class Survey {
     private String name;
     private String description;
     private Integer categoryId;
+    private String categoryName;
     private Date createdAt;
 
-    public Survey(int id, String name, String description, Integer categoryId, Date createdAt) {
+    public Survey(int id, String name, String description, Integer categoryId, String categoryName, Date createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.createdAt = createdAt;
     }
 
@@ -48,6 +50,14 @@ public class Survey {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public Date getCreatedAt() {

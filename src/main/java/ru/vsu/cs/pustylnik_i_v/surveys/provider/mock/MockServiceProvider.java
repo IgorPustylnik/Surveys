@@ -1,8 +1,10 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.provider.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenValidationService;
@@ -16,21 +18,24 @@ public class MockServiceProvider implements ServiceProvider {
     private final SurveysService surveysService;
 
     public MockServiceProvider() {
-        AnswerRepository answerRepository = new AnswerMockRepository();
-        CategoryRepository categoryRepository = new CategoryMockRepository();
-        OptionRepository optionRepository = new OptionMockRepository();
-        QuestionRepository questionRepository = new QuestionMockRepository();
-        RoleRepository roleRepository = new RoleMockRepository();
-        SessionRepository sessionRepository = new SessionMockRepository();
-        SurveyRepository surveyRepository = new SurveyMockRepository();
-        UserRepository userRepository = new UserMockRepository();
+        MockDatabaseSource db = new MockDatabaseSource();
+        AnswerRepository answerRepository = new AnswerMockRepository(db);
+        CategoryRepository categoryRepository = new CategoryMockRepository(db);
+        OptionRepository optionRepository = new OptionMockRepository(db);
+        QuestionRepository questionRepository = new QuestionMockRepository(db);
+        SessionRepository sessionRepository = new SessionMockRepository(db);
+        SurveyRepository surveyRepository = new SurveyMockRepository(db);
+        UserRepository userRepository = new UserMockRepository(db);
 
-        this.userInfoService = new UserInfoServiceImpl(userRepository, roleRepository);
+        this.userInfoService = new UserInfoServiceImpl(userRepository);
         this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
 
-        userInfoService.register("admin", "admin");
-        userInfoService.setRole("admin", RoleType.ADMIN);
+        try {
+            userInfoService.register("admin", "admin");
+            userInfoService.setRole("admin", RoleType.ADMIN);
+        } catch (DatabaseAccessException ignored) {
+        }
     }
 
     @Override

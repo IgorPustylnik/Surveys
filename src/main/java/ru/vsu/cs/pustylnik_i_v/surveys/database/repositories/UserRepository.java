@@ -1,6 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
@@ -17,7 +18,7 @@ public interface UserRepository {
 
     PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
 
-    void addUser(String name, String password) throws DatabaseAccessException;
+    void addUser(String name, RoleType roleType, String password) throws DatabaseAccessException;
 
     void updateUser(User u) throws UserNotFoundException, DatabaseAccessException;
 

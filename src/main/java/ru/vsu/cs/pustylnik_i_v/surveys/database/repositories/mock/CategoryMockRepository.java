@@ -1,20 +1,22 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.emulation.DBTableImitation;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 
 import java.util.List;
 
-public class CategoryMockRepository implements CategoryRepository {
+public class CategoryMockRepository extends BaseMockRepository implements CategoryRepository {
 
-    private final DBTableImitation<Category> categories = new DBTableImitation<>(
-            params -> new Category(0, (String) params[0]));
+    public CategoryMockRepository(MockDatabaseSource database) {
+        super(database);
+    }
 
     @Override
     public Category getCategoryById(int id) throws CategoryNotFoundException {
-        List<Category> query = categories.get(Category::getId, id);
+        List<Category> query = database.categories.get(Category::getId, id);
         if (query.isEmpty()) {
             throw new CategoryNotFoundException(id);
         }
@@ -23,7 +25,7 @@ public class CategoryMockRepository implements CategoryRepository {
 
     @Override
     public Category getCategoryByName(String name) throws CategoryNotFoundException {
-        List<Category> query = categories.get(Category::getName, name);
+        List<Category> query = database.categories.get(Category::getName, name);
         if (query.isEmpty()) {
             throw new CategoryNotFoundException(name);
         }
@@ -32,24 +34,24 @@ public class CategoryMockRepository implements CategoryRepository {
 
     @Override
     public List<Category> getAllCategories() {
-        return categories.getAll();
+        return database.categories.getAll();
     }
 
     @Override
     public void addCategory(String name) {
-        if (!categories.contains(Category::getName, name)) {
-            categories.add(name);
+        if (!database.categories.contains(Category::getName, name)) {
+            database.categories.add(name);
         }
     }
 
     @Override
     public void deleteCategory(int id) {
-        categories.remove(Category::getId, id);
+        database.categories.remove(Category::getId, id);
     }
 
     @Override
     public boolean exists(String name) {
-        return categories.contains(Category::getName,name);
+        return database.categories.contains(Category::getName,name);
     }
 
 }

@@ -34,8 +34,6 @@ public interface SurveysService {
 
     ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException;
 
-    ResponseEntity<String> getCategoryName(Integer categoryId) throws DatabaseAccessException;
-
     ResponseEntity<?> deleteCategory(Integer categoryId) throws DatabaseAccessException;
 
 }

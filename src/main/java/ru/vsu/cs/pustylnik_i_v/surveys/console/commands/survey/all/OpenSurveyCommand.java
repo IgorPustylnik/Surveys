@@ -35,20 +35,9 @@ public class OpenSurveyCommand extends CommandMenu {
         commands.add(CommandType.LIST_SURVEYS);
         Survey s = appContext.currentSurvey;
 
-        ResponseEntity<String> response;
-
-        try {
-            response = appContext.getSurveysService().getCategoryName(s.getCategoryId());
-        } catch (DatabaseAccessException e) {
-            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
-            return;
-        }
-
-        String categoryName = response.getBody();
-
         setTitle(String.format("Survey name: %s\nCategory: %s\nDescription: %s",
                 s.getName(),
-                categoryName != null ? categoryName : "none",
+                s.getCategoryName(),
                 s.getDescription()));
 
         super.execute();

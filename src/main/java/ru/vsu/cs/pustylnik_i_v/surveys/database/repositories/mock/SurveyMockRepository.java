@@ -1,30 +1,29 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.emulation.DBTableImitation;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Role;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.RoleNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SurveyMockRepository implements SurveyRepository {
-
-    private final DBTableImitation<Survey> surveys = new DBTableImitation<>(
-            params -> (new Survey(0, (String) params[0], (String) params[1], (Integer) params[2], (Date) params[3])));
+public class SurveyMockRepository extends BaseMockRepository implements SurveyRepository {
+    public SurveyMockRepository(MockDatabaseSource database) {
+        super(database);
+    }
 
     @Override
     public Survey getSurveyById(int id) {
-        return surveys.get(Survey::getId, id).get(0);
+        return database.surveys.get(Survey::getId, id).get(0);
     }
 
     @Override
     public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException {
-        List<Survey> query = surveys.get(Survey::getId, id);
+        List<Survey> query = database.surveys.get(Survey::getId, id);
         if (query.isEmpty()) {
             throw new SurveyNotFoundException(id);
         }
@@ -36,30 +35,33 @@ public class SurveyMockRepository implements SurveyRepository {
         List<Survey> filtered;
         int fromIndex = perPageAmount * page;
         if (categoryId == null) {
-            filtered = surveys.getAll();
+            filtered = database.surveys.getAll();
         } else {
-            filtered = surveys.get(Survey::getCategoryId, categoryId);
+            filtered = database.surveys.get(Survey::getCategoryId, categoryId);
         }
-        List<Survey> sublist = filtered.subList(fromIndex, fromIndex + perPageAmount);
-        int totalPages = (int) Math.ceil((double) surveys.size() / perPageAmount);
+        int toIndex = Math.min(fromIndex + perPageAmount, filtered.size());
+        List<Survey> sublist = filtered.subList(fromIndex, toIndex);
+        int totalPages = (int) Math.ceil((double) database.surveys.size() / perPageAmount);
         if (totalPages < 1) totalPages = 1;
         return new PagedEntity<>(page, totalPages, sublist);
     }
 
     @Override
     public Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) {
-        int id = surveys.add(name, description, categoryId, createdAt);
-        return surveys.get(Survey::getId, id).get(0);
+        List<Category> query = database.categories.get(Category::getId, categoryId);
+        String categoryName = query.get(0).getName();
+        int id = database.surveys.add(name, description, categoryId, categoryName, createdAt);
+        return database.surveys.get(Survey::getId, id).get(0);
     }
 
     @Override
     public void deleteSurvey(int id) {
-        surveys.remove(Survey::getId, id);
+        database.surveys.remove(Survey::getId, id);
     }
 
     @Override
     public boolean exists(int id) {
-        return surveys.contains(Survey::getId, id);
+        return database.surveys.contains(Survey::getId, id);
     }
 
 }
