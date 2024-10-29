@@ -1,14 +1,11 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Role;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,7 +20,7 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
     }
 
     @Override
-    public Category getCategoryById(int id) throws CategoryNotFoundException {
+    public Category getCategoryById(int id) throws DatabaseAccessException {
         String query = "SELECT * FROM categories WHERE id = ?";
 
         try {
@@ -41,13 +38,13 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
             }
 
         } catch (SQLException e) {
-            throw new CategoryNotFoundException(id);
+            throw new DatabaseAccessException(e.getMessage());
         }
         throw new CategoryNotFoundException(id);
     }
 
     @Override
-    public Category getCategoryByName(String name) throws CategoryNotFoundException {
+    public Category getCategoryByName(String name) throws DatabaseAccessException {
         String query = "SELECT * FROM categories WHERE name = ?";
 
         try {
@@ -63,13 +60,13 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
             }
 
         } catch (SQLException e) {
-            throw new CategoryNotFoundException(name);
+            throw new DatabaseAccessException(e.getMessage());
         }
         throw new CategoryNotFoundException(name);
     }
 
     @Override
-    public List<Category> getAllCategories() {
+    public List<Category> getAllCategories() throws DatabaseAccessException {
         List<Category> categories = new ArrayList<>();
 
         String query = "SELECT * FROM categories";
@@ -85,12 +82,14 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
                             resultSet.getString("name")));
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
         return categories;
     }
 
     @Override
-    public void addCategory(String name) {
+    public void addCategory(String name) throws DatabaseAccessException {
         String query = "INSERT INTO categories (name) VALUES (?)";
 
         try {
@@ -99,12 +98,14 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
 
             statement.setString(1, name);
 
-            statement.executeQuery();
-        } catch (SQLException ignored) {}
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 
     @Override
-    public void deleteCategory(int id) throws CategoryNotFoundException {
+    public void deleteCategory(int id) throws CategoryNotFoundException, DatabaseAccessException {
         String query = "DELETE FROM categories WHERE id = ?";
 
         try {
@@ -115,12 +116,12 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
 
             statement.execute();
         } catch (SQLException e) {
-            throw new CategoryNotFoundException(id);
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 
     @Override
-    public boolean exists(String name) {
+    public boolean exists(String name) throws DatabaseAccessException {
         try {
             getCategoryByName(name);
         } catch (CategoryNotFoundException e) {

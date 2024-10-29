@@ -38,17 +38,20 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) {
-        PagedEntity<List<Survey>> surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, page, perPageAmount);
+    public ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException {
+        PagedEntity<List<Survey>> surveysPagedEntity;
+        surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, page, perPageAmount);
+
         if (surveysPagedEntity.getPage().isEmpty()) {
-            return new ResponseEntity<>(false, "Surveys not found", surveysPagedEntity);
+            return new ResponseEntity<>(false, "Nothing found", surveysPagedEntity);
         }
         return new ResponseEntity<>(true, "Surveys successfully found", surveysPagedEntity);
     }
 
     @Override
-    public ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) {
+    public ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) throws DatabaseAccessException {
         List<Question> questions = questionRepository.getQuestions(surveyId);
+
         if (index >= questions.size()) {
             return new ResponseEntity<>(false, "Survey completed successfully", null);
         }
@@ -57,8 +60,9 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId) {
+    public ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException {
         List<Option> options = optionRepository.getOptions(questionId);
+
         if (options.isEmpty()) {
             return new ResponseEntity<>(true, "No options found", null);
         }
@@ -66,10 +70,10 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) {
+    public ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
         List<Category> sliced;
-
         List<Category> surveys = categoryRepository.getAllCategories();
+
         int totalPages = (int) Math.ceil((double) surveys.size() / perPageAmount);
 
         int fromIndex = perPageAmount * page;
@@ -87,7 +91,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> submitAnswer(Integer sessionId, Integer optionId) {
+    public ResponseEntity<?> submitAnswer(Integer sessionId, Integer optionId) throws DatabaseAccessException {
         try {
             answerRepository.addAnswer(sessionId, optionId);
         } catch (SessionNotFoundException e) {
@@ -99,7 +103,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) {
+    public ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException {
         questionRepository.addQuestion(surveyId, description, questionType);
 
         List<Question> questions = questionRepository.getQuestions(surveyId);
@@ -116,7 +120,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<String> getCategoryName(Integer categoryId) {
+    public ResponseEntity<String> getCategoryName(Integer categoryId) throws DatabaseAccessException {
         try {
             return new ResponseEntity<>(true, "Category name found successfully", categoryRepository.getCategoryById(categoryId).getName());
         } catch (CategoryNotFoundException e) {
@@ -125,7 +129,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> deleteCategory(Integer categoryId) {
+    public ResponseEntity<?> deleteCategory(Integer categoryId) throws DatabaseAccessException {
         try {
             categoryRepository.deleteCategory(categoryId);
         } catch (CategoryNotFoundException e) {
@@ -135,7 +139,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> deleteSurvey(Integer surveyId) {
+    public ResponseEntity<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException {
         try {
             surveyRepository.deleteSurvey(surveyId);
             return new ResponseEntity<>(true, "Survey deleted successfully", null);
@@ -145,7 +149,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName) {
+    public ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName) throws DatabaseAccessException {
         if (!categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
@@ -157,7 +161,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName) {
+    public ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName) throws DatabaseAccessException {
         if (!categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
@@ -173,7 +177,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId) {
+    public ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId) throws DatabaseAccessException {
         Integer userId = null;
 
         try {
@@ -192,7 +196,7 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<?> finishSession(Integer sessionId) {
+    public ResponseEntity<?> finishSession(Integer sessionId) throws DatabaseAccessException {
         try {
             Session session = sessionRepository.getSessionById(sessionId);
             session.setFinishedAt(Calendar.getInstance().getTime());

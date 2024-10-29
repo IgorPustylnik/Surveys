@@ -24,6 +24,15 @@ public class UserMockRepository implements UserRepository {
     }
 
     @Override
+    public User getUser(int id) throws UserNotFoundException {
+        List<User> query = users.get(User::getId, id);
+        if (query.isEmpty()) {
+            throw new UserNotFoundException(id);
+        }
+        return query.get(0);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return users.getAll();
     }

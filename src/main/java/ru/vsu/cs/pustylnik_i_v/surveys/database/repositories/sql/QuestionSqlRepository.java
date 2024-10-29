@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.QuestionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
     }
 
     @Override
-    public List<Question> getQuestions(Integer surveyId) {
+    public List<Question> getQuestions(Integer surveyId) throws DatabaseAccessException {
         List<Question> questions = new ArrayList<>();
 
         String query = "SELECT * FROM questions WHERE survey_id = ?";
@@ -37,14 +38,14 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
                             QuestionType.valueOf(resultSet.getString("type").toUpperCase())));
                 }
             }
-        } catch (SQLException ignored) {
-            System.out.println(ignored.getMessage());
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
         return questions;
     }
 
     @Override
-    public void addQuestion(int surveyId, String text, QuestionType type) {
+    public void addQuestion(int surveyId, String text, QuestionType type) throws DatabaseAccessException {
         String query = "INSERT INTO questions (survey_id, text, type) VALUES (?, ?, ?)";
 
         try {
@@ -55,7 +56,9 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
             statement.setString(2, text);
             statement.setObject(3, type.toString().toLowerCase(), java.sql.Types.OTHER);
 
-            statement.executeQuery();
-        } catch (SQLException ignored) {}
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
@@ -8,19 +9,21 @@ import java.util.List;
 
 public interface UserRepository {
 
-    User getUser(String name) throws UserNotFoundException;
+    User getUser(String name) throws UserNotFoundException, DatabaseAccessException;
 
-    List<User> getAllUsers();
+    User getUser(int id) throws UserNotFoundException, DatabaseAccessException;
 
-    PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount);
+    List<User> getAllUsers() throws DatabaseAccessException;
 
-    void addUser(String name, String password);
+    PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
 
-    void updateUser(User u) throws UserNotFoundException;
+    void addUser(String name, String password) throws DatabaseAccessException;
 
-    void deleteUser(String name);
+    void updateUser(User u) throws UserNotFoundException, DatabaseAccessException;
 
-    boolean exists(int userId);
+    void deleteUser(String name) throws DatabaseAccessException;
 
-    boolean exists(String name);
+    boolean exists(int userId) throws DatabaseAccessException;
+
+    boolean exists(String name) throws DatabaseAccessException;
 }

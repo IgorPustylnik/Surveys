@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
@@ -20,7 +21,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     }
 
     @Override
-    public User getUser(String name) throws UserNotFoundException {
+    public User getUser(String name) throws UserNotFoundException, DatabaseAccessException {
         String query = "SELECT * FROM users WHERE name = ?";
 
         try {
@@ -37,13 +38,36 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
             }
 
         } catch (SQLException e) {
-            throw new UserNotFoundException(name);
+            throw new DatabaseAccessException(e.getMessage());
         }
         throw new UserNotFoundException(name);
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public User getUser(int id) throws UserNotFoundException, DatabaseAccessException {
+        String query = "SELECT * FROM users WHERE id = ?";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new User(resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("password"));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
+        throw new UserNotFoundException(id);
+    }
+
+    @Override
+    public List<User> getAllUsers() throws DatabaseAccessException {
         List<User> users = new ArrayList<>();
 
         String query = "SELECT * FROM users";
@@ -60,13 +84,14 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                             resultSet.getString("password")));
                 }
             }
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
         return users;
     }
 
     @Override
-    public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) {
+    public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
         List<User> users = new ArrayList<>();
 
         int fromIndex = perPageAmount * page;
@@ -97,7 +122,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                 }
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
 
         int totalPages = (int) Math.ceil((double) totalCount / perPageAmount);
@@ -107,7 +133,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     }
 
     @Override
-    public void addUser(String name, String password) {
+    public void addUser(String name, String password) throws DatabaseAccessException {
         String query = "INSERT INTO users (name, password) VALUES (?, ?)";
 
         try {
@@ -117,13 +143,14 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
             statement.setString(1, name);
             statement.setString(2, password);
 
-            statement.executeQuery();
-        } catch (SQLException ignored) {
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 
     @Override
-    public void updateUser(User u) throws UserNotFoundException {
+    public void updateUser(User u) throws UserNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
         String updateQuery = "UPDATE users SET name = ?, password = ? WHERE id = ?";
 
@@ -146,12 +173,13 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
                 updateStatement.executeUpdate();
             }
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 
     @Override
-    public void deleteUser(String name) {
+    public void deleteUser(String name) throws DatabaseAccessException {
         String query = "DELETE FROM users WHERE name = ?";
 
         try {
@@ -161,12 +189,13 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
             statement.setString(1, name);
 
             statement.execute();
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 
     @Override
-    public boolean exists(int userId) {
+    public boolean exists(int userId) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM users WHERE id = ?";
 
         try {
@@ -179,7 +208,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                 return true;
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
         return false;
     }
@@ -188,7 +218,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     public boolean exists(String name) {
         try {
             getUser(name);
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | DatabaseAccessException e) {
             return false;
         }
         return true;

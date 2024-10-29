@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.OptionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
     }
 
     @Override
-    public List<Option> getOptions(int questionId) {
+    public List<Option> getOptions(int questionId) throws DatabaseAccessException {
         List<Option> options = new ArrayList<>();
 
         String query = "SELECT * FROM options WHERE question_id = ?";
@@ -37,12 +38,14 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
                             resultSet.getString("description")));
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
         return options;
     }
 
     @Override
-    public void addOption(int questionId, String description) {
+    public void addOption(int questionId, String description) throws DatabaseAccessException {
         String checkQuestionQuery = "SELECT * FROM questions WHERE id = ?";
 
         String query = "INSERT INTO options (question_id, description) VALUES (?, ?)";
@@ -63,8 +66,8 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
             statement.setString(2, description);
 
             statement.execute();
-        } catch (SQLException ignored) {
-            System.out.println("Error adding option");
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 }

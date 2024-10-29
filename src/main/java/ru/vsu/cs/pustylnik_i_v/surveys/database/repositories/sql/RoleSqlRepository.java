@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.RoleRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 
 import java.sql.Connection;
@@ -18,7 +19,7 @@ public class RoleSqlRepository extends BaseSqlRepository implements RoleReposito
     }
 
     @Override
-    public Role getRole(int userId) throws UserNotFoundException {
+    public Role getRole(int userId) throws UserNotFoundException, DatabaseAccessException {
         String query = "SELECT * FROM roles WHERE user_id = ?";
 
         try {
@@ -34,13 +35,13 @@ public class RoleSqlRepository extends BaseSqlRepository implements RoleReposito
             }
 
         } catch (SQLException e) {
-            throw new UserNotFoundException(userId);
+            throw new DatabaseAccessException(e.getMessage());
         }
         throw new UserNotFoundException(userId);
     }
 
     @Override
-    public void addRole(int userId, RoleType roleType) {
+    public void addRole(int userId, RoleType roleType) throws DatabaseAccessException {
         String query = "INSERT INTO roles (user_id, role) VALUES (?, ?)";
 
         try {
@@ -51,11 +52,13 @@ public class RoleSqlRepository extends BaseSqlRepository implements RoleReposito
             statement.setObject(2, roleType.toString().toLowerCase(), java.sql.Types.OTHER);
 
             statement.execute();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 
     @Override
-    public void updateRole(int userId, RoleType roleType) throws UserNotFoundException {
+    public void updateRole(int userId, RoleType roleType) throws UserNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
         String updateQuery = "UPDATE roles SET role = ? WHERE user_id = ?";
 
@@ -74,12 +77,14 @@ public class RoleSqlRepository extends BaseSqlRepository implements RoleReposito
                 updateStatement.setInt(2, userId);
                 updateStatement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 
 
     @Override
-    public boolean exists(int userId) {
+    public boolean exists(int userId) throws DatabaseAccessException {
         try {
             getRole(userId);
         } catch (UserNotFoundException e) {

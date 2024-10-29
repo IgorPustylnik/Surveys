@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.RoleRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.RoleNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
@@ -25,7 +26,25 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<AuthBody> login(String name, String password) {
+    public ResponseEntity<User> getUser(String token) throws DatabaseAccessException {
+        User user;
+        int userId;
+        try {
+            TokenInfo tokenInfo = (TokenInfo) AESCryptoUtil.getInstance().decrypt(token);
+            userId = tokenInfo.getId();
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, "Failed to decrypt token", null);
+        }
+        try {
+            user = userRepository.getUser(userId);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(false, "User not found", null);
+        }
+        return new ResponseEntity<>(true, "Successfully found user", user);
+    }
+
+    @Override
+    public ResponseEntity<AuthBody> login(String name, String password) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(name);
             String hashedPassword = user.getPassword();
@@ -53,7 +72,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<AuthBody> register(String name, String password) {
+    public ResponseEntity<AuthBody> register(String name, String password) throws DatabaseAccessException {
         try {
             userRepository.getUser(name);
             return new ResponseEntity<>(false, "Username exists", null);
@@ -80,7 +99,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password) {
+    public ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(name);
             String hashedPassword = user.getPassword();
@@ -95,6 +114,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public ResponseEntity<?> updatePassword(String name, String newPassword) {
+    public ResponseEntity<?> updatePassword(String name, String newPassword) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(name);
             String hashedPassword = HashingUtil.hashPassword(newPassword);
@@ -107,7 +127,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<?> setRole(String userName, RoleType role) {
+    public ResponseEntity<?> setRole(String userName, RoleType role) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(userName);
             int id = user.getId();
@@ -123,7 +143,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) {
+    public ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
         PagedEntity<List<User>> usersPagedEntity = userRepository.getUsersPagedList(page, perPageAmount);
         if (usersPagedEntity.getPage().isEmpty()) {
             return new ResponseEntity<>(false, "Users not found", usersPagedEntity);
@@ -132,13 +152,13 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<?> deleteUser(String userName) {
+    public ResponseEntity<?> deleteUser(String userName) throws DatabaseAccessException {
         userRepository.deleteUser(userName);
         return new ResponseEntity<>(true, "User successfully deleted", null);
     }
 
     @Override
-    public ResponseEntity<RoleType> getUserRole(String userName) {
+    public ResponseEntity<RoleType> getUserRole(String userName) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(userName);
             RoleType roleType = roleRepository.getRole(user.getId()).getRoleType();

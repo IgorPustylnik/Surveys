@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SessionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 
 import java.sql.Connection;
@@ -18,7 +19,7 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     }
 
     @Override
-    public Session getSessionById(int id) throws SessionNotFoundException {
+    public Session getSessionById(int id) throws SessionNotFoundException, DatabaseAccessException {
         String query = "SELECT * FROM sessions WHERE id = ?";
 
         try {
@@ -39,13 +40,13 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
                 throw new SessionNotFoundException(id);
             }
         } catch (SQLException e) {
-            throw new SessionNotFoundException(id);
+            throw new DatabaseAccessException(e.getMessage());
         }
         throw new SessionNotFoundException(id);
     }
 
     @Override
-    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) {
+    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) throws DatabaseAccessException {
         String query = "INSERT INTO sessions (survey_id, user_id, started_at) VALUES (?, ?, ?) RETURNING id";
         String queryUserNull = "INSERT INTO sessions (survey_id, started_at) VALUES (?, ?) RETURNING id";
 
@@ -67,13 +68,16 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 }
-            } catch (SQLException ignored) {}
-        } catch (SQLException ignored) {}
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
         return null;
     }
 
     @Override
-    public void updateSession(Session s) throws SessionNotFoundException {
+    public void updateSession(Session s) throws SessionNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM sessions WHERE id = ?";
         String updateQuery = "UPDATE sessions SET finished_at = ? WHERE id = ?";
 
@@ -95,11 +99,13 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
 
                 updateStatement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 
     @Override
-    public boolean exists(int id) {
+    public boolean exists(int id) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM sessions WHERE id = ?";
 
         try {
@@ -112,7 +118,8 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
                 return true;
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
         return false;
     }

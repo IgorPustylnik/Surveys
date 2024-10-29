@@ -1,12 +1,11 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
@@ -24,7 +23,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     }
 
     @Override
-    public Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) {
+    public Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) throws DatabaseAccessException {
         String query = "INSERT INTO surveys (name, description, category_id, created_at) VALUES (?, ?, ?, ?) RETURNING id";
 
         try {
@@ -41,15 +40,16 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                     int id = resultSet.getInt("id");
                     return new Survey(id, name, description, categoryId, createdAt);
                 }
-            } catch (SQLException ignored) {
             }
-        } catch (SQLException ignored) {
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
         return null;
     }
 
     @Override
-    public Survey getSurveyById(int id) throws SurveyNotFoundException {
+    public Survey getSurveyById(int id) throws SurveyNotFoundException, DatabaseAccessException {
         String query = "SELECT * FROM surveys WHERE id = ?";
 
         try {
@@ -70,13 +70,13 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                 throw new SurveyNotFoundException(id);
             }
         } catch (SQLException e) {
-            throw new SurveyNotFoundException(id);
+            throw new DatabaseAccessException(e.getMessage());
         }
         throw new SurveyNotFoundException(id);
     }
 
     @Override
-    public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException {
+    public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM surveys WHERE id = ?";
         String updateQuery = "UPDATE surveys SET category_id = ? WHERE id = ?";
 
@@ -98,12 +98,13 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
                 updateStatement.executeUpdate();
             }
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 
     @Override
-    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Integer page, Integer perPageAmount) throws CategoryNotFoundException {
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Integer page, Integer perPageAmount) throws CategoryNotFoundException, DatabaseAccessException {
         List<Survey> surveys = new ArrayList<>();
 
         int fromIndex = perPageAmount * page;
@@ -168,7 +169,8 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                 }
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
 
         int totalPages = (int) Math.ceil((double) totalCount / perPageAmount);
@@ -178,8 +180,8 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     }
 
     @Override
-    public void deleteSurvey(int id) throws SurveyNotFoundException {
-        String query = "DELETE FROM users WHERE id = ?";
+    public void deleteSurvey(int id) throws DatabaseAccessException {
+        String query = "DELETE FROM surveys WHERE id = ?";
 
         try {
             Connection connection = getConnection();
@@ -187,14 +189,14 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
             statement.setInt(1, id);
 
-            statement.executeQuery();
-        } catch (SQLException ignored) {
-            throw new SurveyNotFoundException(id);
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
     }
 
     @Override
-    public boolean exists(int id) {
+    public boolean exists(int id) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM surveys WHERE id = ?";
 
         try {
@@ -207,7 +209,8 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                 return true;
             }
 
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
         }
         return false;
     }

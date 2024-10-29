@@ -18,7 +18,7 @@ public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepo
     }
 
     @Override
-    public void addAnswer(int sessionId, int optionId) throws SessionNotFoundException, OptionNotFoundException {
+    public void addAnswer(int sessionId, int optionId) throws SessionNotFoundException, OptionNotFoundException, DatabaseAccessException {
         String checkSessionQuery = "SELECT * FROM sessions WHERE id = ?";
         String checkOptionQuery = "SELECT * FROM options WHERE id = ?";
 
@@ -54,12 +54,14 @@ public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepo
             statement.setInt(1, sessionId);
             statement.setInt(2, optionId);
 
-            statement.executeQuery();
-        } catch (SQLException ignored) {}
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 
     @Override
-    public boolean exists(int sessionId, int optionId) {
+    public boolean exists(int sessionId, int optionId) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM answers WHERE session_id = ? AND option_id = ?";
 
         try {
@@ -73,7 +75,9 @@ public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepo
                 return true;
             }
 
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
         return false;
     }
 }
