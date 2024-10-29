@@ -1,8 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.entities;
 
-import java.io.Serializable;
-
-public class User implements Serializable {
+public class User{
 
     private int id;
     private String name;

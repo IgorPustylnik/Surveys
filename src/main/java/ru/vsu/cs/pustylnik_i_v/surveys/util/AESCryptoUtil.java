@@ -1,22 +1,19 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.services.impl;
-
-import ru.vsu.cs.pustylnik_i_v.surveys.services.CryptoService;
+package ru.vsu.cs.pustylnik_i_v.surveys.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class AESCryptoService implements CryptoService {
-    private static final AESCryptoService INSTANCE = new AESCryptoService();
-    public static AESCryptoService getInstance() {
+public class AESCryptoUtil {
+    private static final AESCryptoUtil INSTANCE = new AESCryptoUtil();
+    public static AESCryptoUtil getInstance() {
         return INSTANCE;
     }
 
     private final String SECRET_KEY = "SECRET_KEY123456";
     private final String ALGORITHM = "AES";
 
-    @Override
     public String encrypt(Object object) throws Exception {
         byte[] serializedObject = serialize(object);
         SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), ALGORITHM);
@@ -26,7 +23,6 @@ public class AESCryptoService implements CryptoService {
         return bytesToHex(encryptedData);
     }
 
-    @Override
     public Object decrypt(String token) throws Exception {
         SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);

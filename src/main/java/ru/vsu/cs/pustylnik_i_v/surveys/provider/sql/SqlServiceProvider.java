@@ -7,7 +7,6 @@ import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenValidationService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.AESCryptoService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.SurveysServiceImpl;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.TokenValidationServiceImpl;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.UserInfoServiceImpl;
@@ -33,7 +32,7 @@ public class SqlServiceProvider implements ServiceProvider {
         this.userInfoService = new UserInfoServiceImpl(userRepository, roleRepository);
         this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
-        this.tokenValidationService = new TokenValidationServiceImpl(AESCryptoService.getInstance(), userInfoService);
+        this.tokenValidationService = new TokenValidationServiceImpl(userInfoService);
     }
 
     @Override

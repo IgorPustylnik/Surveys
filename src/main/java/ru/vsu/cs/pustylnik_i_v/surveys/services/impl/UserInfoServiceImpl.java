@@ -11,6 +11,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.TokenInfo;
+import ru.vsu.cs.pustylnik_i_v.surveys.util.AESCryptoUtil;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.HashingUtil;
 
 import java.util.List;
@@ -56,9 +58,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
 
             String token;
+            TokenInfo tokenInfo = new TokenInfo(user.getId(), roleType);
 
             try {
-                token = AESCryptoService.getInstance().encrypt(user);
+                token = AESCryptoUtil.getInstance().encrypt(tokenInfo);
             } catch (Exception e) {
                 return new ResponseEntity<>(false, "Failed to generate a token", null);
             }
@@ -75,7 +78,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResponseEntity<AuthBody> register(String name, String password) throws DatabaseAccessException {
         try {
             userRepository.getUser(name);
-            return new ResponseEntity<>(false, "Username exists", null);
+            return new ResponseEntity<>(false, "Username is taken", null);
         } catch (UserNotFoundException e) {
             userRepository.addUser(name, HashingUtil.hashPassword(password));
             User user;
@@ -87,9 +90,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
 
             String token;
+            TokenInfo tokenInfo = new TokenInfo(user.getId(), RoleType.USER);
 
             try {
-                token = AESCryptoService.getInstance().encrypt(user);
+                token = AESCryptoUtil.getInstance().encrypt(tokenInfo);
             } catch (Exception ex) {
                 return new ResponseEntity<>(false, "Failed to generate a token", null);
             }
@@ -98,6 +102,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
+    // TODO: Delete
     @Override
     public ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password) throws DatabaseAccessException {
         try {
@@ -113,11 +118,13 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<?> updatePassword(String name, String newPassword) {
     public ResponseEntity<?> updatePassword(String name, String newPassword) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(name);
-            String hashedPassword = HashingUtil.hashPassword(newPassword);
+            String hashedPassword = user.getPassword();
+            if (!HashingUtil.passwordMatch(newPassword, hashedPassword)) {
+                return new ResponseEntity<>(false, "Password is incorrect", null);
+            }
             user.setPassword(hashedPassword);
             userRepository.updateUser(user);
             return new ResponseEntity<>(true, "Password changed", null);
