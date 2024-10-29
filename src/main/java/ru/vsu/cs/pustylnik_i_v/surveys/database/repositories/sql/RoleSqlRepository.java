@@ -4,7 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Role;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.RoleRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RoleSqlRepository extends BaseSqlRepository implements RoleRepository {
-    public RoleSqlRepository(PostgresqlDataSource dataSource) {
+    public RoleSqlRepository(DatabaseSource dataSource) {
         super(dataSource);
     }
 

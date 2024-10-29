@@ -2,7 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.provider.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.*;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenValidationService;
@@ -19,10 +19,7 @@ public class SqlServiceProvider implements ServiceProvider {
     private final TokenValidationService tokenValidationService;
 
     public SqlServiceProvider() {
-        PostgresqlDataSource dataSource = new PostgresqlDataSource(
-                "jdbc:postgresql://localhost:5432/postgres",
-                "postgres",
-                "1234");
+        DatabaseSource dataSource = new DatabaseSource();
 
         AnswerRepository answerRepository = new AnswerSqlRepository(dataSource);
         CategoryRepository categoryRepository = new CategorySqlRepository(dataSource);

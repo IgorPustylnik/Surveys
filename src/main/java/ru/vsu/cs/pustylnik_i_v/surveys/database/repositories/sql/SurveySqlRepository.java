@@ -4,7 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepository {
-    public SurveySqlRepository(PostgresqlDataSource dataSource) {
+    public SurveySqlRepository(DatabaseSource dataSource) {
         super(dataSource);
     }
 

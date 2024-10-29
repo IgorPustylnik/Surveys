@@ -3,7 +3,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserSqlRepository extends BaseSqlRepository implements UserRepository {
-    public UserSqlRepository(PostgresqlDataSource dataSource) {
+    public UserSqlRepository(DatabaseSource dataSource) {
         super(dataSource);
     }
 

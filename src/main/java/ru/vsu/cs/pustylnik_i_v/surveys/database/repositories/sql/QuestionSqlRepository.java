@@ -4,7 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.QuestionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionSqlRepository extends BaseSqlRepository implements QuestionRepository {
-    public QuestionSqlRepository(PostgresqlDataSource dataSource) {
+    public QuestionSqlRepository(DatabaseSource dataSource) {
         super(dataSource);
     }
 

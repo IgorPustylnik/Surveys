@@ -1,14 +1,14 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public abstract class BaseSqlRepository {
-    private final PostgresqlDataSource dataSource;
+    private final DatabaseSource dataSource;
 
-    public BaseSqlRepository(PostgresqlDataSource dataSource) {
+    public BaseSqlRepository(DatabaseSource dataSource) {
         this.dataSource = dataSource;
     }
 

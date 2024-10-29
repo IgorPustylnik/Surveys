@@ -2,7 +2,8 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.AnswerRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.OptionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 
 public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepository {
 
-    public AnswerSqlRepository(PostgresqlDataSource dataSource) {
+    public AnswerSqlRepository(DatabaseSource dataSource) {
         super(dataSource);
     }
 

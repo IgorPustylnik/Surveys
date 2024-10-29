@@ -3,7 +3,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SessionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Date;
 
 public class SessionSqlRepository extends BaseSqlRepository implements SessionRepository {
-    public SessionSqlRepository(PostgresqlDataSource dataSource) {
+    public SessionSqlRepository(DatabaseSource dataSource) {
         super(dataSource);
     }
 

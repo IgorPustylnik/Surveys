@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.PostgresqlDataSource;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 
@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategorySqlRepository extends BaseSqlRepository implements CategoryRepository {
-    public CategorySqlRepository(PostgresqlDataSource databaseManager) {
-        super(databaseManager);
+    public CategorySqlRepository(DatabaseSource dataSource) {
+        super(dataSource);
     }
 
     @Override
