@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
@@ -22,7 +23,14 @@ public class ChangePasswordCommand extends AppCommand {
     public void execute() {
         String oldPassword = ConsoleUtils.inputString("your old password");
 
-        ResponseEntity<?> response = appContext.getUserInfoService().checkIfPasswordIsCorrect(appContext.userName, oldPassword);
+        ResponseEntity<?> response;
+
+        try {
+            response = appContext.getUserInfoService().checkIfPasswordIsCorrect(appContext.userName, oldPassword);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
 
         if (!response.isSuccess()) {
             ConsoleUtils.clear();
@@ -40,7 +48,13 @@ public class ChangePasswordCommand extends AppCommand {
             }
         } while (validation != null);
 
-        response = appContext.getUserInfoService().updatePassword(appContext.userName, newPassword);
+        try {
+            response = appContext.getUserInfoService().updatePassword(appContext.userName, newPassword);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
+
         ConsoleUtils.clear();
         System.out.println(response.getMessage());
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();

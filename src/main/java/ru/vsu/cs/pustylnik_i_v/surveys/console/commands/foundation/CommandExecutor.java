@@ -63,5 +63,6 @@ public class CommandExecutor {
         commands.put(CommandType.DELETE_USER, new DeleteUserCommand(appContext));
 
         commands.put(CommandType.UNKNOWN, new UnknownCommand());
+        commands.put(CommandType.DATABASE_ERROR, new DatabaseErrorCommand(appContext));
     }
 }

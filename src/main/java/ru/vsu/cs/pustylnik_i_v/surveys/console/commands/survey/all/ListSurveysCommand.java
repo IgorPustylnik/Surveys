@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
@@ -38,7 +39,14 @@ public class ListSurveysCommand extends CommandMenu {
         int currentPage = appContext.currentPageIndex;
         Integer currentCategoryId = appContext.currentCategory != null ? appContext.currentCategory.getId() : null;
 
-        ResponseEntity<PagedEntity<List<Survey>>> response = appContext.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage, 5);
+        ResponseEntity<PagedEntity<List<Survey>>> response;
+
+        try {
+            response = appContext.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage, 5);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
 
         PagedEntity<List<Survey>> surveysPage = response.getBody();
         int totalPages = surveysPage.getSize();

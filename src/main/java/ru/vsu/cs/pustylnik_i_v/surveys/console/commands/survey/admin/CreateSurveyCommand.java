@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
@@ -21,19 +22,39 @@ public class CreateSurveyCommand extends AppCommand {
 
     @Override
     public void execute() {
-        String name = ConsoleUtils.inputString("a survey name");
-        String description = ConsoleUtils.inputString("a description");
 
-        String categoryName, validation;
+        String validation;
+
+        String name;
         do {
-            categoryName = ConsoleUtils.inputString("a category name");
-            validation = ValidationUtils.isValidName(categoryName);
+            name = ConsoleUtils.inputString("a survey name");
+            validation = name.length() < 2 ? "Name must be at least 2 characters" : null;
             if (validation != null) {
+                ConsoleUtils.clear();
                 System.err.println(validation);
             }
         } while (validation != null);
 
-        ResponseEntity<Survey> response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName);
+        String description = ConsoleUtils.inputString("a description");
+
+        String categoryName;
+        do {
+            categoryName = ConsoleUtils.inputString("a category name");
+            validation = ValidationUtils.isValidName(categoryName);
+            if (validation != null) {
+                ConsoleUtils.clear();
+                System.err.println(validation);
+            }
+        } while (validation != null);
+
+        ResponseEntity<Survey> response;
+
+        try {
+            response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
 
         if (!response.isSuccess()) {
             System.err.println(response.getMessage());
@@ -43,14 +64,17 @@ public class CreateSurveyCommand extends AppCommand {
 
         appContext.currentSurvey = response.getBody();
 
-        Integer questionsCount = ConsoleUtils.inputInt("questions count");
+        Integer questionsCount;
 
-        if (questionsCount == null || questionsCount < 0) {
-            ConsoleUtils.clear();
-            System.err.println("Please enter a valid number");
-            this.execute();
-            return;
-        }
+        do {
+            questionsCount = ConsoleUtils.inputInt("questions count");
+
+            validation = (questionsCount == null || questionsCount < 0) ? "Please enter a valid number" : null;
+            if (validation != null) {
+                ConsoleUtils.clear();
+                System.err.println(validation);
+            }
+        } while (validation != null);
 
         for (int i = 0; i < questionsCount; i++) {
             ConsoleUtils.clear();

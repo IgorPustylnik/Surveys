@@ -36,5 +36,6 @@ public enum CommandType {
     UPDATE_USER_ROLE,
     DELETE_USER,
 
-    UNKNOWN
+    UNKNOWN,
+    DATABASE_ERROR
 }

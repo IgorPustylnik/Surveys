@@ -8,6 +8,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
@@ -31,7 +32,14 @@ public class OpenQuestionCommand extends CommandMenu {
     public void execute() {
         // Starting a session if needed
         if (appContext.currentSessionId == null) {
-            ResponseEntity<Integer> response = appContext.getSurveysService().startSessionAndGetId(appContext.userName, appContext.currentSurvey.getId());
+            ResponseEntity<Integer> response;
+
+            try {
+                response = appContext.getSurveysService().startSessionAndGetId(appContext.userName, appContext.currentSurvey.getId());
+            } catch (DatabaseAccessException e) {
+                appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+                return;
+            }
 
             if (!response.isSuccess()) {
                 System.err.println(response.getMessage());
@@ -41,7 +49,15 @@ public class OpenQuestionCommand extends CommandMenu {
             appContext.currentSessionId = response.getBody();
         }
 
-        ResponseEntity<PagedEntity<Question>> response = appContext.getSurveysService().getQuestionPagedEntity(appContext.currentSurvey.getId(), appContext.currentQuestionIndex);
+
+        ResponseEntity<PagedEntity<Question>> response;
+
+        try {
+            response = appContext.getSurveysService().getQuestionPagedEntity(appContext.currentSurvey.getId(), appContext.currentQuestionIndex);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
 
         // Questions not found
         PagedEntity<Question> questionPagedEntity = response.getBody();
@@ -56,7 +72,14 @@ public class OpenQuestionCommand extends CommandMenu {
 
         setTitle(String.format("%s", question.getText()));
 
-        ResponseEntity<List<Option>> response1 = appContext.getSurveysService().getQuestionOptionList(question.getId());
+        ResponseEntity<List<Option>> response1;
+
+        try {
+            response1 = appContext.getSurveysService().getQuestionOptionList(question.getId());
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
 
         if (!response1.isSuccess()) {
             ConsoleUtils.clear();
@@ -94,7 +117,13 @@ public class OpenQuestionCommand extends CommandMenu {
 
         Set<Integer> inputSet = new HashSet<>(input);
         inputSet.forEach(index ->
-                appContext.getSurveysService().submitAnswer(appContext.currentSessionId, options.get(index).getId())
+                {
+                    try {
+                        appContext.getSurveysService().submitAnswer(appContext.currentSessionId, options.get(index).getId());
+                    } catch (DatabaseAccessException e) {
+                        appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+                    }
+                }
         );
         appContext.currentQuestionIndex += 1;
 
@@ -103,10 +132,14 @@ public class OpenQuestionCommand extends CommandMenu {
     }
 
     private void goBack() {
-        appContext.getSurveysService().finishSession(appContext.currentSessionId);
-        appContext.currentSessionId = null;
-        appContext.currentQuestionIndex = 0;
-        appContext.getCommandExecutor().getCommand(CommandType.OPEN_SURVEY).execute();
+        try {
+            appContext.getSurveysService().finishSession(appContext.currentSessionId);
+            appContext.currentSessionId = null;
+            appContext.currentQuestionIndex = 0;
+            appContext.getCommandExecutor().getCommand(CommandType.OPEN_SURVEY).execute();
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+        }
     }
 
 }

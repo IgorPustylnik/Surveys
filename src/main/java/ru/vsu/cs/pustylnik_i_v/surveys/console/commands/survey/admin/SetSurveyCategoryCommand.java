@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 
@@ -30,7 +31,15 @@ public class SetSurveyCategoryCommand extends AppCommand {
             }
         } while (validation != null);
 
-        ResponseEntity<?> response = appContext.getSurveysService().setSurveyCategory(appContext.currentSurvey.getId(), categoryName);
+        ResponseEntity<?> response;
+
+        try {
+            response = appContext.getSurveysService().setSurveyCategory(appContext.currentSurvey.getId(), categoryName);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
+
         ConsoleUtils.clear();
         System.out.println(response.getMessage());
         appContext.getCommandExecutor().getCommand(CommandType.LIST_SURVEYS).execute();
