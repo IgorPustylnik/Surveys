@@ -7,9 +7,9 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 
-public class DeleteCategory extends AppCommand {
+public class DeleteCategoryCommand extends AppCommand {
 
-    public DeleteCategory(ConsoleAppContext appContext) {
+    public DeleteCategoryCommand(ConsoleAppContext appContext) {
         super(appContext);
     }
 

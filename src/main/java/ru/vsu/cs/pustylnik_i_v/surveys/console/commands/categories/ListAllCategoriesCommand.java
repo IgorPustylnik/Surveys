@@ -12,11 +12,11 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAllCategories extends CommandMenu {
+public class ListAllCategoriesCommand extends CommandMenu {
 
     private static final int perPageAmount = 6;
 
-    public ListAllCategories(ConsoleAppContext appContext) {
+    public ListAllCategoriesCommand(ConsoleAppContext appContext) {
         super(new ArrayList<>(), appContext);
     }
 
