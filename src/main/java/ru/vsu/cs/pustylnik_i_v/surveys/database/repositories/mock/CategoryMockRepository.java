@@ -15,15 +15,6 @@ public class CategoryMockRepository extends BaseMockRepository implements Catego
     }
 
     @Override
-    public Category getCategoryById(int id) throws CategoryNotFoundException {
-        List<Category> query = database.categories.get(Category::getId, id);
-        if (query.isEmpty()) {
-            throw new CategoryNotFoundException(id);
-        }
-        return query.get(0);
-    }
-
-    @Override
     public Category getCategoryByName(String name) throws CategoryNotFoundException {
         List<Category> query = database.categories.get(Category::getName, name);
         if (query.isEmpty()) {

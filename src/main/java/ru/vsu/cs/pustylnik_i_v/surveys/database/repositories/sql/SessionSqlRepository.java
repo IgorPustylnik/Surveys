@@ -22,8 +22,7 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     public Session getSessionById(int id) throws SessionNotFoundException, DatabaseAccessException {
         String query = "SELECT * FROM sessions WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
 
@@ -50,8 +49,7 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
         String query = "INSERT INTO sessions (survey_id, user_id, started_at) VALUES (?, ?, ?) RETURNING id";
         String queryUserNull = "INSERT INTO sessions (survey_id, started_at) VALUES (?, ?) RETURNING id";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement;
             if (userId != null) {
                 statement = connection.prepareStatement(query);
@@ -108,8 +106,7 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     public boolean exists(int id) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM sessions WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, id);

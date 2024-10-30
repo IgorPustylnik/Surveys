@@ -26,8 +26,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
         String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
                 "FROM users u JOIN roles r ON u.id = r.user_id AND u.name = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, name);
 
@@ -51,8 +50,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
         String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
                 "FROM users u JOIN roles r ON u.id = r.user_id AND u.id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
 
@@ -72,32 +70,6 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     }
 
     @Override
-    public List<User> getAllUsers() throws DatabaseAccessException {
-        List<User> users = new ArrayList<>();
-
-        String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
-                "FROM users u JOIN roles r ON u.id = r.user_id";
-
-        try {
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-                    users.add(new User(resultSet.getInt("user_id"),
-                            resultSet.getString("user_name"),
-                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
-                            resultSet.getString("password")));
-                }
-            }
-        } catch (SQLException e) {
-            throw new DatabaseAccessException(e.getMessage());
-        }
-        return users;
-    }
-
-    @Override
     public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
         List<User> users = new ArrayList<>();
 
@@ -108,8 +80,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                 "ON u.id = r.user_id LIMIT ? OFFSET ?";
         String queryTotalCount = "SELECT COUNT(*) FROM users JOIN roles ON users.id = roles.user_id";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             PreparedStatement statementTotalCount = connection.prepareStatement(queryTotalCount);
 
@@ -146,8 +117,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
         String queryAddUser = "INSERT INTO users (name, password) VALUES (?, ?) RETURNING id";
         String queryAddRole = "INSERT INTO roles (user_id, role) VALUES (?, ?)";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statementAddUser = connection.prepareStatement(queryAddUser);
 
             statementAddUser.setString(1, name);
@@ -175,7 +145,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     @Override
     public void updateUser(User u) throws UserNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
-        String updateQuery = "UPDATE users SET name = ?, password = ? WHERE id = ?";
+        String updateQuery = "UPDATE users SET name = ?, password = ? WHERE id = ?;" +
+                "UPDATE roles SET role = ? WHERE user_id = ?;";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
@@ -193,6 +164,8 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
                 updateStatement.setString(1, u.getName());
                 updateStatement.setString(2, u.getPassword());
                 updateStatement.setInt(3, u.getId());
+                updateStatement.setObject(4, u.getRole().toString().toLowerCase(), java.sql.Types.OTHER);
+                updateStatement.setInt(5, u.getId());
 
                 updateStatement.executeUpdate();
             }
@@ -205,8 +178,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     public void deleteUser(String name) throws DatabaseAccessException {
         String query = "DELETE FROM users WHERE name = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setString(1, name);
@@ -221,8 +193,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     public boolean exists(int userId) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM users WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, userId);

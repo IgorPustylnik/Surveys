@@ -25,8 +25,7 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
 
         String query = "SELECT * FROM questions WHERE survey_id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, surveyId);
 
@@ -48,8 +47,7 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
     public void addQuestion(int surveyId, String text, QuestionType type) throws DatabaseAccessException {
         String query = "INSERT INTO questions (survey_id, text, type) VALUES (?, ?, ?)";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, surveyId);

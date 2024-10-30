@@ -20,35 +20,10 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
     }
 
     @Override
-    public Category getCategoryById(int id) throws DatabaseAccessException {
-        String query = "SELECT * FROM categories WHERE id = ?";
-
-        try {
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new Category(resultSet.getInt("id"),
-                            resultSet.getString("name"));
-                }
-            } catch (SQLException e) {
-                throw new CategoryNotFoundException(id);
-            }
-
-        } catch (SQLException e) {
-            throw new DatabaseAccessException(e.getMessage());
-        }
-        throw new CategoryNotFoundException(id);
-    }
-
-    @Override
     public Category getCategoryByName(String name) throws DatabaseAccessException {
         String query = "SELECT * FROM categories WHERE name = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, name);
 
@@ -71,8 +46,7 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
 
         String query = "SELECT * FROM categories";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -92,8 +66,7 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
     public void addCategory(String name) throws DatabaseAccessException {
         String query = "INSERT INTO categories (name) VALUES (?)";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setString(1, name);
@@ -108,8 +81,7 @@ public class CategorySqlRepository extends BaseSqlRepository implements Category
     public void deleteCategory(int id) throws CategoryNotFoundException, DatabaseAccessException {
         String query = "DELETE FROM categories WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, id);

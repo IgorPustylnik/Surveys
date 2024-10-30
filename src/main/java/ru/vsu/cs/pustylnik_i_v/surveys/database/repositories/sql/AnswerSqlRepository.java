@@ -24,8 +24,7 @@ public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepo
 
         String query = "INSERT INTO answers (session_id, option_id) VALUES (?, ?)";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
 
             // Check if session exists
             try {
@@ -64,8 +63,7 @@ public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepo
     public boolean exists(int sessionId, int optionId) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM answers WHERE session_id = ? AND option_id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, sessionId);

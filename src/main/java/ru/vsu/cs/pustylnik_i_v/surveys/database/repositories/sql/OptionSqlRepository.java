@@ -24,8 +24,7 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
 
         String query = "SELECT * FROM options WHERE question_id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, questionId);
@@ -50,8 +49,7 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
 
         String query = "INSERT INTO options (question_id, description) VALUES (?, ?)";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
 
             PreparedStatement checkQuestionStatement = connection.prepareStatement(checkQuestionQuery);
             checkQuestionStatement.setInt(1, questionId);
