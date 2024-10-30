@@ -20,7 +20,7 @@ public class MainCommandMenu extends CommandMenu {
 
     @Override
     public void execute() {
-        if (appContext.roleType == null) {
+        if (appContext.localUser == null) {
             commands = List.of(
                     CommandType.LIST_SURVEYS,
                     CommandType.LOGIN,
@@ -30,13 +30,13 @@ public class MainCommandMenu extends CommandMenu {
             super.execute();
             return;
         }
-        switch (appContext.roleType) {
+        switch (appContext.localUser.getRole()) {
             case USER:
                 commands = List.of(CommandType.LIST_SURVEYS,
                         CommandType.CHANGE_PASSWORD,
                         CommandType.LOGOUT
                 );
-                setTitle(String.format("Hello, %s", appContext.userName));
+                setTitle(String.format("Hello, %s", appContext.localUser.getName()));
                 break;
             case ADMIN:
                 commands = List.of(CommandType.LIST_SURVEYS,
@@ -45,7 +45,7 @@ public class MainCommandMenu extends CommandMenu {
                         CommandType.CHANGE_PASSWORD,
                         CommandType.LOGOUT
                 );
-                setTitle(String.format("Hello, %s (administrator)", appContext.userName));
+                setTitle(String.format("Hello, %s (administrator)", appContext.localUser.getName()));
                 break;
         }
         super.execute();

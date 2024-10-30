@@ -9,6 +9,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.menus.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.admin.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.admin.edit.EditSurveyCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class CommandExecutor {
     }
 
     public Command getCommand(CommandType type) {
+        appContext.fetchUser();
         return commands.getOrDefault(type, new UnknownCommand());
     }
 

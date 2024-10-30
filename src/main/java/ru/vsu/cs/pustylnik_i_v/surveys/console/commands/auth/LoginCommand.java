@@ -42,9 +42,7 @@ public class LoginCommand extends AppCommand {
         }
         System.out.println(response.getMessage());
 
-        appContext.token = response.getBody().getToken();
-        appContext.userName = name;
-        appContext.roleType = response.getBody().getRoleType();
+        appContext.setToken(response.getBody().getToken());
 
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();

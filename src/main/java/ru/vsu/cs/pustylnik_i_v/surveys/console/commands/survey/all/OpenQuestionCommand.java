@@ -35,7 +35,7 @@ public class OpenQuestionCommand extends CommandMenu {
             ResponseEntity<Integer> response;
 
             try {
-                response = appContext.getSurveysService().startSessionAndGetId(appContext.userName, appContext.currentSurvey.getId());
+                response = appContext.getSurveysService().startSessionAndGetId(appContext.localUser.getName(), appContext.currentSurvey.getId());
             } catch (DatabaseAccessException e) {
                 appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                 return;

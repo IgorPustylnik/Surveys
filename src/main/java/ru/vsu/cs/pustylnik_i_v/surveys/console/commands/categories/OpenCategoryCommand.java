@@ -25,7 +25,7 @@ public class OpenCategoryCommand extends CommandMenu {
         setTitle(String.format("%s\nId:%d", appContext.selectedCategory.getName(), appContext.selectedCategory.getId()));
 
         commands.add(CommandType.CHOOSE_CATEGORY);
-        if (appContext.roleType == RoleType.ADMIN) {
+        if (appContext.localUser.getRole() == RoleType.ADMIN) {
             commands.add(CommandType.DELETE_CATEGORY);
         }
         commands.add(CommandType.LIST_CATEGORIES);

@@ -27,7 +27,7 @@ public class OpenSurveyCommand extends CommandMenu {
 
         commands.add(CommandType.OPEN_QUESTION);
 
-        if (appContext.roleType == RoleType.ADMIN) {
+        if (appContext.localUser != null && appContext.localUser.getRole() == RoleType.ADMIN) {
             commands.add(CommandType.EDIT_SURVEY);
             commands.add(CommandType.SET_SURVEY_CATEGORY);
             commands.add(CommandType.DELETE_SURVEY);

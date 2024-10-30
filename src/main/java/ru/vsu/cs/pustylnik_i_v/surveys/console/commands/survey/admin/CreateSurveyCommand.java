@@ -53,7 +53,7 @@ public class CreateSurveyCommand extends AppCommand {
         // TODO: REMOVE THIS KOSTYL
         ResponseEntity<User> response1;
         try {
-            response1 = appContext.getUserInfoService().getUser(appContext.token);
+            response1 = appContext.getUserInfoService().getUser(appContext.getToken());
         } catch (DatabaseAccessException e) {
             System.err.println(e.getMessage());
             return;

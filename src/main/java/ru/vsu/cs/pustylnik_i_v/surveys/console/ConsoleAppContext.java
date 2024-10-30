@@ -5,8 +5,18 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ConsoleAppContext {
 
@@ -15,9 +25,7 @@ public class ConsoleAppContext {
     private final CommandExecutor commandExecutor;
 
     // User info
-    public String token = null;
-    public String userName = null;
-    public RoleType roleType = null;
+    public User localUser = null;
 
     // Surveys
     public Survey currentSurvey = null;
@@ -52,5 +60,44 @@ public class ConsoleAppContext {
 
     public CommandExecutor getCommandExecutor() {
         return commandExecutor;
+    }
+
+    public String getToken() {
+        String filePath = "token.txt";
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(filePath));
+            if (lines.isEmpty()) {
+                return null;
+            }
+            return lines.get(0);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public void setToken(String token) {
+        String filePath = "token.txt";
+        try {
+            Files.write(Paths.get(filePath), Collections.singletonList(token != null ? token : ""), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            System.err.println("Error saving token: " + e.getMessage());
+        }
+    }
+
+    public void fetchUser() {
+        String token = getToken();
+        try {
+            ResponseEntity<User> response = getUserInfoService().getUser(token);
+
+            if (!response.isSuccess()) {
+                localUser = null;
+                return;
+            }
+
+            localUser = response.getBody();
+
+        } catch (DatabaseAccessException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

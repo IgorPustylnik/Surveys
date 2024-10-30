@@ -28,9 +28,8 @@ public class LogoutCommand extends AppCommand {
         }
 
         if (confirmation) {
-            appContext.token = null;
-            appContext.userName = null;
-            appContext.roleType = null;
+            appContext.setToken(null);
+            appContext.localUser = null;
             appContext.currentCategory = null;
             appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;

@@ -58,9 +58,7 @@ public class RegisterCommand extends AppCommand {
         ConsoleUtils.clear();
         System.out.println(response.getMessage());
 
-        appContext.token = response.getBody().getToken();
-        appContext.userName = name;
-        appContext.roleType = response.getBody().getRoleType();
+        appContext.setToken(response.getBody().getToken());
 
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
     }
