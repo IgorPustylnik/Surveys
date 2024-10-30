@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface SurveyRepository {
-    Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) throws DatabaseAccessException;
+    Survey addSurvey(String name, String description, Integer categoryId, String authorName, Date createdAt) throws DatabaseAccessException;
 
     Survey getSurveyById(int id) throws SurveyNotFoundException, DatabaseAccessException;
 

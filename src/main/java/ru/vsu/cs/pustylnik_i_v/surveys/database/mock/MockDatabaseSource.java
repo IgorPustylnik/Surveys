@@ -50,7 +50,8 @@ public class MockDatabaseSource {
                     (String) params[1],
                     (Integer) params[2],
                     (String) params[3],
-                    (Date) params[4])
+                    (String) params[4],
+                    (Date) params[5])
     );
 
     public final DBTableImitation<User> users = new DBTableImitation<>(

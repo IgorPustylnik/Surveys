@@ -2,6 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
@@ -47,10 +48,11 @@ public class SurveyMockRepository extends BaseMockRepository implements SurveyRe
     }
 
     @Override
-    public Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) {
+    public Survey addSurvey(String name, String description, Integer categoryId, String authorName, Date createdAt) {
         List<Category> query = database.categories.get(Category::getId, categoryId);
         String categoryName = query.get(0).getName();
-        int id = database.surveys.add(name, description, categoryId, categoryName, createdAt);
+        Integer authorId = database.users.get(User::getName, authorName).get(0).getId();
+        int id = database.surveys.add(name, description, categoryId, categoryName, authorId, createdAt);
         return database.surveys.get(Survey::getId, id).get(0);
     }
 

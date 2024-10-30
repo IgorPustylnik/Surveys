@@ -23,32 +23,43 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     }
 
     @Override
-    public Survey addSurvey(String name, String description, Integer categoryId, Date createdAt) throws DatabaseAccessException {
-        String query = "INSERT INTO surveys (name, description, category_id, created_at) VALUES (?, ?, ?, ?) RETURNING id";
+    public Survey addSurvey(String name, String description, Integer categoryId, String authorName, Date createdAt) throws DatabaseAccessException {
+        String query = "INSERT INTO surveys (name, description, category_id, author_id, created_at) VALUES (?, ?, ?, ?, ?) RETURNING id";
 
+        String queryGetUserId = "SELECT id FROM users WHERE name = ?";
         String queryGetCategoryName = "SELECT name FROM categories WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            statement.setString(1, name);
-            statement.setString(2, description);
-            statement.setInt(3, categoryId);
-            statement.setTimestamp(4, new java.sql.Timestamp(createdAt.getTime()));
-
-            PreparedStatement statementCategoryName = connection.prepareStatement(queryGetCategoryName);
+        try (Connection connection = getConnection()) {
+            PreparedStatement statementUserId = connection.prepareStatement(queryGetUserId);
+            statementUserId.setString(1, name);
 
             Survey returnee = null;
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    returnee = new Survey(id, name, description, categoryId, null, createdAt);
 
-                    try (ResultSet resultSet1 = statementCategoryName.executeQuery()) {
-                        if (resultSet1.next()) {
-                            String categoryName = resultSet1.getString("name");
-                            returnee.setCategoryName(categoryName);
+            int authorId;
+            try (ResultSet resultSetUserId = statementUserId.executeQuery()) {
+                authorId = resultSetUserId.getInt(1);
+
+                PreparedStatement statement = connection.prepareStatement(query);
+
+                statement.setString(1, name);
+                statement.setString(2, description);
+                statement.setInt(3, categoryId);
+                statement.setInt(4, authorId);
+                statement.setTimestamp(5, new java.sql.Timestamp(createdAt.getTime()));
+
+                PreparedStatement statementCategoryName = connection.prepareStatement(queryGetCategoryName);
+
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        returnee = new Survey(id, name, description, categoryId, null, null, createdAt);
+
+                        try (ResultSet resultSet1 = statementCategoryName.executeQuery()) {
+                            if (resultSet1.next()) {
+                                String categoryName = resultSet1.getString("name");
+                                returnee.setCategoryName(categoryName);
+                            }
                         }
                     }
                 }
@@ -63,22 +74,22 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
     @Override
     public Survey getSurveyById(int id) throws SurveyNotFoundException, DatabaseAccessException {
-        String query = "SELECT * FROM surveys s JOIN categories c ON s.category_id = c.id AND s.id = ?";
+        String query = "SELECT s.id as survey_id, s.name as survey_name, s.description, s.category_id, c.name as category_name, u.name as author_name, s.created_at " +
+                "FROM surveys s JOIN categories c ON s.category_id = c.id LEFT JOIN users u ON s.author_id = u.id AND s.id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new Survey(resultSet.getInt("s.id"),
-                            resultSet.getString("s.name"),
+                    return new Survey(resultSet.getInt("survey_id"),
+                            resultSet.getString("survey_name"),
                             resultSet.getString("description"),
                             resultSet.getInt("category_id"),
-                            resultSet.getString("c.name"),
+                            resultSet.getString("category_name"),
+                            resultSet.getString("author_name"),
                             resultSet.getTimestamp("created_at"));
-
                 }
             } catch (SQLException e) {
                 throw new SurveyNotFoundException(id);
@@ -124,22 +135,25 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
         int fromIndex = perPageAmount * page;
         int totalCount = 0;
 
-        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, s.created_at, " +
+        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name as author_name, s.created_at, " +
                 "c.name AS category_name " +
-                "FROM surveys s JOIN categories c " +
-                "ON s.category_id = c.id AND s.category_id = ? LIMIT ? OFFSET ?";
+                "FROM surveys s " +
+                "JOIN categories c ON s.category_id = c.id " +
+                "LEFT JOIN users u ON s.author_id = u.id " +
+                "WHERE s.category_id = ? LIMIT ? OFFSET ?";
         String queryTotalCount = "SELECT COUNT(*) FROM surveys WHERE category_id = ?";
 
-        String queryAll = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, s.created_at, " +
+        String queryAll = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name as author_name, s.created_at, " +
                 "c.name AS category_name " +
-                "FROM surveys s JOIN categories c " +
-                "ON s.category_id = c.id LIMIT ? OFFSET ?";
+                "FROM surveys s " +
+                "JOIN categories c ON s.category_id = c.id " +
+                "LEFT JOIN users u ON s.author_id = u.id " +
+                "LIMIT ? OFFSET ?";
         String queryTotalCountAll = "SELECT COUNT(*) FROM surveys";
 
         String queryCheckCategory = "SELECT * FROM categories WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
 
             PreparedStatement statement;
             PreparedStatement statementTotalCount;
@@ -153,7 +167,6 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                 statement.setInt(3, fromIndex);
 
                 statementTotalCount.setInt(1, categoryId);
-
 
                 PreparedStatement statementCheck = connection.prepareStatement(queryCheckCategory);
 
@@ -179,6 +192,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                             resultSet.getString("description"),
                             resultSet.getInt("category_id"),
                             resultSet.getString("category_name"),
+                            resultSet.getString("author_name"),
                             resultSet.getTimestamp("created_at")));
                 }
             }
@@ -190,7 +204,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
             }
 
         } catch (SQLException e) {
-                System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
         }
 
@@ -204,8 +218,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     public void deleteSurvey(int id) throws DatabaseAccessException {
         String query = "DELETE FROM surveys WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, id);
@@ -220,8 +233,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     public boolean exists(int id) throws DatabaseAccessException {
         String query = "SELECT COUNT(*) FROM surveys WHERE id = ?";
 
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, id);

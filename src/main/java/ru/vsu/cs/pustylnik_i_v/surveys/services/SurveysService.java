@@ -16,7 +16,7 @@ public interface SurveysService {
 
     ResponseEntity<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException;
 
-    ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName) throws DatabaseAccessException;
+    ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException;
 
     ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName) throws DatabaseAccessException;
 

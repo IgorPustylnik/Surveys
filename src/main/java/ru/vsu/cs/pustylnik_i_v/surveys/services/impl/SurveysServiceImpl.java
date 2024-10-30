@@ -140,13 +140,19 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName) throws DatabaseAccessException {
+    public ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException {
         if (!categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
 
         Integer categoryId = categoryRepository.getCategoryByName(categoryName).getId();
-        Survey newSurvey = surveyRepository.addSurvey(name, description, categoryId, Calendar.getInstance().getTime());
+        String authorName;
+        try {
+            authorName = userRepository.getUser(authorId).getName();
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(false, "User doesn't exist", null);
+        }
+        Survey newSurvey = surveyRepository.addSurvey(name, description, categoryId, authorName, Calendar.getInstance().getTime());
 
         return new ResponseEntity<>(true, "Survey created successfully", newSurvey);
     }

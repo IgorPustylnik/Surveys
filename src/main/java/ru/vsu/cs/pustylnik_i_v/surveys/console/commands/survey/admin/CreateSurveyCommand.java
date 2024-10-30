@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
@@ -49,8 +50,17 @@ public class CreateSurveyCommand extends AppCommand {
 
         ResponseEntity<Survey> response;
 
+        // TODO: REMOVE THIS KOSTYL
+        ResponseEntity<User> response1;
         try {
-            response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName);
+            response1 = appContext.getUserInfoService().getUser(appContext.token);
+        } catch (DatabaseAccessException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
+
+        try {
+            response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName, response1.getBody().getId());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
