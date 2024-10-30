@@ -15,6 +15,8 @@ CREATE TABLE surveys
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(1000),
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL,
     created_at timestamp NOT NULL
 );
 
