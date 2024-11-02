@@ -36,4 +36,6 @@ public interface SurveysService {
 
     ResponseEntity<?> deleteCategory(Integer categoryId) throws DatabaseAccessException;
 
+    ResponseEntity<Survey> getSurvey(Integer surveyId) throws DatabaseAccessException;
+
 }

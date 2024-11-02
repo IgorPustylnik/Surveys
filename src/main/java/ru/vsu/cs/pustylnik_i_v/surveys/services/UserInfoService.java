@@ -14,6 +14,8 @@ public interface UserInfoService {
 
     ResponseEntity<User> getUser(String token) throws DatabaseAccessException;
 
+    ResponseEntity<User> getUser(Integer id) throws DatabaseAccessException;
+
     ResponseEntity<AuthBody> login(String name, String password) throws DatabaseAccessException;
 
     ResponseEntity<AuthBody> register(String name, String password) throws DatabaseAccessException;

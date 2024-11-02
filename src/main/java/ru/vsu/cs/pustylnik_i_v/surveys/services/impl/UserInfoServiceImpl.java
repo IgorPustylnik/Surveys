@@ -43,6 +43,17 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public ResponseEntity<User> getUser(Integer id) throws DatabaseAccessException {
+        User user;
+        try {
+            user = userRepository.getUser(id);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(false, "User not found", null);
+        }
+        return new ResponseEntity<>(true, "Successfully found user", user);
+    }
+
+    @Override
     public ResponseEntity<AuthBody> login(String name, String password) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(name);

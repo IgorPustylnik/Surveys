@@ -130,6 +130,16 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
+    public ResponseEntity<Survey> getSurvey(Integer surveyId) throws DatabaseAccessException {
+        try {
+            Survey survey = surveyRepository.getSurveyById(surveyId);
+            return new ResponseEntity<>(true, "Successfully found survey", survey);
+        } catch (SurveyNotFoundException e) {
+            return new ResponseEntity<>(false, "Survey not found", null);
+        }
+    }
+
+    @Override
     public ResponseEntity<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException {
         try {
             surveyRepository.deleteSurvey(surveyId);
