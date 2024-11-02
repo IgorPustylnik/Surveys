@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.OptionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.QuestionNotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,12 +20,20 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
     }
 
     @Override
-    public List<Option> getOptions(int questionId) throws DatabaseAccessException {
+    public List<Option> getOptions(int questionId) throws QuestionNotFoundException, DatabaseAccessException {
         List<Option> options = new ArrayList<>();
 
         String query = "SELECT * FROM options WHERE question_id = ?";
+        String checkQuestionQuery = "SELECT * FROM questions WHERE id = ?";
 
         try (Connection connection = getConnection()) {
+            PreparedStatement checkQuestionStatement = connection.prepareStatement(checkQuestionQuery);
+            checkQuestionStatement.setInt(1, questionId);
+
+            if (!checkQuestionStatement.execute()) {
+                throw new QuestionNotFoundException(questionId);
+            }
+
             PreparedStatement statement = connection.prepareStatement(query);
 
             statement.setInt(1, questionId);
@@ -44,18 +53,17 @@ public class OptionSqlRepository extends BaseSqlRepository implements OptionRepo
     }
 
     @Override
-    public void addOption(int questionId, String description) throws DatabaseAccessException {
+    public void addOption(int questionId, String description) throws QuestionNotFoundException, DatabaseAccessException {
         String checkQuestionQuery = "SELECT * FROM questions WHERE id = ?";
 
         String query = "INSERT INTO options (question_id, description) VALUES (?, ?)";
 
         try (Connection connection = getConnection()) {
-
             PreparedStatement checkQuestionStatement = connection.prepareStatement(checkQuestionQuery);
             checkQuestionStatement.setInt(1, questionId);
 
             if (!checkQuestionStatement.execute()) {
-                return;
+                throw new QuestionNotFoundException(questionId);
             }
 
             PreparedStatement statement = connection.prepareStatement(query);

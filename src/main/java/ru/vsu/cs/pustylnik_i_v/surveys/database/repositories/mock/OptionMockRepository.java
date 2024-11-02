@@ -1,9 +1,11 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.OptionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.QuestionNotFoundException;
 
 import java.util.List;
 
@@ -14,12 +16,18 @@ public class OptionMockRepository extends BaseMockRepository implements OptionRe
     }
 
     @Override
-    public List<Option> getOptions(int questionId) {
-        return database.options.get(Option::getQuestionId,questionId);
+    public List<Option> getOptions(int questionId) throws QuestionNotFoundException {
+        if (database.questions.get(Question::getId, questionId).isEmpty()) {
+            throw new QuestionNotFoundException(questionId);
+        }
+        return database.options.get(Option::getQuestionId, questionId);
     }
 
     @Override
-    public void addOption(int questionId, String description) {
+    public void addOption(int questionId, String description) throws QuestionNotFoundException {
+        if (database.questions.get(Question::getId, questionId).isEmpty()) {
+            throw new QuestionNotFoundException(questionId);
+        }
         database.options.add(questionId, description);
     }
 }

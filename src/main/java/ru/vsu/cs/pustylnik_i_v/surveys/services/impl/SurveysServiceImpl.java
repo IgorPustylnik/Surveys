@@ -61,7 +61,12 @@ public class SurveysServiceImpl implements SurveysService {
 
     @Override
     public ServiceResponse<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException {
-        List<Option> options = optionRepository.getOptions(questionId);
+        List<Option> options;
+        try {
+            options = optionRepository.getOptions(questionId);
+        } catch (QuestionNotFoundException e) {
+            return new ServiceResponse<>(false, "Question doesn't exist", null);
+        }
 
         if (options.isEmpty()) {
             return new ServiceResponse<>(true, "No options found", null);
@@ -113,7 +118,11 @@ public class SurveysServiceImpl implements SurveysService {
         Question question = questions.get(questions.size() - 1);
 
         for (String option : options) {
-            optionRepository.addOption(question.getId(), option);
+            try {
+                optionRepository.addOption(question.getId(), option);
+            } catch (QuestionNotFoundException e) {
+                return new ServiceResponse<>(false, "Question doesn't exist", null);
+            }
         }
 
         return new ServiceResponse<>(true, "Question created successfully", null);
@@ -141,12 +150,8 @@ public class SurveysServiceImpl implements SurveysService {
 
     @Override
     public ServiceResponse<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException {
-        try {
-            surveyRepository.deleteSurvey(surveyId);
-            return new ServiceResponse<>(true, "Survey deleted successfully", null);
-        } catch (SurveyNotFoundException e) {
-            return new ServiceResponse<>(false, "Survey doesn't exist", null);
-        }
+        surveyRepository.deleteSurvey(surveyId);
+        return new ServiceResponse<>(true, "Survey deleted successfully", null);
     }
 
     @Override
