@@ -5,10 +5,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.TokenValidationService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.SurveysServiceImpl;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.TokenValidationServiceImpl;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.UserInfoServiceImpl;
 
 public class SqlServiceProvider implements ServiceProvider {

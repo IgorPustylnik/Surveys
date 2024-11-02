@@ -3,10 +3,6 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
-
-import javax.xml.crypto.Data;
 import java.util.Date;
 
 public interface SessionRepository {

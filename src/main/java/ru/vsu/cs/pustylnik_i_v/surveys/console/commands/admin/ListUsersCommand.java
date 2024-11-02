@@ -7,7 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class ListUsersCommand extends CommandMenu {
 
         int currentPage = appContext.currentPageIndex;
 
-        ResponseEntity<PagedEntity<List<User>>> response;
+        ServiceResponse<PagedEntity<List<User>>> response;
         try {
             response = appContext.getUserInfoService().getUsersPagedList(currentPage, perPageAmount);
         } catch (DatabaseAccessException e) {
@@ -42,9 +42,9 @@ public class ListUsersCommand extends CommandMenu {
             return;
         }
 
-        PagedEntity<List<User>> usersPage = response.getBody();
-        int totalPages = usersPage.getSize();
-        List<User> users = usersPage.getPage();
+        PagedEntity<List<User>> usersPage = response.body();
+        int totalPages = usersPage.size();
+        List<User> users = usersPage.page();
 
         users.forEach(s -> commands.add(CommandType.OPEN_USER));
         if (currentPage > 0) {

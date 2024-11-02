@@ -12,30 +12,30 @@ import java.util.List;
 
 public interface SurveysService {
 
-    ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException;
+    ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException;
 
-    ResponseEntity<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException;
+    ServiceResponse<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException;
 
-    ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException;
+    ServiceResponse<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException;
 
-    ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName) throws DatabaseAccessException;
+    ServiceResponse<?> setSurveyCategory(Integer surveyId, String categoryName) throws DatabaseAccessException;
 
-    ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId) throws DatabaseAccessException;
+    ServiceResponse<Integer> startSessionAndGetId(String userName, Integer surveyId) throws DatabaseAccessException;
 
-    ResponseEntity<?> finishSession(Integer sessionId) throws DatabaseAccessException;
+    ServiceResponse<?> finishSession(Integer sessionId) throws DatabaseAccessException;
 
-    ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer page) throws DatabaseAccessException;
+    ServiceResponse<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer page) throws DatabaseAccessException;
 
-    ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException;
+    ServiceResponse<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException;
 
-    ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
+    ServiceResponse<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
 
-    ResponseEntity<?> submitAnswer (Integer sessionId, Integer optionId) throws DatabaseAccessException;
+    ServiceResponse<?> submitAnswer (Integer sessionId, Integer optionId) throws DatabaseAccessException;
 
-    ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException;
+    ServiceResponse<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException;
 
-    ResponseEntity<?> deleteCategory(Integer categoryId) throws DatabaseAccessException;
+    ServiceResponse<?> deleteCategory(Integer categoryId) throws DatabaseAccessException;
 
-    ResponseEntity<Survey> getSurvey(Integer surveyId) throws DatabaseAccessException;
+    ServiceResponse<Survey> getSurvey(Integer surveyId) throws DatabaseAccessException;
 
 }

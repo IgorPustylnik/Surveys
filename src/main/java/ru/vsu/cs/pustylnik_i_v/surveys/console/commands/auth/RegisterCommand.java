@@ -7,7 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public class RegisterCommand extends AppCommand {
 
@@ -39,7 +39,7 @@ public class RegisterCommand extends AppCommand {
             }
         } while (validation != null);
 
-        ResponseEntity<AuthBody> response;
+        ServiceResponse<AuthBody> response;
 
         try {
             response = appContext.getUserInfoService().register(name, password);
@@ -48,17 +48,17 @@ public class RegisterCommand extends AppCommand {
             return;
         }
 
-        if (!response.isSuccess()) {
+        if (!response.success()) {
             ConsoleUtils.clear();
-            System.err.println(response.getMessage());
+            System.err.println(response.message());
             appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 
         ConsoleUtils.clear();
-        System.out.println(response.getMessage());
+        System.out.println(response.message());
 
-        appContext.setToken(response.getBody().getToken());
+        appContext.setToken(response.body().token());
 
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
     }

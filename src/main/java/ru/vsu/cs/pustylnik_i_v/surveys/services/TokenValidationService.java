@@ -1,8 +1,8 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.services;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public interface TokenValidationService {
-    ResponseEntity<RoleType> getRoleFromToken(String token);
+    ServiceResponse<RoleType> getRoleFromToken(String token);
 }

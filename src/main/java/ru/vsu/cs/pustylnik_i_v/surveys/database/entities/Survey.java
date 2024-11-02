@@ -66,7 +66,7 @@ public class Survey {
         return authorName;
     }
 
-    public void setAuthorName(int authorId) {
+    public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
 

@@ -3,8 +3,6 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.QuestionNotFoundException;
-
 import java.util.List;
 
 public interface QuestionRepository {

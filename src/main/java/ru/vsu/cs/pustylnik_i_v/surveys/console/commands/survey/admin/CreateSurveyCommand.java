@@ -7,7 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public class CreateSurveyCommand extends AppCommand {
 
@@ -47,7 +47,7 @@ public class CreateSurveyCommand extends AppCommand {
             }
         } while (validation != null);
 
-        ResponseEntity<Survey> response;
+        ServiceResponse<Survey> response;
 
         try {
             response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName, appContext.localUser.getId());
@@ -56,13 +56,13 @@ public class CreateSurveyCommand extends AppCommand {
             return;
         }
 
-        if (!response.isSuccess()) {
-            System.err.println(response.getMessage());
+        if (!response.success()) {
+            System.err.println(response.message());
             appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 
-        appContext.currentSurvey = response.getBody();
+        appContext.currentSurvey = response.body();
 
         Integer questionsCount;
 

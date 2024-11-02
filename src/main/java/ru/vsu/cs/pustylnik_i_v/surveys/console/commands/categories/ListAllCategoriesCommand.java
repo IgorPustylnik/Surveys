@@ -7,7 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ListAllCategoriesCommand extends CommandMenu {
 
         int currentPage = appContext.currentPageIndex;
 
-        ResponseEntity<PagedEntity<List<Category>>> response;
+        ServiceResponse<PagedEntity<List<Category>>> response;
 
         try {
             response = appContext.getSurveysService().getCategoriesPagedList(currentPage, perPageAmount);
@@ -47,9 +47,9 @@ public class ListAllCategoriesCommand extends CommandMenu {
             return;
         }
 
-        PagedEntity<List<Category>> categoriesPage = response.getBody();
-        int totalPages = categoriesPage.getSize();
-        List<Category> categories = categoriesPage.getPage();
+        PagedEntity<List<Category>> categoriesPage = response.body();
+        int totalPages = categoriesPage.size();
+        List<Category> categories = categoriesPage.page();
 
         categories.forEach(s -> commands.add(CommandType.OPEN_CATEGORY));
         if (currentPage > 0) {

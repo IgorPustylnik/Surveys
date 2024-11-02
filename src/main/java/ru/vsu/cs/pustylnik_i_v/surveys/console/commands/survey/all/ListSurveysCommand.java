@@ -7,7 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ListSurveysCommand extends CommandMenu {
         int currentPage = appContext.currentPageIndex;
         Integer currentCategoryId = appContext.currentCategory != null ? appContext.currentCategory.getId() : null;
 
-        ResponseEntity<PagedEntity<List<Survey>>> response;
+        ServiceResponse<PagedEntity<List<Survey>>> response;
 
         try {
             response = appContext.getSurveysService().getSurveysPagedList(currentCategoryId, currentPage, 5);
@@ -48,9 +48,9 @@ public class ListSurveysCommand extends CommandMenu {
             return;
         }
 
-        PagedEntity<List<Survey>> surveysPage = response.getBody();
-        int totalPages = surveysPage.getSize();
-        List<Survey> surveys = surveysPage.getPage();
+        PagedEntity<List<Survey>> surveysPage = response.body();
+        int totalPages = surveysPage.size();
+        List<Survey> surveys = surveysPage.page();
 
         surveys.forEach(s -> commands.add(CommandType.OPEN_SURVEY));
         if (currentPage > 0) {

@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.Calendar;
 import java.util.List;
@@ -38,39 +38,39 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException {
+    public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException {
         PagedEntity<List<Survey>> surveysPagedEntity;
         surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, page, perPageAmount);
 
-        if (surveysPagedEntity.getPage().isEmpty()) {
-            return new ResponseEntity<>(false, "Nothing found", surveysPagedEntity);
+        if (surveysPagedEntity.page().isEmpty()) {
+            return new ServiceResponse<>(false, "Nothing found", surveysPagedEntity);
         }
-        return new ResponseEntity<>(true, "Surveys successfully found", surveysPagedEntity);
+        return new ServiceResponse<>(true, "Surveys successfully found", surveysPagedEntity);
     }
 
     @Override
-    public ResponseEntity<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) throws DatabaseAccessException {
+    public ServiceResponse<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) throws DatabaseAccessException {
         List<Question> questions = questionRepository.getQuestions(surveyId);
 
         if (index >= questions.size()) {
-            return new ResponseEntity<>(false, "Survey completed successfully", null);
+            return new ServiceResponse<>(false, "Survey completed successfully", null);
         }
         Question question = questions.get(index);
-        return new ResponseEntity<>(true, "Question successfully found", new PagedEntity<>(index, questions.size(), question));
+        return new ServiceResponse<>(true, "Question successfully found", new PagedEntity<>(index, questions.size(), question));
     }
 
     @Override
-    public ResponseEntity<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException {
+    public ServiceResponse<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException {
         List<Option> options = optionRepository.getOptions(questionId);
 
         if (options.isEmpty()) {
-            return new ResponseEntity<>(true, "No options found", null);
+            return new ServiceResponse<>(true, "No options found", null);
         }
-        return new ResponseEntity<>(true, "Options found successfully", options);
+        return new ServiceResponse<>(true, "Options found successfully", options);
     }
 
     @Override
-    public ResponseEntity<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
+    public ServiceResponse<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
         List<Category> sliced;
         List<Category> surveys = categoryRepository.getAllCategories();
 
@@ -84,31 +84,31 @@ public class SurveysServiceImpl implements SurveysService {
         if (totalPages < 1) totalPages = 1;
 
         if (sliced.isEmpty()) {
-            return new ResponseEntity<>(false, "No categories found", new PagedEntity<>(page, totalPages, sliced));
+            return new ServiceResponse<>(false, "No categories found", new PagedEntity<>(page, totalPages, sliced));
         }
 
-        return new ResponseEntity<>(true, "Categories successfully found", new PagedEntity<>(page, totalPages, sliced));
+        return new ServiceResponse<>(true, "Categories successfully found", new PagedEntity<>(page, totalPages, sliced));
     }
 
     @Override
-    public ResponseEntity<?> submitAnswer(Integer sessionId, Integer optionId) throws DatabaseAccessException {
+    public ServiceResponse<?> submitAnswer(Integer sessionId, Integer optionId) throws DatabaseAccessException {
         try {
             answerRepository.addAnswer(sessionId, optionId);
         } catch (SessionNotFoundException e) {
-            return new ResponseEntity<>(false, "Session doesn't exist", null);
+            return new ServiceResponse<>(false, "Session doesn't exist", null);
         } catch (OptionNotFoundException e) {
-            return new ResponseEntity<>(false, "Option doesn't exist", null);
+            return new ServiceResponse<>(false, "Option doesn't exist", null);
         }
-        return new ResponseEntity<>(true, "Answer submitted successfully", null);
+        return new ServiceResponse<>(true, "Answer submitted successfully", null);
     }
 
     @Override
-    public ResponseEntity<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException {
+    public ServiceResponse<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException {
         questionRepository.addQuestion(surveyId, description, questionType);
 
         List<Question> questions = questionRepository.getQuestions(surveyId);
         if (questions.isEmpty()) {
-            return new ResponseEntity<>(false, "Error (couldn't create a question)", null);
+            return new ServiceResponse<>(false, "Error (couldn't create a question)", null);
         }
         Question question = questions.get(questions.size() - 1);
 
@@ -116,41 +116,41 @@ public class SurveysServiceImpl implements SurveysService {
             optionRepository.addOption(question.getId(), option);
         }
 
-        return new ResponseEntity<>(true, "Question created successfully", null);
+        return new ServiceResponse<>(true, "Question created successfully", null);
     }
 
     @Override
-    public ResponseEntity<?> deleteCategory(Integer categoryId) throws DatabaseAccessException {
+    public ServiceResponse<?> deleteCategory(Integer categoryId) throws DatabaseAccessException {
         try {
             categoryRepository.deleteCategory(categoryId);
         } catch (CategoryNotFoundException e) {
-            return new ResponseEntity<>(false, "Category to delete was not found", null);
+            return new ServiceResponse<>(false, "Category to delete was not found", null);
         }
-        return new ResponseEntity<>(true, "Category deleted successfully", null);
+        return new ServiceResponse<>(true, "Category deleted successfully", null);
     }
 
     @Override
-    public ResponseEntity<Survey> getSurvey(Integer surveyId) throws DatabaseAccessException {
+    public ServiceResponse<Survey> getSurvey(Integer surveyId) throws DatabaseAccessException {
         try {
             Survey survey = surveyRepository.getSurveyById(surveyId);
-            return new ResponseEntity<>(true, "Successfully found survey", survey);
+            return new ServiceResponse<>(true, "Successfully found survey", survey);
         } catch (SurveyNotFoundException e) {
-            return new ResponseEntity<>(false, "Survey not found", null);
+            return new ServiceResponse<>(false, "Survey not found", null);
         }
     }
 
     @Override
-    public ResponseEntity<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException {
+    public ServiceResponse<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException {
         try {
             surveyRepository.deleteSurvey(surveyId);
-            return new ResponseEntity<>(true, "Survey deleted successfully", null);
+            return new ServiceResponse<>(true, "Survey deleted successfully", null);
         } catch (SurveyNotFoundException e) {
-            return new ResponseEntity<>(false, "Survey doesn't exist", null);
+            return new ServiceResponse<>(false, "Survey doesn't exist", null);
         }
     }
 
     @Override
-    public ResponseEntity<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException {
+    public ServiceResponse<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException {
         if (!categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
@@ -161,15 +161,15 @@ public class SurveysServiceImpl implements SurveysService {
         try {
             authorName = userRepository.getUser(authorId).getName();
         } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(false, "User doesn't exist", null);
+            return new ServiceResponse<>(false, "User doesn't exist", null);
         }
         Survey newSurvey = surveyRepository.addSurvey(name, description, categoryId, authorName, Calendar.getInstance().getTime());
 
-        return new ResponseEntity<>(true, "Survey created successfully", newSurvey);
+        return new ServiceResponse<>(true, "Survey created successfully", newSurvey);
     }
 
     @Override
-    public ResponseEntity<?> setSurveyCategory(Integer surveyId, String categoryName) throws DatabaseAccessException {
+    public ServiceResponse<?> setSurveyCategory(Integer surveyId, String categoryName) throws DatabaseAccessException {
         if (!categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
@@ -178,14 +178,14 @@ public class SurveysServiceImpl implements SurveysService {
         try {
             surveyRepository.updateSurveyCategoryName(surveyId, categoryId);
         } catch (SurveyNotFoundException e) {
-            return new ResponseEntity<>(false, "Survey doesn't exist", null);
+            return new ServiceResponse<>(false, "Survey doesn't exist", null);
         }
 
-        return new ResponseEntity<>(true, "Category set successfully", null);
+        return new ServiceResponse<>(true, "Category set successfully", null);
     }
 
     @Override
-    public ResponseEntity<Integer> startSessionAndGetId(String userName, Integer surveyId) throws DatabaseAccessException {
+    public ServiceResponse<Integer> startSessionAndGetId(String userName, Integer surveyId) throws DatabaseAccessException {
         Integer userId = null;
 
         try {
@@ -196,22 +196,22 @@ public class SurveysServiceImpl implements SurveysService {
         try {
             surveyRepository.getSurveyById(surveyId);
         } catch (SurveyNotFoundException e) {
-            return new ResponseEntity<>(false, "Survey doesn't exist", null);
+            return new ServiceResponse<>(false, "Survey doesn't exist", null);
         }
 
         Integer sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
-        return new ResponseEntity<>(true, "Successfully created a session", sessionId);
+        return new ServiceResponse<>(true, "Successfully created a session", sessionId);
     }
 
     @Override
-    public ResponseEntity<?> finishSession(Integer sessionId) throws DatabaseAccessException {
+    public ServiceResponse<?> finishSession(Integer sessionId) throws DatabaseAccessException {
         try {
             Session session = sessionRepository.getSessionById(sessionId);
             session.setFinishedAt(Calendar.getInstance().getTime());
             sessionRepository.updateSession(session);
-            return new ResponseEntity<>(true, "Session finished successfully", null);
+            return new ServiceResponse<>(true, "Session finished successfully", null);
         } catch (SessionNotFoundException e) {
-            return new ResponseEntity<>(false, "Session doesn't exist", null);
+            return new ServiceResponse<>(false, "Session doesn't exist", null);
         }
     }
 }

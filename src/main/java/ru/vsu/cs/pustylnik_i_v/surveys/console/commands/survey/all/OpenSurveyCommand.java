@@ -5,8 +5,6 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
 
 import java.util.ArrayList;
 

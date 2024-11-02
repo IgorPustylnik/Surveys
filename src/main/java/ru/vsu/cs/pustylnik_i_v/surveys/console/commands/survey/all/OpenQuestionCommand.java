@@ -9,7 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ public class OpenQuestionCommand extends CommandMenu {
     public void execute() {
         // Starting a session if needed
         if (appContext.currentSessionId == null) {
-            ResponseEntity<Integer> response;
+            ServiceResponse<Integer> response;
 
             try {
                 response = appContext.getSurveysService().startSessionAndGetId(appContext.localUser.getName(), appContext.currentSurvey.getId());
@@ -40,16 +40,16 @@ public class OpenQuestionCommand extends CommandMenu {
                 return;
             }
 
-            if (!response.isSuccess()) {
-                System.err.println(response.getMessage());
+            if (!response.success()) {
+                System.err.println(response.message());
                 goBack();
                 return;
             }
-            appContext.currentSessionId = response.getBody();
+            appContext.currentSessionId = response.body();
         }
 
 
-        ResponseEntity<PagedEntity<Question>> response;
+        ServiceResponse<PagedEntity<Question>> response;
 
         try {
             response = appContext.getSurveysService().getQuestionPagedEntity(appContext.currentSurvey.getId(), appContext.currentQuestionIndex);
@@ -59,19 +59,19 @@ public class OpenQuestionCommand extends CommandMenu {
         }
 
         // Questions not found
-        PagedEntity<Question> questionPagedEntity = response.getBody();
-        if (!response.isSuccess() || questionPagedEntity == null) {
+        PagedEntity<Question> questionPagedEntity = response.body();
+        if (!response.success() || questionPagedEntity == null) {
             ConsoleUtils.clear();
-            System.out.println(response.getMessage());
+            System.out.println(response.message());
             goBack();
             return;
         }
 
-        Question question = questionPagedEntity.getPage();
+        Question question = questionPagedEntity.page();
 
         setTitle(String.format("%s", question.getText()));
 
-        ResponseEntity<List<Option>> response1;
+        ServiceResponse<List<Option>> response1;
 
         try {
             response1 = appContext.getSurveysService().getQuestionOptionList(question.getId());
@@ -80,17 +80,17 @@ public class OpenQuestionCommand extends CommandMenu {
             return;
         }
 
-        if (!response1.isSuccess()) {
+        if (!response1.success()) {
             ConsoleUtils.clear();
-            System.err.println(response1.getMessage());
+            System.err.println(response1.message());
             goBack();
             return;
         }
 
-        List<Option> options = response1.getBody();
+        List<Option> options = response1.body();
         if (options == null) {
             ConsoleUtils.clear();
-            System.err.println(response1.getMessage());
+            System.err.println(response1.message());
             goBack();
             return;
         }

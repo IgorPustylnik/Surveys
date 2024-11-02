@@ -1,6 +1,5 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Answer;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.OptionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;

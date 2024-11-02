@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public class ChangePasswordCommand extends AppCommand {
 
@@ -23,7 +23,7 @@ public class ChangePasswordCommand extends AppCommand {
     public void execute() {
         String oldPassword = ConsoleUtils.inputString("your old password");
 
-        ResponseEntity<?> response;
+        ServiceResponse<?> response;
 
         String newPassword, validation;
         do {
@@ -41,15 +41,15 @@ public class ChangePasswordCommand extends AppCommand {
             return;
         }
 
-        if (!response.isSuccess()) {
+        if (!response.success()) {
             ConsoleUtils.clear();
-            System.err.println(response.getMessage());
+            System.err.println(response.message());
             appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 
         ConsoleUtils.clear();
-        System.out.println(response.getMessage());
+        System.out.println(response.message());
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
     }
 }

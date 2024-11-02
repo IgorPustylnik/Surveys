@@ -3,31 +3,30 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.List;
 
 public interface UserInfoService {
 
-    ResponseEntity<User> getUser(String token) throws DatabaseAccessException;
+    ServiceResponse<User> getUser(String token) throws DatabaseAccessException;
 
-    ResponseEntity<User> getUser(Integer id) throws DatabaseAccessException;
+    ServiceResponse<User> getUser(Integer id) throws DatabaseAccessException;
 
-    ResponseEntity<AuthBody> login(String name, String password) throws DatabaseAccessException;
+    ServiceResponse<AuthBody> login(String name, String password) throws DatabaseAccessException;
 
-    ResponseEntity<AuthBody> register(String name, String password) throws DatabaseAccessException;
+    ServiceResponse<AuthBody> register(String name, String password) throws DatabaseAccessException;
 
-    ResponseEntity<?> updatePassword(String name, String oldPassword, String newPassword) throws DatabaseAccessException;
+    ServiceResponse<?> updatePassword(String name, String oldPassword, String newPassword) throws DatabaseAccessException;
 
-    ResponseEntity<?> setRole(String userName, RoleType role) throws DatabaseAccessException;
+    ServiceResponse<?> setRole(String userName, RoleType role) throws DatabaseAccessException;
 
-    ResponseEntity<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
+    ServiceResponse<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
 
-    ResponseEntity<?> deleteUser(String userName) throws DatabaseAccessException;
+    ServiceResponse<?> deleteUser(String userName) throws DatabaseAccessException;
 
-    ResponseEntity<RoleType> getUserRole(String userName) throws DatabaseAccessException;
+    ServiceResponse<RoleType> getUserRole(String userName) throws DatabaseAccessException;
 
 }

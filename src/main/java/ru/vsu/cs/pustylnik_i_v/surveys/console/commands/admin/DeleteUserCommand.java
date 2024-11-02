@@ -5,7 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public class DeleteUserCommand extends AppCommand {
 
@@ -26,7 +26,7 @@ public class DeleteUserCommand extends AppCommand {
             appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
             return;
         }
-        ResponseEntity<?> response;
+        ServiceResponse<?> response;
         try {
             response = appContext.getUserInfoService().deleteUser(appContext.selectedUser.getName());
         } catch (DatabaseAccessException e) {
@@ -35,10 +35,10 @@ public class DeleteUserCommand extends AppCommand {
         }
 
         ConsoleUtils.clear();
-        if (!response.isSuccess()) {
-            System.err.println(response.getMessage());
+        if (!response.success()) {
+            System.err.println(response.message());
         } else {
-            System.out.println(response.getMessage());
+            System.out.println(response.message());
         }
 
         appContext.getCommandExecutor().getCommand(CommandType.LIST_USERS).execute();

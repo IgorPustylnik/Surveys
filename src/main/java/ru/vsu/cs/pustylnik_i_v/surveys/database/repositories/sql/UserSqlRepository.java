@@ -215,10 +215,10 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     }
 
     @Override
-    public boolean exists(String name) {
+    public boolean exists(String name) throws DatabaseAccessException {
         try {
             getUser(name);
-        } catch (UserNotFoundException | DatabaseAccessException e) {
+        } catch (UserNotFoundException e) {
             return false;
         }
         return true;

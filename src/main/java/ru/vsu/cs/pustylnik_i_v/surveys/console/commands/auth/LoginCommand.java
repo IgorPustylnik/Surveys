@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 
 public class LoginCommand extends AppCommand {
@@ -25,7 +25,7 @@ public class LoginCommand extends AppCommand {
         String name = ConsoleUtils.inputString("your username");
         String password = ConsoleUtils.inputString("your password");
 
-        ResponseEntity<AuthBody> response;
+        ServiceResponse<AuthBody> response;
 
         try {
             response = appContext.getUserInfoService().login(name, password);
@@ -34,15 +34,15 @@ public class LoginCommand extends AppCommand {
             return;
         }
 
-        if (!response.isSuccess()) {
+        if (!response.success()) {
             ConsoleUtils.clear();
-            System.err.println(response.getMessage());
+            System.err.println(response.message());
             appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
-        System.out.println(response.getMessage());
+        System.out.println(response.message());
 
-        appContext.setToken(response.getBody().getToken());
+        appContext.setToken(response.body().token());
 
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();

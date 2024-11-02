@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.ArrayList;
 
@@ -25,7 +25,7 @@ public class OpenUserCommand extends CommandMenu {
     public void execute() {
         commands = new ArrayList<>();
         User user = appContext.selectedUser;
-        ResponseEntity<RoleType> response;
+        ServiceResponse<RoleType> response;
 
         try {
             response = appContext.getUserInfoService().getUserRole(user.getName());
@@ -33,11 +33,11 @@ public class OpenUserCommand extends CommandMenu {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
         }
-        if (!response.isSuccess()) {
-            System.err.println(response.getMessage());
+        if (!response.success()) {
+            System.err.println(response.message());
         }
 
-        setTitle(String.format("Id: %d\nName: %s\nRole: %s", user.getId(), user.getName(), response.getBody()));
+        setTitle(String.format("Id: %d\nName: %s\nRole: %s", user.getId(), user.getName(), response.body()));
 
         if (appContext.selectedUser.getId() != appContext.localUser.getId()) {
             commands.add(CommandType.DELETE_USER);

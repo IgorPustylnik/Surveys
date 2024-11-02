@@ -2,19 +2,17 @@ package ru.vsu.cs.pustylnik_i_v.surveys.console;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandExecutor;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -87,14 +85,14 @@ public class ConsoleAppContext {
     public void fetchUser() {
         String token = getToken();
         try {
-            ResponseEntity<User> response = getUserInfoService().getUser(token);
+            ServiceResponse<User> response = getUserInfoService().getUser(token);
 
-            if (!response.isSuccess()) {
+            if (!response.success()) {
                 localUser = null;
                 return;
             }
 
-            localUser = response.getBody();
+            localUser = response.body();
 
         } catch (DatabaseAccessException e) {
             System.err.println(e.getMessage());

@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ResponseEntity;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public class UpdateUserRoleCommand extends AppCommand {
 
@@ -32,7 +32,7 @@ public class UpdateUserRoleCommand extends AppCommand {
 
         RoleType roleType = input == 1 ? RoleType.USER : RoleType.ADMIN;
 
-        ResponseEntity<?> response;
+        ServiceResponse<?> response;
 
         try {
             response = appContext.getUserInfoService().setRole(appContext.selectedUser.getName(), roleType);
@@ -41,15 +41,15 @@ public class UpdateUserRoleCommand extends AppCommand {
             return;
         }
 
-        if (!response.isSuccess()) {
+        if (!response.success()) {
             ConsoleUtils.clear();
-            System.err.println(response.getMessage());
+            System.err.println(response.message());
             appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
             return;
         }
 
         ConsoleUtils.clear();
-        System.out.println(response.getMessage());
+        System.out.println(response.message());
         appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
     }
 }
