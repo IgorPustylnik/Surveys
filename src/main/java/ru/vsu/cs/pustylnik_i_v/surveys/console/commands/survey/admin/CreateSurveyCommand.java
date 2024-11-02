@@ -50,17 +50,8 @@ public class CreateSurveyCommand extends AppCommand {
 
         ResponseEntity<Survey> response;
 
-        // TODO: REMOVE THIS KOSTYL
-        ResponseEntity<User> response1;
         try {
-            response1 = appContext.getUserInfoService().getUser(appContext.getToken());
-        } catch (DatabaseAccessException e) {
-            System.err.println(e.getMessage());
-            return;
-        }
-
-        try {
-            response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName, response1.getBody().getId());
+            response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName, appContext.localUser.getId());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

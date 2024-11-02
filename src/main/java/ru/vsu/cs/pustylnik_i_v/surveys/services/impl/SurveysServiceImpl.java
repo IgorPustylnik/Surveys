@@ -146,6 +146,7 @@ public class SurveysServiceImpl implements SurveysService {
         }
 
         Integer categoryId = categoryRepository.getCategoryByName(categoryName).getId();
+
         String authorName;
         try {
             authorName = userRepository.getUser(authorId).getName();
