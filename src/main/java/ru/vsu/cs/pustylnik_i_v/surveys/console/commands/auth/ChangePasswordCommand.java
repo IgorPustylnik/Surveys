@@ -25,20 +25,6 @@ public class ChangePasswordCommand extends AppCommand {
 
         ResponseEntity<?> response;
 
-        try {
-            response = appContext.getUserInfoService().checkIfPasswordIsCorrect(appContext.localUser.getName(), oldPassword);
-        } catch (DatabaseAccessException e) {
-            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
-            return;
-        }
-
-        if (!response.isSuccess()) {
-            ConsoleUtils.clear();
-            System.err.println(response.getMessage());
-            appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
-            return;
-        }
-
         String newPassword, validation;
         do {
             newPassword = ConsoleUtils.inputString("your new password");
@@ -49,9 +35,16 @@ public class ChangePasswordCommand extends AppCommand {
         } while (validation != null);
 
         try {
-            response = appContext.getUserInfoService().updatePassword(appContext.localUser.getName(), newPassword);
+            response = appContext.getUserInfoService().updatePassword(appContext.localUser.getName(), oldPassword, newPassword);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+            return;
+        }
+
+        if (!response.isSuccess()) {
+            ConsoleUtils.clear();
+            System.err.println(response.getMessage());
+            appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
             return;
         }
 

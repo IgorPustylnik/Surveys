@@ -18,9 +18,7 @@ public interface UserInfoService {
 
     ResponseEntity<AuthBody> register(String name, String password) throws DatabaseAccessException;
 
-    ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password) throws DatabaseAccessException;
-
-    ResponseEntity<?> updatePassword(String name, String newPassword) throws DatabaseAccessException;
+    ResponseEntity<?> updatePassword(String name, String oldPassword, String newPassword) throws DatabaseAccessException;
 
     ResponseEntity<?> setRole(String userName, RoleType role) throws DatabaseAccessException;
 
