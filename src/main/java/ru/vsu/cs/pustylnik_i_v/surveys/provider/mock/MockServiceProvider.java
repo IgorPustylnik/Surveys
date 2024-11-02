@@ -47,9 +47,4 @@ public class MockServiceProvider implements ServiceProvider {
     public SurveysService getSurveysService() {
         return surveysService;
     }
-
-    @Override
-    public TokenValidationService getTokenValidationService() {
-        return null;
-    }
 }

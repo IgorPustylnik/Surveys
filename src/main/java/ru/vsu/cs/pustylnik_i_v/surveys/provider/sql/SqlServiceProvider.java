@@ -15,7 +15,6 @@ public class SqlServiceProvider implements ServiceProvider {
 
     private final UserInfoService userInfoService;
     private final SurveysService surveysService;
-    private final TokenValidationService tokenValidationService;
 
     public SqlServiceProvider() {
         DatabaseSource dataSource = new DatabaseSource();
@@ -31,7 +30,6 @@ public class SqlServiceProvider implements ServiceProvider {
         this.userInfoService = new UserInfoServiceImpl(userRepository);
         this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
-        this.tokenValidationService = new TokenValidationServiceImpl(userInfoService);
     }
 
     @Override
@@ -42,10 +40,5 @@ public class SqlServiceProvider implements ServiceProvider {
     @Override
     public SurveysService getSurveysService() {
         return surveysService;
-    }
-
-    @Override
-    public TokenValidationService getTokenValidationService() {
-        return tokenValidationService;
     }
 }

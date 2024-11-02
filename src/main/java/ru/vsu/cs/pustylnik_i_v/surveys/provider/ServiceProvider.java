@@ -10,6 +10,4 @@ public interface ServiceProvider {
 
     SurveysService getSurveysService();
 
-    TokenValidationService getTokenValidationService();
-
 }

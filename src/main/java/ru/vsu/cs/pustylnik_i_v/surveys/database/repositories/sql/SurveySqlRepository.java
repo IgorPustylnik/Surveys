@@ -79,7 +79,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     @Override
     public Survey getSurveyById(int id) throws SurveyNotFoundException, DatabaseAccessException {
         String query = "SELECT s.id as survey_id, s.name as survey_name, s.description, s.category_id, c.name as category_name, u.name as author_name, s.created_at " +
-                "FROM surveys s LEFT JOIN categories c ON s.category_id = c.id LEFT JOIN users u ON s.author_id = u.id AND s.id = ?";
+                "FROM surveys s LEFT JOIN categories c ON s.category_id = c.id LEFT JOIN users u ON s.author_id = u.id WHERE s.id = ?";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);

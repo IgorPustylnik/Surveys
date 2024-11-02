@@ -5,21 +5,20 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class DatabaseConfig {
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
     static {
         try (InputStream input = DatabaseConfig.class.getClassLoader().getResourceAsStream("db.properties")) {
             if (input == null) {
                 System.err.println("Unable to find db.properties");
             } else {
-                properties.load(input); // Загружаем данные из файла
+                properties.load(input);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
     }
-
-
+    
     public static String getUrl() {
         return properties.getProperty("db.url");
     }
