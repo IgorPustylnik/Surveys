@@ -24,7 +24,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     @Override
     public User getUser(String name) throws UserNotFoundException, DatabaseAccessException {
         String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
-                "FROM users u JOIN roles r ON u.id = r.user_id AND u.name = ?";
+                "FROM users u JOIN roles r ON u.id = r.user_id WHERE u.name = ?";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -32,9 +32,11 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    String roleString = resultSet.getString("role");
+                    RoleType roleType = roleString != null ? RoleType.valueOf(roleString.toUpperCase()) : null;
                     return new User(resultSet.getInt("user_id"),
                             resultSet.getString("user_name"),
-                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
+                            roleType,
                             resultSet.getString("password"));
                 }
             }
@@ -48,7 +50,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     @Override
     public User getUser(int id) throws UserNotFoundException, DatabaseAccessException {
         String query = "SELECT u.id as user_id, u.name as user_name, role, password " +
-                "FROM users u JOIN roles r ON u.id = r.user_id AND u.id = ?";
+                "FROM users u LEFT JOIN roles r ON u.id = r.user_id WHERE u.id = ?";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -56,9 +58,11 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    String roleString = resultSet.getString("role");
+                    RoleType roleType = roleString != null ? RoleType.valueOf(roleString.toUpperCase()) : null;
                     return new User(resultSet.getInt("user_id"),
                             resultSet.getString("user_name"),
-                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
+                            roleType,
                             resultSet.getString("password"));
                 }
             }
@@ -76,9 +80,9 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
         int fromIndex = perPageAmount * page;
         int totalCount = 0;
 
-        String query = "SELECT u.id as user_id, u.name as user_name, role, password FROM users u JOIN roles r " +
+        String query = "SELECT u.id as user_id, u.name as user_name, role, password FROM users u LEFT JOIN roles r " +
                 "ON u.id = r.user_id LIMIT ? OFFSET ?";
-        String queryTotalCount = "SELECT COUNT(*) FROM users JOIN roles ON users.id = roles.user_id";
+        String queryTotalCount = "SELECT COUNT(*) FROM users LEFT JOIN roles ON users.id = roles.user_id";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -89,9 +93,11 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
+                    String roleString = resultSet.getString("role");
+                    RoleType roleType = roleString != null ? RoleType.valueOf(roleString.toUpperCase()) : null;
                     users.add(new User(resultSet.getInt("user_id"),
                             resultSet.getString("user_name"),
-                            RoleType.valueOf(resultSet.getString("role").toUpperCase()),
+                            roleType,
                             resultSet.getString("password")));
                 }
             }

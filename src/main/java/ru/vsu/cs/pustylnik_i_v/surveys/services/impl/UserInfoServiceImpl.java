@@ -55,7 +55,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
 
             String token;
-            TokenInfo tokenInfo = new TokenInfo(user.getId(), roleType);
+            TokenInfo tokenInfo = new TokenInfo(user.getId());
 
             try {
                 token = AESCryptoUtil.getInstance().encrypt(tokenInfo);
@@ -86,7 +86,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
 
             String token;
-            TokenInfo tokenInfo = new TokenInfo(user.getId(), RoleType.USER);
+            TokenInfo tokenInfo = new TokenInfo(user.getId());
 
             try {
                 token = AESCryptoUtil.getInstance().encrypt(tokenInfo);
@@ -98,30 +98,16 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
-    // TODO: Delete
     @Override
-    public ResponseEntity<?> checkIfPasswordIsCorrect(String name, String password) throws DatabaseAccessException {
+    public ResponseEntity<?> updatePassword(String name, String oldPassword, String newPassword) throws DatabaseAccessException {
         try {
             User user = userRepository.getUser(name);
-            String hashedPassword = user.getPassword();
-            if (!HashingUtil.passwordMatch(password, hashedPassword)) {
-                return new ResponseEntity<>(false, "Password is incorrect", null);
+            String oldHashedPassword = user.getPassword();
+            if (!HashingUtil.passwordMatch(oldPassword, oldHashedPassword)) {
+                return new ResponseEntity<>(false, "Old password is incorrect", null);
             }
-            return new ResponseEntity<>(true, "Password is correct", null);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(false, "User doesn't exist", null);
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> updatePassword(String name, String newPassword) throws DatabaseAccessException {
-        try {
-            User user = userRepository.getUser(name);
-            String hashedPassword = user.getPassword();
-            if (!HashingUtil.passwordMatch(newPassword, hashedPassword)) {
-                return new ResponseEntity<>(false, "Password is incorrect", null);
-            }
-            user.setPassword(hashedPassword);
+            String newPasswordHashed = HashingUtil.hashPassword(newPassword);
+            user.setPassword(newPasswordHashed);
             userRepository.updateUser(user);
             return new ResponseEntity<>(true, "Password changed", null);
         } catch (UserNotFoundException e) {
