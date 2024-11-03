@@ -9,6 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilt
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserMockRepository extends BaseMockRepository implements UserRepository {
@@ -18,23 +19,28 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
 
     @Override
     public User getUser(String name) throws UserNotFoundException {
-        List<User> query = database.users.get(List.of(
-                DBTableSimulationFilter.of(User::getName, name))
-        );
+        List<DBTableSimulationFilter<User>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(u -> u.getName().equals(name)));
+
+        List<User> query = database.users.get(filters);
         if (query.isEmpty()) {
             throw new UserNotFoundException(name);
         }
+
         return query.get(0);
     }
 
     @Override
     public User getUser(int id) throws UserNotFoundException {
-        List<User> query = database.users.get(List.of(
-                DBTableSimulationFilter.of(User::getId, id))
-        );
+        List<DBTableSimulationFilter<User>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(u -> u.getId() == id));
+
+        List<User> query = database.users.get(filters);
+
         if (query.isEmpty()) {
             throw new UserNotFoundException(id);
         }
+
         return query.get(0);
     }
 
@@ -60,9 +66,11 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
 
     @Override
     public void updateUser(User u) throws UserNotFoundException {
-        List<User> query = database.users.get(List.of(
-                DBTableSimulationFilter.of(User::getId, u.getId()))
-        );
+        List<DBTableSimulationFilter<User>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(user -> user.getId() == u.getId()));
+
+        List<User> query = database.users.get(filters);
+
         if (query.isEmpty()) {
             throw new UserNotFoundException(u.getId());
         }
@@ -74,23 +82,26 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
 
     @Override
     public void deleteUser(String name) {
-        database.users.remove(List.of(
-                DBTableSimulationFilter.of(User::getName, name))
-        );
+        List<DBTableSimulationFilter<User>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(u -> u.getName().equals(name)));
+
+        database.users.remove(filters);
     }
 
     @Override
     public boolean exists(int userId) {
-        return database.users.contains(List.of(
-                DBTableSimulationFilter.of(User::getId, userId))
-        );
+        List<DBTableSimulationFilter<User>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(u -> u.getId() == userId));
+
+        return database.users.contains(filters);
     }
 
     @Override
     public boolean exists(String name) {
-        return database.users.contains(List.of(
-                DBTableSimulationFilter.of(User::getName, name))
-        );
+        List<DBTableSimulationFilter<User>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(u -> u.getName().equals(name)));
+
+        return database.users.contains(filters);
     }
 
 }

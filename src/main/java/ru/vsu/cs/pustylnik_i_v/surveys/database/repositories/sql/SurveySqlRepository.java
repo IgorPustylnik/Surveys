@@ -9,10 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +43,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                     statement.setString(2, description);
                     statement.setInt(3, categoryId);
                     statement.setInt(4, authorId);
-                    statement.setTimestamp(5, new java.sql.Timestamp(createdAt.getTime()));
+                    statement.setTimestamp(5, new Timestamp(createdAt.getTime()));
 
                     PreparedStatement statementCategoryName = connection.prepareStatement(queryGetCategoryName);
 
@@ -66,12 +63,13 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                         }
                     }
                 }
+            } catch (SQLException e) {
+                return null;
             }
 
             return returnee;
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
         }
     }
@@ -133,64 +131,68 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     }
 
     @Override
-    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Integer page, Integer perPageAmount) throws CategoryNotFoundException, DatabaseAccessException {
-        List<Survey> surveys = new ArrayList<>();
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount)
+            throws CategoryNotFoundException, DatabaseAccessException {
 
+        List<Survey> surveys = new ArrayList<>();
         int fromIndex = perPageAmount * page;
         int totalCount = 0;
 
-        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name as author_name, s.created_at, " +
-                "c.name AS category_name " +
+        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name as author_name, " +
+                "s.created_at, c.name AS category_name " +
                 "FROM surveys s " +
                 "LEFT JOIN categories c ON s.category_id = c.id " +
                 "LEFT JOIN users u ON s.author_id = u.id " +
-                "WHERE s.category_id = ? " +
-                "ORDER BY s.id " +
-                "LIMIT ? OFFSET ?";
-        String queryTotalCount = "SELECT COUNT(*) FROM surveys WHERE category_id = ?";
+                "WHERE 1=1 ";
 
-        String queryAll = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name as author_name, s.created_at, " +
-                "c.name AS category_name " +
-                "FROM surveys s " +
-                "LEFT JOIN categories c ON s.category_id = c.id " +
-                "LEFT JOIN users u ON s.author_id = u.id " +
-                "ORDER BY s.id " +
-                "LIMIT ? OFFSET ?";
-        String queryTotalCountAll = "SELECT COUNT(*) FROM surveys";
+        if (categoryId != null) {
+            query += "AND s.category_id = ? ";
+        }
+        if (fromDate != null) {
+            query += "AND s.created_at >= ? ";
+        }
+        if (toDate != null) {
+            query += "AND s.created_at <= ? ";
+        }
 
-        String queryCheckCategory = "SELECT * FROM categories WHERE id = ?";
+        query += "ORDER BY s.id LIMIT ? OFFSET ?";
+
+        String queryTotalCount = "SELECT COUNT(*) FROM surveys WHERE 1=1 ";
+        if (categoryId != null) {
+            queryTotalCount += "AND category_id = ? ";
+        }
+        if (fromDate != null) {
+            queryTotalCount += "AND created_at >= ? ";
+        }
+        if (toDate != null) {
+            queryTotalCount += "AND created_at <= ? ";
+        }
 
         try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statementTotalCount = connection.prepareStatement(queryTotalCount);
 
-            PreparedStatement statement;
-            PreparedStatement statementTotalCount;
+            int paramIndex = 1;
 
             if (categoryId != null) {
-                statement = connection.prepareStatement(query);
-                statementTotalCount = connection.prepareStatement(queryTotalCount);
-
-                statement.setInt(1, categoryId);
-                statement.setInt(2, perPageAmount);
-                statement.setInt(3, fromIndex);
-
-                statementTotalCount.setInt(1, categoryId);
-
-                PreparedStatement statementCheck = connection.prepareStatement(queryCheckCategory);
-
-                statementCheck.setInt(1, categoryId);
-
-                boolean categoryExists = statementCheck.execute();
-
-                if (!categoryExists) {
-                    throw new CategoryNotFoundException(categoryId);
-                }
-            } else {
-                statement = connection.prepareStatement(queryAll);
-                statementTotalCount = connection.prepareStatement(queryTotalCountAll);
-
-                statement.setInt(1, perPageAmount);
-                statement.setInt(2, fromIndex);
+                statement.setInt(paramIndex, categoryId);
+                statementTotalCount.setInt(paramIndex, categoryId);
+                paramIndex++;
             }
+
+            if (fromDate != null) {
+                statement.setTimestamp(paramIndex, new Timestamp(fromDate.getTime()));
+                statementTotalCount.setTimestamp(paramIndex, new Timestamp(fromDate.getTime()));
+                paramIndex++;
+            }
+            if (toDate != null) {
+                statement.setTimestamp(paramIndex, new Timestamp(toDate.getTime()));
+                statementTotalCount.setTimestamp(paramIndex, new Timestamp(toDate.getTime()));
+                paramIndex++;
+            }
+
+            statement.setInt(paramIndex++, perPageAmount);
+            statement.setInt(paramIndex, fromIndex);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -205,13 +207,12 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
             }
 
             try (ResultSet resultSetTotalCount = statementTotalCount.executeQuery()) {
-                while (resultSetTotalCount.next()) {
+                if (resultSetTotalCount.next()) {
                     totalCount = resultSetTotalCount.getInt(1);
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
         }
 

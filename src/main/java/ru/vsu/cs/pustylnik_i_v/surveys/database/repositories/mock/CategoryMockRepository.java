@@ -7,6 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockR
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryMockRepository extends BaseMockRepository implements CategoryRepository {
@@ -17,12 +18,15 @@ public class CategoryMockRepository extends BaseMockRepository implements Catego
 
     @Override
     public Category getCategoryByName(String name) throws CategoryNotFoundException {
-        List<Category> query = database.categories.get(List.of(
-                DBTableSimulationFilter.of(Category::getName, name))
-        );
+        List<DBTableSimulationFilter<Category>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(a -> a.getName().equals(name)));
+
+        List<Category> query = database.categories.get(filters);
+
         if (query.isEmpty()) {
             throw new CategoryNotFoundException(name);
         }
+
         return query.get(0);
     }
 
@@ -33,24 +37,28 @@ public class CategoryMockRepository extends BaseMockRepository implements Catego
 
     @Override
     public void addCategory(String name) {
-        if (!database.categories.contains(List.of(
-                DBTableSimulationFilter.of(Category::getName, name)))) {
+        List<DBTableSimulationFilter<Category>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(a -> a.getName().equals(name)));
+
+        if (!database.categories.contains(filters)) {
             database.categories.add(name);
         }
     }
 
     @Override
     public void deleteCategory(int id) {
-        database.categories.remove(List.of(
-                DBTableSimulationFilter.of(Category::getId, id))
-        );
+        List<DBTableSimulationFilter<Category>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(a -> a.getId() == id));
+
+        database.categories.remove(filters);
     }
 
     @Override
     public boolean exists(String name) {
-        return database.categories.contains(List.of(
-                DBTableSimulationFilter.of(Category::getName, name))
-        );
+        List<DBTableSimulationFilter<Category>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(a -> a.getName().equals(name)));
+
+        return database.categories.contains(filters);
     }
 
 }

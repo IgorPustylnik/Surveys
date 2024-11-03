@@ -7,6 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.QuestionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionMockRepository extends BaseMockRepository implements QuestionRepository {
@@ -16,9 +17,10 @@ public class QuestionMockRepository extends BaseMockRepository implements Questi
 
     @Override
     public List<Question> getQuestions(Integer surveyId) {
-        return database.questions.get(List.of(
-                DBTableSimulationFilter.of(Question::getSurveyId, surveyId))
-        );
+        List<DBTableSimulationFilter<Question>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(q -> q.getSurveyId() == surveyId));
+
+        return database.questions.get(filters);
     }
 
     @Override

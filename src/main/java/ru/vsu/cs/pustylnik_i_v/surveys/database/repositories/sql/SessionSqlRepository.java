@@ -7,10 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Date;
 
 public class SessionSqlRepository extends BaseSqlRepository implements SessionRepository {
@@ -81,11 +78,11 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
                 statement = connection.prepareStatement(query);
                 statement.setInt(1, surveyId);
                 statement.setInt(2, userId);
-                statement.setTimestamp(3, new java.sql.Timestamp(startedAt.getTime()));
+                statement.setTimestamp(3, new Timestamp(startedAt.getTime()));
             } else {
                 statement = connection.prepareStatement(queryUserNull);
                 statement.setInt(1, surveyId);
-                statement.setTimestamp(2, new java.sql.Timestamp(startedAt.getTime()));
+                statement.setTimestamp(2, new Timestamp(startedAt.getTime()));
             }
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -118,7 +115,7 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
             }
 
             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
-                updateStatement.setTimestamp(1, new java.sql.Timestamp(s.getFinishedAt().getTime()));
+                updateStatement.setTimestamp(1, new Timestamp(s.getFinishedAt().getTime()));
                 updateStatement.setInt(2, s.getId());
 
                 updateStatement.executeUpdate();

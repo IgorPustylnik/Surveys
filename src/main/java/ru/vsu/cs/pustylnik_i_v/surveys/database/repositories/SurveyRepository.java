@@ -16,7 +16,7 @@ public interface SurveyRepository {
 
     void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException, DatabaseAccessException;
 
-    PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Integer page, Integer perPageAmount) throws CategoryNotFoundException, DatabaseAccessException;
+    PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws CategoryNotFoundException, DatabaseAccessException;
 
     void deleteSurvey(int id) throws DatabaseAccessException;
 

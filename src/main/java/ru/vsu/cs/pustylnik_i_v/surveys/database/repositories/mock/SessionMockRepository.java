@@ -9,8 +9,10 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilt
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class SessionMockRepository extends BaseMockRepository implements SessionRepository {
     public SessionMockRepository(MockDatabaseSource database) {
@@ -19,42 +21,58 @@ public class SessionMockRepository extends BaseMockRepository implements Session
 
     @Override
     public Session getSessionById(int id) {
-        return database.sessions.get(List.of(
-                DBTableSimulationFilter.of(Session::getId, id)))
-                .get(0);
+        List<DBTableSimulationFilter<Session>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(s -> s.getId() == id));
+
+        return database.sessions.get(filters).get(0);
     }
 
     @Override
     public Session getUserSession(Integer userId) throws SessionNotFoundException {
-        List<Session> query = database.sessions.get(List.of(
-                DBTableSimulationFilter.of(Session::getUserId, userId))
-        );
+        if (userId == null) {
+            throw new SessionNotFoundException(-1);
+        }
+
+        List<DBTableSimulationFilter<Session>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(s -> Objects.equals(s.getUserId(), userId)));
+
+        List<Session> query = database.sessions.get(filters);
         if (query.isEmpty()) {
             throw new SessionNotFoundException(-1);
         }
+
         return query.get(0);
     }
 
     @Override
     public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException {
-        List<Survey> query = database.surveys.get(List.of(
-                DBTableSimulationFilter.of(Survey::getId, surveyId)));
+        List<DBTableSimulationFilter<Survey>> filtersSurvey = new ArrayList<>();
+        filtersSurvey.add(DBTableSimulationFilter.of(s -> s.getId() == surveyId));
+
+        List<Survey> query = database.surveys.get(filtersSurvey);
         if (query.isEmpty()) {
             throw new SurveyNotFoundException(surveyId);
         }        database.sessions.add(surveyId, userId, startedAt, finishedAt);
-        return database.sessions.get(List.of(
-                DBTableSimulationFilter.of(Session::getStartedAt, startedAt)))
-                .get(0).getId();
+
+        List<DBTableSimulationFilter<Session>> filtersSession = new ArrayList<>();
+        filtersSession.add(DBTableSimulationFilter.of(s -> s.getStartedAt() == startedAt));
+
+        return database.sessions.get(filtersSession).get(0).getId();
     }
 
     @Override
     public void updateSession(Session s) throws SessionNotFoundException {
-        List<Session> query = database.sessions.get(List.of(
-                DBTableSimulationFilter.of(Session::getId, s.getId())));
+        List<DBTableSimulationFilter<Session>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(session -> session.getId() == s.getId()));
+
+        List<Session> query = database.sessions.get(filters);
+
         if (query.isEmpty()) {
             throw new SessionNotFoundException(s.getId());
         }
+
         Session session = query.get(0);
+
         session.setSurveyId(s.getSurveyId());
         session.setUserId(s.getUserId());
         session.setStartedAt(s.getStartedAt());
@@ -63,9 +81,10 @@ public class SessionMockRepository extends BaseMockRepository implements Session
 
     @Override
     public boolean exists(int id) {
-        return database.sessions.contains(List.of(
-                DBTableSimulationFilter.of(Session::getId, id))
-        );
+        List<DBTableSimulationFilter<Session>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(s -> s.getId() == id));
+
+        return database.sessions.contains(filters);
     }
 
 }

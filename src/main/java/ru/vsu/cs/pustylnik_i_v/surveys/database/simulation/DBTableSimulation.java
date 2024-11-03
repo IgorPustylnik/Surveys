@@ -80,7 +80,7 @@ public class DBTableSimulation<T> {
 
     private boolean matchesFilters(T element, List<DBTableSimulationFilter<T>> filters) {
         for (DBTableSimulationFilter<T> filter : filters) {
-            if (!filter.keyFunction().apply(element).equals(filter.key())) {
+            if (!filter.condition().test(element)) {
                 return false;
             }
         }

@@ -9,6 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class SurveysServiceImpl implements SurveysService {
@@ -38,9 +39,9 @@ public class SurveysServiceImpl implements SurveysService {
     }
 
     @Override
-    public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException {
+    public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws DatabaseAccessException {
         PagedEntity<List<Survey>> surveysPagedEntity;
-        surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, page, perPageAmount);
+        surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, fromDate, toDate, page, perPageAmount);
 
         if (surveysPagedEntity.page().isEmpty()) {
             return new ServiceResponse<>(false, "Nothing found", surveysPagedEntity);

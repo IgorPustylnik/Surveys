@@ -8,11 +8,12 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.*;
 
+import java.util.Date;
 import java.util.List;
 
 public interface SurveysService {
 
-    ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Integer page, Integer perPageAmount) throws DatabaseAccessException;
+    ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws DatabaseAccessException;
 
     ServiceResponse<?> deleteSurvey(Integer surveyId) throws DatabaseAccessException;
 

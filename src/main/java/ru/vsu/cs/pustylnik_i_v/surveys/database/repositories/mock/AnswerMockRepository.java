@@ -6,6 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.AnswerRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnswerMockRepository extends BaseMockRepository implements AnswerRepository {
@@ -21,10 +22,11 @@ public class AnswerMockRepository extends BaseMockRepository implements AnswerRe
 
     @Override
     public boolean exists(int sessionId, int optionId) {
-        return database.answers.contains(List.of(
-                DBTableSimulationFilter.of(Answer::getSessionId, sessionId),
-                DBTableSimulationFilter.of(Answer::getOptionId, optionId))
-        );
+        List<DBTableSimulationFilter<Answer>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(a -> a.getSessionId() == sessionId));
+        filters.add(DBTableSimulationFilter.of(a -> a.getOptionId() == optionId));
+
+        return database.answers.contains(filters);
     }
 
 }
