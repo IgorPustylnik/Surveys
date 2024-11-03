@@ -1,4 +1,4 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.emulation;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.simulation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,13 +9,13 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class DBTableImitation<T> {
+public class DBTableSimulation<T> {
     private static final int DEFAULT_SIZE = 1000;
     private final T[] data;
-    private int currentIndex = 0;
+    private int currentIndex = 1;
     private final Function<Object[], T> constructorFunction;
 
-    public DBTableImitation(Function<Object[], T> constructorFunction) {
+    public DBTableSimulation(Function<Object[], T> constructorFunction) {
         data = (T[]) new Object[DEFAULT_SIZE];
         this.constructorFunction = constructorFunction;
     }
@@ -36,22 +36,22 @@ public class DBTableImitation<T> {
         return currentIndex - 1;
     }
 
-    public void remove(Function<T, ?> keyFunction, Object key) {
+    public void remove(List<DBTableSimulationFilter<T>> filters) {
         for (int i = 0; i < currentIndex; i++) {
             T element = data[i];
-            if (element != null && keyFunction.apply(element).equals(key)) {
+            if (element != null && matchesFilters(element, filters)) {
                 data[i] = null;
                 return;
             }
         }
-        throw new RuntimeException("Element with key " + key + " not found");
+        throw new RuntimeException("Element with specified keys not found");
     }
 
-    public List<T> get(Function<T, ?> keyFunction, Object key) {
+    public List<T> get(List<DBTableSimulationFilter<T>> filters) {
         List<T> result = new ArrayList<>();
         for (int i = 0; i < currentIndex; i++) {
             T element = data[i];
-            if (element != null && keyFunction.apply(element).equals(key)) {
+            if (element != null && matchesFilters(element, filters)) {
                 result.add(element);
             }
         }
@@ -64,10 +64,10 @@ public class DBTableImitation<T> {
                 .collect(Collectors.toList());
     }
 
-    public boolean contains(Function<T, ?> keyFunction, Object key) {
+    public boolean contains(List<DBTableSimulationFilter<T>> filters) {
         for (int i = 0; i < currentIndex; i++) {
             T element = data[i];
-            if (element != null && keyFunction.apply(element).equals(key)) {
+            if (element != null && matchesFilters(element, filters)) {
                 return true;
             }
         }
@@ -76,5 +76,14 @@ public class DBTableImitation<T> {
 
     public int size() {
         return currentIndex;
+    }
+
+    private boolean matchesFilters(T element, List<DBTableSimulationFilter<T>> filters) {
+        for (DBTableSimulationFilter<T> filter : filters) {
+            if (!filter.keyFunction().apply(element).equals(filter.key())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

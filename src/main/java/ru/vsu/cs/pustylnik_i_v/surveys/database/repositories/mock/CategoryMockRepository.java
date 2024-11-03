@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 
 import java.util.List;
@@ -16,7 +17,9 @@ public class CategoryMockRepository extends BaseMockRepository implements Catego
 
     @Override
     public Category getCategoryByName(String name) throws CategoryNotFoundException {
-        List<Category> query = database.categories.get(Category::getName, name);
+        List<Category> query = database.categories.get(List.of(
+                DBTableSimulationFilter.of(Category::getName, name))
+        );
         if (query.isEmpty()) {
             throw new CategoryNotFoundException(name);
         }
@@ -30,19 +33,24 @@ public class CategoryMockRepository extends BaseMockRepository implements Catego
 
     @Override
     public void addCategory(String name) {
-        if (!database.categories.contains(Category::getName, name)) {
+        if (!database.categories.contains(List.of(
+                DBTableSimulationFilter.of(Category::getName, name)))) {
             database.categories.add(name);
         }
     }
 
     @Override
     public void deleteCategory(int id) {
-        database.categories.remove(Category::getId, id);
+        database.categories.remove(List.of(
+                DBTableSimulationFilter.of(Category::getId, id))
+        );
     }
 
     @Override
     public boolean exists(String name) {
-        return database.categories.contains(Category::getName,name);
+        return database.categories.contains(List.of(
+                DBTableSimulationFilter.of(Category::getName, name))
+        );
     }
 
 }

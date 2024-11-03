@@ -198,13 +198,12 @@ public class SurveysServiceImpl implements SurveysService {
         } catch (UserNotFoundException ignored) {
         }
 
+        Integer sessionId;
         try {
-            surveyRepository.getSurveyById(surveyId);
+            sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
         } catch (SurveyNotFoundException e) {
             return new ServiceResponse<>(false, "Survey doesn't exist", null);
         }
-
-        Integer sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
         return new ServiceResponse<>(true, "Successfully created a session", sessionId);
     }
 

@@ -10,11 +10,6 @@ public class Answer {
         this.optionId = optionId;
     }
 
-
-    public Answer getSelf() {
-        return this;
-    }
-
     public int getSessionId() {
         return sessionId;
     }

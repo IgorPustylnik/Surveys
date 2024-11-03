@@ -5,6 +5,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 
@@ -17,7 +18,9 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
 
     @Override
     public User getUser(String name) throws UserNotFoundException {
-        List<User> query = database.users.get(User::getName, name);
+        List<User> query = database.users.get(List.of(
+                DBTableSimulationFilter.of(User::getName, name))
+        );
         if (query.isEmpty()) {
             throw new UserNotFoundException(name);
         }
@@ -26,7 +29,9 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
 
     @Override
     public User getUser(int id) throws UserNotFoundException {
-        List<User> query = database.users.get(User::getId, id);
+        List<User> query = database.users.get(List.of(
+                DBTableSimulationFilter.of(User::getId, id))
+        );
         if (query.isEmpty()) {
             throw new UserNotFoundException(id);
         }
@@ -55,28 +60,37 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
 
     @Override
     public void updateUser(User u) throws UserNotFoundException {
-        List<User> query = database.users.get(User::getId, u.getId());
+        List<User> query = database.users.get(List.of(
+                DBTableSimulationFilter.of(User::getId, u.getId()))
+        );
         if (query.isEmpty()) {
             throw new UserNotFoundException(u.getId());
         }
-        query.get(0).setName(u.getName());
-        query.get(0).setRole(u.getRole());
-        query.get(0).setPassword(u.getPassword());
+        User user = query.get(0);
+        user.setName(u.getName());
+        user.setRole(u.getRole());
+        user.setPassword(u.getPassword());
     }
 
     @Override
     public void deleteUser(String name) {
-        database.users.remove(User::getName, name);
+        database.users.remove(List.of(
+                DBTableSimulationFilter.of(User::getName, name))
+        );
     }
 
     @Override
     public boolean exists(int userId) {
-        return database.users.contains(User::getId, userId);
+        return database.users.contains(List.of(
+                DBTableSimulationFilter.of(User::getId, userId))
+        );
     }
 
     @Override
     public boolean exists(String name) {
-        return database.users.contains(User::getName, name);
+        return database.users.contains(List.of(
+                DBTableSimulationFilter.of(User::getName, name))
+        );
     }
 
 }
