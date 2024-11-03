@@ -75,7 +75,7 @@ public class SurveyMockRepository extends BaseMockRepository implements SurveyRe
 
         String categoryName = query.get(0).getName();
 
-        int id = database.surveys.add(name, description, categoryId, categoryName, authorName, createdAt);
+        int id = database.surveys.add(name, description, categoryId, categoryName, authorName, 0, createdAt);
 
         List<DBTableSimulationFilter<Survey>> filters = new ArrayList<>();
         filters.add(DBTableSimulationFilter.of(s -> s.getId() == id));

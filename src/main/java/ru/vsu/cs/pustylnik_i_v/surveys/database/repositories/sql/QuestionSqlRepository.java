@@ -59,4 +59,18 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
             throw new DatabaseAccessException(e.getMessage());
         }
     }
+
+    @Override
+    public void deleteQuestion(int id) throws DatabaseAccessException {
+        String query = "DELETE FROM questions WHERE id = ?";
+
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
+    }
 }

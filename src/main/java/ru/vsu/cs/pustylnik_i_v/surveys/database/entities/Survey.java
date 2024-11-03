@@ -10,15 +10,18 @@ public class Survey {
     private Integer categoryId;
     private String categoryName;
     private String authorName;
+    private Integer questionsAmount;
     private Date createdAt;
 
-    public Survey(int id, String name, String description, Integer categoryId, String categoryName, String authorName, Date createdAt) {
+    public Survey(int id, String name, String description, Integer categoryId, String categoryName,
+                  String authorName, Integer questionsAmount, Date createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.authorName = authorName;
+        this.questionsAmount = questionsAmount;
         this.createdAt = createdAt;
     }
 
@@ -68,6 +71,14 @@ public class Survey {
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
+    }
+
+    public Integer getQuestionsAmount() {
+        return questionsAmount;
+    }
+
+    public void setQuestionsAmount(Integer questionsAmount) {
+        this.questionsAmount = questionsAmount;
     }
 
     public Date getCreatedAt() {

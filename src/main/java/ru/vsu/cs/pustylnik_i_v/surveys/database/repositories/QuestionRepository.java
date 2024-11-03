@@ -9,4 +9,6 @@ public interface QuestionRepository {
     List<Question> getQuestions(Integer surveyId) throws DatabaseAccessException;
 
     void addQuestion(int surveyId, String text, QuestionType type) throws DatabaseAccessException;
+
+    void deleteQuestion(int id) throws DatabaseAccessException;
 }

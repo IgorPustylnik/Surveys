@@ -52,7 +52,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                     try (ResultSet resultSet = statement.executeQuery()) {
                         if (resultSet.next()) {
                             int id = resultSet.getInt("id");
-                            returnee = new Survey(id, name, description, categoryId, null, authorName, createdAt);
+                            returnee = new Survey(id, name, description, categoryId, null, authorName, 0, createdAt);
 
                             try (ResultSet resultSet1 = statementCategoryName.executeQuery()) {
                                 if (resultSet1.next()) {
@@ -76,8 +76,15 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
     @Override
     public Survey getSurveyById(int id) throws SurveyNotFoundException, DatabaseAccessException {
-        String query = "SELECT s.id as survey_id, s.name as survey_name, s.description, s.category_id, c.name as category_name, u.name as author_name, s.created_at " +
-                "FROM surveys s LEFT JOIN categories c ON s.category_id = c.id LEFT JOIN users u ON s.author_id = u.id WHERE s.id = ?";
+        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, " +
+                "c.name AS category_name, u.name AS author_name, s.created_at, " +
+                "COUNT(q.id) AS question_count " +
+                "FROM surveys s " +
+                "LEFT JOIN categories c ON s.category_id = c.id " +
+                "LEFT JOIN users u ON s.author_id = u.id " +
+                "LEFT JOIN questions q ON q.survey_id = s.id " +
+                "WHERE s.id = ? " +
+                "GROUP BY s.id, c.name, u.name";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -91,6 +98,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                             resultSet.getInt("category_id"),
                             resultSet.getString("category_name"),
                             resultSet.getString("author_name"),
+                            resultSet.getInt("question_count"),
                             resultSet.getTimestamp("created_at"));
                 }
             } catch (SQLException e) {
@@ -101,6 +109,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
         }
         throw new SurveyNotFoundException(id);
     }
+
 
     @Override
     public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException, DatabaseAccessException {
@@ -138,11 +147,12 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
         int fromIndex = perPageAmount * page;
         int totalCount = 0;
 
-        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name as author_name, " +
-                "s.created_at, c.name AS category_name " +
+        String query = "SELECT s.id AS survey_id, s.name AS survey_name, s.description, s.category_id, u.name AS author_name, " +
+                "s.created_at, c.name AS category_name, COUNT(q.id) AS question_count " +
                 "FROM surveys s " +
                 "LEFT JOIN categories c ON s.category_id = c.id " +
                 "LEFT JOIN users u ON s.author_id = u.id " +
+                "LEFT JOIN questions q ON q.survey_id = s.id " +
                 "WHERE 1=1 ";
 
         if (categoryId != null) {
@@ -155,7 +165,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
             query += "AND s.created_at <= ? ";
         }
 
-        query += "ORDER BY s.id LIMIT ? OFFSET ?";
+        query += "GROUP BY s.id, c.name, u.name ORDER BY s.id LIMIT ? OFFSET ?";
 
         String queryTotalCount = "SELECT COUNT(*) FROM surveys WHERE 1=1 ";
         if (categoryId != null) {
@@ -202,6 +212,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
                             resultSet.getInt("category_id"),
                             resultSet.getString("category_name"),
                             resultSet.getString("author_name"),
+                            resultSet.getInt("question_count"),
                             resultSet.getTimestamp("created_at")));
                 }
             }
@@ -221,6 +232,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
         return new PagedEntity<>(page, totalPages, surveys);
     }
+
 
     @Override
     public void deleteSurvey(int id) throws DatabaseAccessException {

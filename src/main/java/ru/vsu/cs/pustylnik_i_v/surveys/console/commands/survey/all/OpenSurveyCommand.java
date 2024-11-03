@@ -33,11 +33,12 @@ public class OpenSurveyCommand extends CommandMenu {
         commands.add(CommandType.LIST_SURVEYS);
         Survey s = appContext.currentSurvey;
 
-        setTitle(String.format("Survey name: %s\nCategory: %s\nDescription: %s\nAuthor: %s",
+        setTitle(String.format("Survey name: %s\nCategory: %s\nDescription: %s\nAuthor: %s\nQuestions: %d",
                 s.getName(),
                 s.getCategoryName(),
                 s.getDescription(),
-                s.getAuthorName()));
+                s.getAuthorName(),
+                s.getQuestionsAmount()));
 
         super.execute();
     }
