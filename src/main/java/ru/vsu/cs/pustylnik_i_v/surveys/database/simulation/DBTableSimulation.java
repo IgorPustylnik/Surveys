@@ -75,7 +75,7 @@ public class DBTableSimulation<T> {
     }
 
     public int size() {
-        return currentIndex;
+        return currentIndex - 1;
     }
 
     private boolean matchesFilters(T element, List<DBTableSimulationFilter<T>> filters) {
