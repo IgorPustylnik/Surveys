@@ -24,6 +24,8 @@ public interface SurveysService {
 
     ServiceResponse<?> finishSession(Integer sessionId) throws DatabaseAccessException;
 
+    ServiceResponse<?> hasActiveSession(Integer userId) throws DatabaseAccessException;
+
     ServiceResponse<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer page) throws DatabaseAccessException;
 
     ServiceResponse<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException;

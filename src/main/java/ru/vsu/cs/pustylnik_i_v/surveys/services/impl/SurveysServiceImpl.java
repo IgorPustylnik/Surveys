@@ -218,4 +218,14 @@ public class SurveysServiceImpl implements SurveysService {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
         }
     }
+
+    @Override
+    public ServiceResponse<?> hasActiveSession(Integer userId) throws DatabaseAccessException {
+        try {
+            sessionRepository.getUserSession(userId);
+        } catch (SessionNotFoundException e) {
+            return new ServiceResponse<>(false, "Session doesn't exist", null);
+        }
+        return new ServiceResponse<>(true, "User has active session", null);
+    }
 }

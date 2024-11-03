@@ -45,6 +45,32 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     }
 
     @Override
+    public Session getUserSession(Integer userId) throws SessionNotFoundException, DatabaseAccessException {
+        String query = "SELECT * FROM sessions WHERE user_id = ?";
+
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Session(resultSet.getInt("id"),
+                            resultSet.getInt("survey_id"),
+                            resultSet.getInt("user_id"),
+                            resultSet.getTimestamp("started_at"),
+                            resultSet.getTimestamp("finished_at"));
+
+                }
+            } catch (SQLException e) {
+                throw new SessionNotFoundException(-1);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
+        throw new SessionNotFoundException(-1);
+    }
+
+    @Override
     public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) throws DatabaseAccessException {
         String query = "INSERT INTO sessions (survey_id, user_id, started_at) VALUES (?, ?, ?) RETURNING id";
         String queryUserNull = "INSERT INTO sessions (survey_id, started_at) VALUES (?, ?) RETURNING id";

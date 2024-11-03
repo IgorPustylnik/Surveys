@@ -24,6 +24,15 @@ public class SessionMockRepository extends BaseMockRepository implements Session
                 .get(0);
     }
 
+    @Override
+    public Session getUserSession(Integer userId) throws SessionNotFoundException {
+        List<Session> query = database.sessions.get(List.of(
+                DBTableSimulationFilter.of(Session::getUserId, userId))
+        );
+        if (query.isEmpty()) {
+            throw new SessionNotFoundException(-1);
+        }
+        return query.get(0);
     }
 
     @Override
