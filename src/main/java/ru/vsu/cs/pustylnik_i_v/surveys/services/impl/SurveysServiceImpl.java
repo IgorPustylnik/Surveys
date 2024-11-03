@@ -7,6 +7,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
+import ru.vsu.cs.pustylnik_i_v.surveys.util.DateUtil;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -41,6 +42,10 @@ public class SurveysServiceImpl implements SurveysService {
     @Override
     public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws DatabaseAccessException {
         PagedEntity<List<Survey>> surveysPagedEntity;
+
+        fromDate = fromDate == null ? null : DateUtil.setTimeToStartOfDay(fromDate);
+        toDate = toDate == null ? null : DateUtil.setTimeToEndOfDay(toDate);
+
         surveysPagedEntity = surveyRepository.getSurveysPagedEntity(categoryId, fromDate, toDate, page, perPageAmount);
 
         if (surveysPagedEntity.page().isEmpty()) {
@@ -170,6 +175,10 @@ public class SurveysServiceImpl implements SurveysService {
             return new ServiceResponse<>(false, "User doesn't exist", null);
         }
         Survey newSurvey = surveyRepository.addSurvey(name, description, categoryId, authorName, Calendar.getInstance().getTime());
+
+        if (newSurvey == null) {
+            return new ServiceResponse<>(false, "Couldn't create new survey", null);
+        }
 
         return new ServiceResponse<>(true, "Survey created successfully", newSurvey);
     }
