@@ -5,8 +5,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.io.IOException;
@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ConsoleAppContext {
 
-    private final UserInfoService userInfoService;
-    private final SurveysService surveysService;
+    private final UserService userService;
+    private final SurveyService surveyService;
     private final CommandExecutor commandExecutor;
 
     // User info
@@ -42,18 +42,18 @@ public class ConsoleAppContext {
     // Session
     public Integer currentSessionId = null;
 
-    public ConsoleAppContext(UserInfoService userInfoService, SurveysService surveysService) {
-        this.userInfoService = userInfoService;
-        this.surveysService = surveysService;
+    public ConsoleAppContext(UserService userService, SurveyService surveyService) {
+        this.userService = userService;
+        this.surveyService = surveyService;
         this.commandExecutor = new CommandExecutor(this);
     }
 
-    public UserInfoService getUserInfoService() {
-        return userInfoService;
+    public UserService getUserService() {
+        return userService;
     }
 
-    public SurveysService getSurveysService() {
-        return surveysService;
+    public SurveyService getSurveyService() {
+        return surveyService;
     }
 
     public CommandExecutor getCommandExecutor() {
@@ -85,7 +85,7 @@ public class ConsoleAppContext {
     public void fetchUser() {
         String token = getToken();
         try {
-            ServiceResponse<User> response = getUserInfoService().getUser(token);
+            ServiceResponse<User> response = getUserService().getUser(token);
 
             if (!response.success()) {
                 localUser = null;

@@ -35,7 +35,7 @@ public class UpdateUserRoleCommand extends AppCommand {
         ServiceResponse<?> response;
 
         try {
-            response = appContext.getUserInfoService().setRole(appContext.selectedUser.getName(), roleType);
+            response = appContext.getUserService().setRole(appContext.selectedUser.getName(), roleType);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

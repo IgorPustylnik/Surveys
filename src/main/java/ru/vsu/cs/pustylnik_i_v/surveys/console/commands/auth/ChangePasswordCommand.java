@@ -35,7 +35,7 @@ public class ChangePasswordCommand extends AppCommand {
         } while (validation != null);
 
         try {
-            response = appContext.getUserInfoService().updatePassword(appContext.localUser.getName(), oldPassword, newPassword);
+            response = appContext.getUserService().updatePassword(appContext.localUser.getName(), oldPassword, newPassword);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

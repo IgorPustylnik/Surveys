@@ -14,11 +14,11 @@ import ru.vsu.cs.pustylnik_i_v.surveys.util.HashingUtil;
 
 import java.util.List;
 
-public class UserInfoService {
+public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserInfoService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

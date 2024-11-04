@@ -41,7 +41,7 @@ public class ListAllCategoriesCommand extends CommandMenu {
         ServiceResponse<PagedEntity<List<Category>>> response;
 
         try {
-            response = appContext.getSurveysService().getCategoriesPagedList(currentPage, perPageAmount);
+            response = appContext.getSurveyService().getCategoriesPagedList(currentPage, perPageAmount);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

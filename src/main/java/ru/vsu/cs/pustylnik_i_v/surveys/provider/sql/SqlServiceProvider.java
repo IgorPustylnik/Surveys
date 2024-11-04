@@ -4,13 +4,13 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 
 public class SqlServiceProvider implements ServiceProvider {
 
-    private final UserInfoService userInfoService;
-    private final SurveysService surveysService;
+    private final UserService userService;
+    private final SurveyService surveyService;
 
     public SqlServiceProvider() {
         DatabaseSource dataSource = new DatabaseSource();
@@ -23,18 +23,18 @@ public class SqlServiceProvider implements ServiceProvider {
         SurveyRepository surveyRepository = new SurveySqlRepository(dataSource);
         UserRepository userRepository = new UserSqlRepository(dataSource);
 
-        this.userInfoService = new UserInfoService(userRepository);
-        this.surveysService = new SurveysService(userRepository, surveyRepository, questionRepository,
+        this.userService = new UserService(userRepository);
+        this.surveyService = new SurveyService(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
     }
 
     @Override
-    public UserInfoService getUserInfoService() {
-        return userInfoService;
+    public UserService getUserService() {
+        return userService;
     }
 
     @Override
-    public SurveysService getSurveysService() {
-        return surveysService;
+    public SurveyService getSurveyService() {
+        return surveyService;
     }
 }

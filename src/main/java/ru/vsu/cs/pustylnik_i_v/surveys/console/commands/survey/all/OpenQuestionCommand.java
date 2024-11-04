@@ -34,7 +34,7 @@ public class OpenQuestionCommand extends CommandMenu {
             ServiceResponse<Integer> response;
 
             try {
-                response = appContext.getSurveysService().startSessionAndGetId(appContext.localUser.getName(), appContext.currentSurvey.getId());
+                response = appContext.getSurveyService().startSessionAndGetId(appContext.localUser.getName(), appContext.currentSurvey.getId());
             } catch (DatabaseAccessException e) {
                 appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                 return;
@@ -52,7 +52,7 @@ public class OpenQuestionCommand extends CommandMenu {
         ServiceResponse<PagedEntity<Question>> response;
 
         try {
-            response = appContext.getSurveysService().getQuestionPagedEntity(appContext.currentSurvey.getId(), appContext.currentQuestionIndex);
+            response = appContext.getSurveyService().getQuestionPagedEntity(appContext.currentSurvey.getId(), appContext.currentQuestionIndex);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
@@ -74,7 +74,7 @@ public class OpenQuestionCommand extends CommandMenu {
         ServiceResponse<List<Option>> response1;
 
         try {
-            response1 = appContext.getSurveysService().getQuestionOptionList(question.getId());
+            response1 = appContext.getSurveyService().getQuestionOptionList(question.getId());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
@@ -118,7 +118,7 @@ public class OpenQuestionCommand extends CommandMenu {
         inputSet.forEach(index ->
                 {
                     try {
-                        appContext.getSurveysService().submitAnswer(appContext.currentSessionId, options.get(index).getId());
+                        appContext.getSurveyService().submitAnswer(appContext.currentSessionId, options.get(index).getId());
                     } catch (DatabaseAccessException e) {
                         appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                     }
@@ -132,7 +132,7 @@ public class OpenQuestionCommand extends CommandMenu {
 
     private void goBack() {
         try {
-            appContext.getSurveysService().finishSession(appContext.currentSessionId);
+            appContext.getSurveyService().finishSession(appContext.currentSessionId);
             appContext.currentSessionId = null;
             appContext.currentQuestionIndex = 0;
             appContext.getCommandExecutor().getCommand(CommandType.OPEN_SURVEY).execute();

@@ -27,7 +27,7 @@ public class LoginCommand extends AppCommand {
         ServiceResponse<String> response;
 
         try {
-            response = appContext.getUserInfoService().login(name, password);
+            response = appContext.getUserService().login(name, password);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

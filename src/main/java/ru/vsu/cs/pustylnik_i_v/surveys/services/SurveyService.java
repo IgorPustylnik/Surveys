@@ -12,7 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class SurveysService {
+public class SurveyService {
 
     private final UserRepository userRepository;
     private final SurveyRepository surveyRepository;
@@ -22,13 +22,13 @@ public class SurveysService {
     private final CategoryRepository categoryRepository;
     private final SessionRepository sessionRepository;
 
-    public SurveysService(UserRepository userRepository,
-                              SurveyRepository surveyRepository,
-                              QuestionRepository questionRepository,
-                              OptionRepository optionRepository,
-                              AnswerRepository answerRepository,
-                              CategoryRepository categoryRepository,
-                              SessionRepository sessionRepository) {
+    public SurveyService(UserRepository userRepository,
+                         SurveyRepository surveyRepository,
+                         QuestionRepository questionRepository,
+                         OptionRepository optionRepository,
+                         AnswerRepository answerRepository,
+                         CategoryRepository categoryRepository,
+                         SessionRepository sessionRepository) {
         this.userRepository = userRepository;
         this.surveyRepository = surveyRepository;
         this.questionRepository = questionRepository;

@@ -50,7 +50,7 @@ public class CreateSurveyCommand extends AppCommand {
         ServiceResponse<Survey> response;
 
         try {
-            response = appContext.getSurveysService().addSurveyAndGetSelf(name, description, categoryName, appContext.localUser.getId());
+            response = appContext.getSurveyService().addSurveyAndGetSelf(name, description, categoryName, appContext.localUser.getId());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

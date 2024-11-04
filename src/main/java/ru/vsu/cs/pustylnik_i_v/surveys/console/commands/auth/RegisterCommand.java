@@ -41,7 +41,7 @@ public class RegisterCommand extends AppCommand {
         ServiceResponse<String> response;
 
         try {
-            response = appContext.getUserInfoService().register(name, password);
+            response = appContext.getUserService().register(name, password);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

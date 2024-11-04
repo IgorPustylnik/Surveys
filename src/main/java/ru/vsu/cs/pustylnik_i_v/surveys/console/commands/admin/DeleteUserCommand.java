@@ -28,7 +28,7 @@ public class DeleteUserCommand extends AppCommand {
         }
         ServiceResponse<?> response;
         try {
-            response = appContext.getUserInfoService().deleteUser(appContext.selectedUser.getName());
+            response = appContext.getUserService().deleteUser(appContext.selectedUser.getName());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

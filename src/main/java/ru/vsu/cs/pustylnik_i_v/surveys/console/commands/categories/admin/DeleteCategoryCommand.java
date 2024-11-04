@@ -31,7 +31,7 @@ public class DeleteCategoryCommand extends AppCommand {
         }
 
         try {
-            appContext.getSurveysService().deleteCategory(toDelete.getId());
+            appContext.getSurveyService().deleteCategory(toDelete.getId());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

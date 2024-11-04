@@ -36,7 +36,7 @@ public class ListUsersCommand extends CommandMenu {
 
         ServiceResponse<PagedEntity<List<User>>> response;
         try {
-            response = appContext.getUserInfoService().getUsersPagedList(currentPage, perPageAmount);
+            response = appContext.getUserService().getUsersPagedList(currentPage, perPageAmount);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

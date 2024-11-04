@@ -28,7 +28,7 @@ public class OpenUserCommand extends CommandMenu {
         ServiceResponse<RoleType> response;
 
         try {
-            response = appContext.getUserInfoService().getUserRole(user.getName());
+            response = appContext.getUserService().getUserRole(user.getName());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

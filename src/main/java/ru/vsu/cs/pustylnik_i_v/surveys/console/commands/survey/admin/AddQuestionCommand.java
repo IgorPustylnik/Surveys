@@ -85,7 +85,7 @@ public class AddQuestionCommand extends AppCommand {
         }
 
         try {
-            appContext.getSurveysService().addQuestionToSurvey(survey.getId(), questionText, options, questionType);
+            appContext.getSurveyService().addQuestionToSurvey(survey.getId(), questionText, options, questionType);
         } catch (
                 DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
