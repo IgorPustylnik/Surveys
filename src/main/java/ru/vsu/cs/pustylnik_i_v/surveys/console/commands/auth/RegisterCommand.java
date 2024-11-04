@@ -6,7 +6,6 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.AuthBody;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 public class RegisterCommand extends AppCommand {
@@ -39,7 +38,7 @@ public class RegisterCommand extends AppCommand {
             }
         } while (validation != null);
 
-        ServiceResponse<AuthBody> response;
+        ServiceResponse<String> response;
 
         try {
             response = appContext.getUserInfoService().register(name, password);
@@ -58,7 +57,7 @@ public class RegisterCommand extends AppCommand {
         ConsoleUtils.clear();
         System.out.println(response.message());
 
-        appContext.setToken(response.body().token());
+        appContext.setToken(response.body());
 
         appContext.getCommandExecutor().getCommand(CommandType.MAIN_MENU).execute();
     }
