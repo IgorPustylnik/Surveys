@@ -6,8 +6,6 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.SurveysServiceImpl;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.UserInfoServiceImpl;
 
 public class SqlServiceProvider implements ServiceProvider {
 
@@ -25,8 +23,8 @@ public class SqlServiceProvider implements ServiceProvider {
         SurveyRepository surveyRepository = new SurveySqlRepository(dataSource);
         UserRepository userRepository = new UserSqlRepository(dataSource);
 
-        this.userInfoService = new UserInfoServiceImpl(userRepository);
-        this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
+        this.userInfoService = new UserInfoService(userRepository);
+        this.surveysService = new SurveysService(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
     }
 

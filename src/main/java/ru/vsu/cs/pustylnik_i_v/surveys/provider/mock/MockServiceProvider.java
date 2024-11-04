@@ -10,9 +10,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveysService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.SurveysServiceImpl;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserInfoService;
-import ru.vsu.cs.pustylnik_i_v.surveys.services.impl.UserInfoServiceImpl;
 
 import java.util.List;
 
@@ -31,8 +29,8 @@ public class MockServiceProvider implements ServiceProvider {
         SurveyRepository surveyRepository = new SurveyMockRepository(db);
         UserRepository userRepository = new UserMockRepository(db);
 
-        this.userInfoService = new UserInfoServiceImpl(userRepository);
-        this.surveysService = new SurveysServiceImpl(userRepository, surveyRepository, questionRepository,
+        this.userInfoService = new UserInfoService(userRepository);
+        this.surveysService = new SurveysService(userRepository, surveyRepository, questionRepository,
                 optionRepository, answerRepository, categoryRepository, sessionRepository);
 
         addMockData();
