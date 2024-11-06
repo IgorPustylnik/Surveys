@@ -105,6 +105,11 @@ public class ListAllCategoriesCommand extends CommandMenu {
         if (input < categories.size()) {
             appContext.selectedCategory = categories.get(input);
         }
+
+        if (commands.get(input) == CommandType.LIST_SURVEYS) {
+            appContext.currentPageIndex = 0;
+        }
+
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(commands.get(input)).execute();
     }

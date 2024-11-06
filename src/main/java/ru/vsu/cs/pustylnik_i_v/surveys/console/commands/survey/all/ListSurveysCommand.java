@@ -1,6 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.Command;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
@@ -101,6 +102,10 @@ public class ListSurveysCommand extends CommandMenu {
         if (input < surveys.size()) {
             appContext.currentSurvey = surveys.get(input);
         }
+        if (commands.get(input) == CommandType.LIST_CATEGORIES) {
+            appContext.currentPageIndex = 0;
+        }
+
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(commands.get(input)).execute();
     }

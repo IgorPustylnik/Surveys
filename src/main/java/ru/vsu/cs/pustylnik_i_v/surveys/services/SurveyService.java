@@ -78,14 +78,14 @@ public class SurveyService {
 
     public ServiceResponse<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
         List<Category> sliced;
-        List<Category> surveys = categoryRepository.getAllCategories();
+        List<Category> categories = categoryRepository.getAllCategories();
 
-        int totalPages = (int) Math.ceil((double) surveys.size() / perPageAmount);
+        int totalPages = (int) Math.ceil((double) categories.size() / perPageAmount);
 
         int fromIndex = perPageAmount * page;
-        int toIndex = Math.min(fromIndex + perPageAmount, surveys.size());
+        int toIndex = Math.min(fromIndex + perPageAmount, categories.size());
 
-        sliced = surveys.subList(fromIndex, toIndex);
+        sliced = categories.subList(fromIndex, toIndex);
 
         if (totalPages < 1) totalPages = 1;
 
