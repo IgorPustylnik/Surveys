@@ -3,6 +3,8 @@ package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.menus;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,16 @@ public class MainCommandMenu extends CommandMenu {
 
     @Override
     public void execute() {
-        if (appContext.localUser == null) {
+        User localUser = appContext.localUser();
+        if (localUser != null && localUser.getRole() == RoleType.BANNED) {
+            commands = List.of(
+                    CommandType.LOGOUT
+            );
+            setTitle("You have been banned");
+            super.execute();
+            return;
+        }
+        if (localUser == null) {
             commands = List.of(
                     CommandType.LIST_SURVEYS,
                     CommandType.LOGIN,
@@ -30,13 +41,13 @@ public class MainCommandMenu extends CommandMenu {
             super.execute();
             return;
         }
-        switch (appContext.localUser.getRole()) {
+        switch (localUser.getRole()) {
             case USER:
                 commands = List.of(CommandType.LIST_SURVEYS,
                         CommandType.CHANGE_PASSWORD,
                         CommandType.LOGOUT
                 );
-                setTitle(String.format("Hello, %s", appContext.localUser.getName()));
+                setTitle(String.format("Hello, %s", localUser.getName()));
                 break;
             case ADMIN:
                 commands = List.of(CommandType.LIST_SURVEYS,
@@ -45,7 +56,7 @@ public class MainCommandMenu extends CommandMenu {
                         CommandType.CHANGE_PASSWORD,
                         CommandType.LOGOUT
                 );
-                setTitle(String.format("Hello, %s (administrator)", appContext.localUser.getName()));
+                setTitle(String.format("Hello, %s (administrator)", localUser.getName()));
                 break;
         }
         super.execute();

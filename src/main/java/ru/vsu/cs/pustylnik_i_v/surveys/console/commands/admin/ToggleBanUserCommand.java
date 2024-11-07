@@ -9,51 +9,44 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
-public class UpdateUserRoleCommand extends AppCommand {
+public class ToggleBanUserCommand extends AppCommand {
 
-    public UpdateUserRoleCommand(ConsoleAppContext appContext) {
+    public ToggleBanUserCommand(ConsoleAppContext appContext) {
         super(appContext);
     }
 
     @Override
     public String getName() {
-        return "Update role";
+        return appContext.selectedUser().getRole() != RoleType.BANNED ? "Ban user" : "Unban user";
     }
 
     @Override
     public void execute() {
-        User localUser = appContext.localUser();
         User selectedUser = appContext.selectedUser();
 
-        Integer input = ConsoleUtils.inputInt("role type (1 - USER, 2 - ADMIN)");
+        if (selectedUser.getRole() != RoleType.BANNED) {
+            Boolean confirmation = ConsoleUtils.confirm("ban this user");
 
-        if (input == null || (input != 1 && input != 2)) {
-            ConsoleUtils.clear();
-            appContext.getCommandExecutor().getCommand(CommandType.UNKNOWN).execute();
-            this.execute();
-            return;
+            if (confirmation == null || !confirmation) {
+                appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
+                return;
+            }
         }
-
-        RoleType newRoleType = input == 1 ? RoleType.USER : RoleType.ADMIN;
-
         ServiceResponse<?> response;
-
         try {
-            response = appContext.getUserService().setRole(selectedUser.getName(), newRoleType);
+            response = appContext.getUserService().toggleBanUser(selectedUser.getName());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
         }
 
+        ConsoleUtils.clear();
         if (!response.success()) {
-            ConsoleUtils.clear();
             System.err.println(response.message());
-            appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
-            return;
+        } else {
+            System.out.println(response.message());
         }
 
-        ConsoleUtils.clear();
-        System.out.println(response.message());
         appContext.getCommandExecutor().getCommand(CommandType.OPEN_USER).execute();
     }
 }

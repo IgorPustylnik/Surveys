@@ -9,6 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OpenUserCommand extends CommandMenu {
 
@@ -24,11 +25,12 @@ public class OpenUserCommand extends CommandMenu {
     @Override
     public void execute() {
         commands = new ArrayList<>();
-        User user = appContext.selectedUser;
+        User localUser = appContext.localUser();
+        User selectedUser = appContext.selectedUser();
         ServiceResponse<RoleType> response;
 
         try {
-            response = appContext.getUserService().getUserRole(user.getName());
+            response = appContext.getUserService().getUserRole(selectedUser.getName());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
@@ -37,11 +39,14 @@ public class OpenUserCommand extends CommandMenu {
             System.err.println(response.message());
         }
 
-        setTitle(String.format("Id: %d\nName: %s\nRole: %s", user.getId(), user.getName(), response.body()));
+        setTitle(String.format("Id: %d\nName: %s\nRole: %s", selectedUser.getId(), selectedUser.getName(), response.body()));
 
-        if (appContext.selectedUser.getId() != appContext.localUser.getId()) {
-            commands.add(CommandType.DELETE_USER);
+        if (selectedUser.getId() != localUser.getId() && !List.of(RoleType.ADMIN, RoleType.BANNED).contains(selectedUser.getRole())) {
             commands.add(CommandType.UPDATE_USER_ROLE);
+        }
+        if (selectedUser.getId() != localUser.getId() && selectedUser.getRole() != RoleType.ADMIN) {
+            commands.add(CommandType.DELETE_USER);
+            commands.add(CommandType.TOGGLE_BAN_USER);
         }
         commands.add(CommandType.LIST_USERS);
         super.execute();

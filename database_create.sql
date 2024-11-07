@@ -1,6 +1,6 @@
 CREATE TYPE question_type as ENUM('single_choice', 'multiple_choice');
 
-CREATE TYPE role_type as ENUM('user', 'admin');
+CREATE TYPE role_type as ENUM('user', 'admin', 'banned');
 
 CREATE TABLE categories
 (

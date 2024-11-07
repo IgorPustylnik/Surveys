@@ -62,6 +62,7 @@ public class CommandExecutor {
         commands.put(CommandType.OPEN_USER, new OpenUserCommand(appContext));
         commands.put(CommandType.UPDATE_USER_ROLE, new UpdateUserRoleCommand(appContext));
         commands.put(CommandType.DELETE_USER, new DeleteUserCommand(appContext));
+        commands.put(CommandType.TOGGLE_BAN_USER, new ToggleBanUserCommand(appContext));
 
         commands.put(CommandType.UNKNOWN, new UnknownCommand());
         commands.put(CommandType.DATABASE_ERROR, new DatabaseErrorCommand(appContext));

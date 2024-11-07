@@ -35,6 +35,7 @@ public enum CommandType {
     NEXT_USERS_PAGE,
     UPDATE_USER_ROLE,
     DELETE_USER,
+    TOGGLE_BAN_USER,
 
     UNKNOWN,
     DATABASE_ERROR
