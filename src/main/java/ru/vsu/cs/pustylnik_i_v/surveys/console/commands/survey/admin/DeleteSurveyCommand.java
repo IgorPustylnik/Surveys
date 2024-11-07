@@ -24,12 +24,12 @@ public class DeleteSurveyCommand extends AppCommand {
         ConsoleUtils.clear();
         if (confirmation != null && confirmation) {
             try {
-                appContext.getSurveyService().deleteSurvey(appContext.currentSurvey.getId());
+                appContext.getSurveyService().deleteSurvey(appContext.currentSurvey().getId());
             } catch (DatabaseAccessException e) {
                 appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                 return;
             }
-            appContext.currentSurvey = null;
+            appContext.currentSurveyId = null;
             appContext.getCommandExecutor().getCommand(CommandType.LIST_SURVEYS).execute();
         } else {
             appContext.getCommandExecutor().getCommand(CommandType.UNKNOWN).execute();

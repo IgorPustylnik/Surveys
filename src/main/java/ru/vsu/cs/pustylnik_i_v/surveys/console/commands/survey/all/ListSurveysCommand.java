@@ -35,7 +35,7 @@ public class ListSurveysCommand extends CommandMenu {
         }
 
         // Reset survey when going back from a survey page
-        appContext.currentSurvey = null;
+        appContext.currentSurveyId = null;
 
         int currentPage = appContext.currentPageIndex;
         Integer currentCategoryId = appContext.currentCategory != null ? appContext.currentCategory.getId() : null;
@@ -100,7 +100,7 @@ public class ListSurveysCommand extends CommandMenu {
         }
 
         if (input < surveys.size()) {
-            appContext.currentSurvey = surveys.get(input);
+            appContext.currentSurveyId = surveys.get(input).getId();
         }
         if (commands.get(input) == CommandType.LIST_CATEGORIES) {
             appContext.currentPageIndex = 0;

@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
@@ -21,6 +22,8 @@ public class ChangePasswordCommand extends AppCommand {
 
     @Override
     public void execute() {
+        User localUser = appContext.localUser();
+
         String oldPassword = ConsoleUtils.inputString("your old password");
 
         ServiceResponse<?> response;
@@ -35,7 +38,7 @@ public class ChangePasswordCommand extends AppCommand {
         } while (validation != null);
 
         try {
-            response = appContext.getUserService().updatePassword(appContext.localUser.getName(), oldPassword, newPassword);
+            response = appContext.getUserService().updatePassword(localUser.getName(), oldPassword, newPassword);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

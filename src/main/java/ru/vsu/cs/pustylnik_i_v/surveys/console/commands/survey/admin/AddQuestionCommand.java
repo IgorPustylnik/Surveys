@@ -24,7 +24,7 @@ public class AddQuestionCommand extends AppCommand {
 
     @Override
     public void execute() {
-        Survey survey = appContext.currentSurvey;
+        Survey survey = appContext.currentSurvey();
 
         String validation;
 

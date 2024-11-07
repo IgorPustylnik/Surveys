@@ -1,6 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandExecutor;
+import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
@@ -23,10 +24,10 @@ public class ConsoleAppContext {
     private final CommandExecutor commandExecutor;
 
     // User info
-    public User localUser = null;
+    public Integer localUserId = null;
 
     // Surveys
-    public Survey currentSurvey = null;
+    public Integer currentSurveyId = null;
     public Integer currentQuestionIndex = 0;
 
     // Categories
@@ -34,7 +35,7 @@ public class ConsoleAppContext {
     public Category currentCategory = null; // Is saved for filtering surveys
 
     // Users
-    public User selectedUser = null; // Is being viewed
+    public Integer selectedUserId = null; // Is being viewed
 
     // Pages
     public Integer currentPageIndex = 0;
@@ -58,6 +59,33 @@ public class ConsoleAppContext {
 
     public CommandExecutor getCommandExecutor() {
         return commandExecutor;
+    }
+
+    public User localUser() {
+        try {
+            return userService.getUser(localUserId).body();
+        } catch (DatabaseAccessException e) {
+            getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+        }
+        return null;
+    }
+
+    public User selectedUser() {
+        try {
+            return userService.getUser(selectedUserId).body();
+        } catch (DatabaseAccessException e) {
+            getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+        }
+        return null;
+    }
+
+    public Survey currentSurvey() {
+        try {
+            return surveyService.getSurvey(currentSurveyId).body();
+        } catch (DatabaseAccessException e) {
+            getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+        }
+        return null;
     }
 
     public String getToken() {
@@ -88,11 +116,11 @@ public class ConsoleAppContext {
             ServiceResponse<User> response = getUserService().getUser(token);
 
             if (!response.success()) {
-                localUser = null;
+                localUserId = null;
                 return;
             }
 
-            localUser = response.body();
+            localUserId = response.body().getId();
 
         } catch (DatabaseAccessException e) {
             System.err.println(e.getMessage());

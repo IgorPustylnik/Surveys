@@ -34,7 +34,7 @@ public class SetSurveyCategoryCommand extends AppCommand {
         ServiceResponse<?> response;
 
         try {
-            response = appContext.getSurveyService().setSurveyCategory(appContext.currentSurvey.getId(), categoryName);
+            response = appContext.getSurveyService().setSurveyCategory(appContext.currentSurvey().getId(), categoryName);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

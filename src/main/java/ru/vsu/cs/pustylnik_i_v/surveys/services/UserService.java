@@ -40,7 +40,6 @@ public class UserService {
     }
 
     public ServiceResponse<User> getUser(Integer id) throws DatabaseAccessException {
-        System.out.println(id);
         User user;
         if (id == null) {
             return new ServiceResponse<>(false, "User id provided is null", null);
@@ -149,7 +148,7 @@ public class UserService {
         try {
             User user = userRepository.getUser(userName);
             boolean ban = user.getRole() != RoleType.BANNED;
-            user.setRole(ban ? RoleType.USER : RoleType.BANNED);
+            user.setRole(ban ? RoleType.BANNED : RoleType.USER);
             userRepository.updateUser(user);
             return new ServiceResponse<>(true, "User " + ((ban) ? "" : "un") + "banned successfully", null);
         } catch (UserNotFoundException e) {

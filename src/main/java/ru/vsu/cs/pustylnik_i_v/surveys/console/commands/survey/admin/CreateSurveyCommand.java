@@ -4,6 +4,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.AppCommand;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
@@ -22,6 +23,7 @@ public class CreateSurveyCommand extends AppCommand {
 
     @Override
     public void execute() {
+        User localUser = appContext.localUser();
 
         String validation;
 
@@ -50,7 +52,7 @@ public class CreateSurveyCommand extends AppCommand {
         ServiceResponse<Survey> response;
 
         try {
-            response = appContext.getSurveyService().addSurveyAndGetSelf(name, description, categoryName, appContext.localUser.getId());
+            response = appContext.getSurveyService().addSurveyAndGetSelf(name, description, categoryName, localUser.getId());
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
@@ -62,7 +64,7 @@ public class CreateSurveyCommand extends AppCommand {
             return;
         }
 
-        appContext.currentSurvey = response.body();
+        appContext.currentSurveyId = response.body().getId();
 
         Integer questionsCount;
 

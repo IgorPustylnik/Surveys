@@ -30,7 +30,7 @@ public class ListUsersCommand extends CommandMenu {
     public void execute() {
         commands = new ArrayList<>();
 
-        appContext.selectedUser = null;
+        appContext.selectedUserId = null;
 
         int currentPage = appContext.currentPageIndex;
 
@@ -91,7 +91,7 @@ public class ListUsersCommand extends CommandMenu {
         }
 
         if (input < users.size()) {
-            appContext.selectedUser = users.get(input);
+            appContext.selectedUserId = users.get(input).getId();
         }
         ConsoleUtils.clear();
         appContext.getCommandExecutor().getCommand(commands.get(input)).execute();

@@ -6,6 +6,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
@@ -29,12 +31,15 @@ public class OpenQuestionCommand extends CommandMenu {
 
     @Override
     public void execute() {
+        User localUser = appContext.localUser();
+        Survey currentSurvey = appContext.currentSurvey();
+
         // Starting a session if needed
         if (appContext.currentSessionId == null) {
             ServiceResponse<Integer> response;
 
             try {
-                response = appContext.getSurveyService().startSessionAndGetId(appContext.localUser.getName(), appContext.currentSurvey.getId());
+                response = appContext.getSurveyService().startSessionAndGetId(localUser.getName(), currentSurvey.getId());
             } catch (DatabaseAccessException e) {
                 appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                 return;
@@ -52,7 +57,7 @@ public class OpenQuestionCommand extends CommandMenu {
         ServiceResponse<PagedEntity<Question>> response;
 
         try {
-            response = appContext.getSurveyService().getQuestionPagedEntity(appContext.currentSurvey.getId(), appContext.currentQuestionIndex);
+            response = appContext.getSurveyService().getQuestionPagedEntity(currentSurvey.getId(), appContext.currentQuestionIndex);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;
