@@ -11,6 +11,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.TokenInfo;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.AESCryptoUtil;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.HashingUtil;
+import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 
 import java.util.List;
 
@@ -79,6 +80,14 @@ public class UserService {
     }
 
     public ServiceResponse<String> register(String name, String password) throws DatabaseAccessException {
+        String validation = ValidationUtils.isValidName(name);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
+        validation = ValidationUtils.isValidPassword(password);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
         try {
             userRepository.getUser(name);
             return new ServiceResponse<>(false, "Username is taken", null);
@@ -111,6 +120,12 @@ public class UserService {
             if (!HashingUtil.passwordMatch(oldPassword, oldHashedPassword)) {
                 return new ServiceResponse<>(false, "Old password is incorrect", null);
             }
+
+            String validation = ValidationUtils.isValidPassword(newPassword);
+            if (validation != null) {
+                return new ServiceResponse<>(false, validation, null);
+            }
+
             String newPasswordHashed = HashingUtil.hashPassword(newPassword);
             user.setPassword(newPasswordHashed);
             userRepository.updateUser(user);
