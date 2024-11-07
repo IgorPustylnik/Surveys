@@ -17,7 +17,7 @@ public class QuestionMockRepository extends BaseMockRepository implements Questi
     }
 
     @Override
-    public List<Question> getQuestions(Integer surveyId) {
+    public List<Question> getQuestions(int surveyId) {
         List<DBTableSimulationFilter<Question>> filters = new ArrayList<>();
         filters.add(DBTableSimulationFilter.of(q -> q.getSurveyId() == surveyId));
 

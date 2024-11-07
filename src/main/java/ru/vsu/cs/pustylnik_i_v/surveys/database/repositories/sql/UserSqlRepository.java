@@ -74,7 +74,7 @@ public class UserSqlRepository extends BaseSqlRepository implements UserReposito
     }
 
     @Override
-    public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
+    public PagedEntity<List<User>> getUsersPagedList(int page, int perPageAmount) throws DatabaseAccessException {
         List<User> users = new ArrayList<>();
 
         int fromIndex = perPageAmount * page;

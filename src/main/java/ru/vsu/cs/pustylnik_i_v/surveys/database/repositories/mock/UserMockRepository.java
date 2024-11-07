@@ -45,7 +45,7 @@ public class UserMockRepository extends BaseMockRepository implements UserReposi
     }
 
     @Override
-    public PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) {
+    public PagedEntity<List<User>> getUsersPagedList(int page, int perPageAmount) {
         int fromIndex = perPageAmount * page;
         List<User> allUsers = database.users.getAll();
 

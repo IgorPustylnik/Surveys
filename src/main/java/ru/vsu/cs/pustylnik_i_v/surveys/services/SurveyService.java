@@ -179,7 +179,7 @@ public class SurveyService {
 
         Integer categoryId = categoryRepository.getCategoryByName(categoryName).getId();
         try {
-            surveyRepository.updateSurveyCategoryName(surveyId, categoryId);
+            surveyRepository.updateSurveyCategory(surveyId, categoryId);
         } catch (SurveyNotFoundException e) {
             return new ServiceResponse<>(false, "Survey doesn't exist", null);
         }
@@ -200,6 +200,8 @@ public class SurveyService {
             sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
         } catch (SurveyNotFoundException e) {
             return new ServiceResponse<>(false, "Survey doesn't exist", null);
+        } catch (UserNotFoundException e) {
+            return new ServiceResponse<>(false, "User doesn't exist", null);
         }
         return new ServiceResponse<>(true, "Successfully created a session", sessionId);
     }
@@ -220,6 +222,8 @@ public class SurveyService {
             sessionRepository.getUserSession(userId);
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
+        } catch (UserNotFoundException e) {
+            return new ServiceResponse<>(false, "User doesn't exist", null);
         }
         return new ServiceResponse<>(true, "User has active session", null);
     }

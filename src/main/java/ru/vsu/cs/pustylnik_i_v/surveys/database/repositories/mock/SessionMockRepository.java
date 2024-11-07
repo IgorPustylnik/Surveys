@@ -2,12 +2,14 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SessionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,9 +30,13 @@ public class SessionMockRepository extends BaseMockRepository implements Session
     }
 
     @Override
-    public Session getUserSession(Integer userId) throws SessionNotFoundException {
-        if (userId == null) {
-            throw new SessionNotFoundException(-1);
+    public Session getUserSession(int userId) throws SessionNotFoundException, UserNotFoundException {
+        List<DBTableSimulationFilter<User>> filtersUser = new ArrayList<>();
+        filtersUser.add(DBTableSimulationFilter.of(u -> u.getId() == userId));
+
+        List<User> queryUser = database.users.get(filtersUser);
+        if (queryUser.isEmpty()) {
+            throw new UserNotFoundException(userId);
         }
 
         List<DBTableSimulationFilter<Session>> filters = new ArrayList<>();
@@ -45,14 +51,24 @@ public class SessionMockRepository extends BaseMockRepository implements Session
     }
 
     @Override
-    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws SurveyNotFoundException {
+    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws UserNotFoundException, SurveyNotFoundException {
         List<DBTableSimulationFilter<Survey>> filtersSurvey = new ArrayList<>();
         filtersSurvey.add(DBTableSimulationFilter.of(s -> s.getId() == surveyId));
 
         List<Survey> query = database.surveys.get(filtersSurvey);
         if (query.isEmpty()) {
             throw new SurveyNotFoundException(surveyId);
-        }        database.sessions.add(surveyId, userId, startedAt, finishedAt);
+        }
+
+        List<DBTableSimulationFilter<User>> filtersUser = new ArrayList<>();
+        filtersSurvey.add(DBTableSimulationFilter.of(u -> u.getId() == userId));
+
+        List<User> queryUser = database.users.get(filtersUser);
+        if (queryUser.isEmpty()) {
+            throw new UserNotFoundException(userId);
+        }
+
+        database.sessions.add(surveyId, userId, startedAt, finishedAt);
 
         List<DBTableSimulationFilter<Session>> filtersSession = new ArrayList<>();
         filtersSession.add(DBTableSimulationFilter.of(s -> s.getStartedAt() == startedAt));

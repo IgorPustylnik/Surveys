@@ -6,6 +6,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRep
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 
 import java.sql.*;
 import java.util.Date;
@@ -42,10 +44,19 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     }
 
     @Override
-    public Session getUserSession(Integer userId) throws SessionNotFoundException, DatabaseAccessException {
+    public Session getUserSession(int userId) throws SessionNotFoundException, DatabaseAccessException, UserNotFoundException {
+        String queryCheckUser = "SELECT * FROM users WHERE id = ?";
         String query = "SELECT * FROM sessions WHERE user_id = ?";
 
         try (Connection connection = getConnection()) {
+
+            PreparedStatement statementCheckUser;
+            statementCheckUser = connection.prepareStatement(queryCheckUser);
+            statementCheckUser.setInt(1, userId);
+            if (!statementCheckUser.executeQuery().next()) {
+                throw new UserNotFoundException(userId);
+            }
+
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, userId);
 
@@ -68,11 +79,31 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     }
 
     @Override
-    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) throws DatabaseAccessException {
+    public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) throws UserNotFoundException, SurveyNotFoundException, DatabaseAccessException {
+        String queryCheckSurvey = "SELECT * FROM surveys WHERE id = ?";
+        String queryCheckUser = "SELECT * FROM users WHERE id = ?";
         String query = "INSERT INTO sessions (survey_id, user_id, started_at) VALUES (?, ?, ?) RETURNING id";
         String queryUserNull = "INSERT INTO sessions (survey_id, started_at) VALUES (?, ?) RETURNING id";
 
         try (Connection connection = getConnection()) {
+            PreparedStatement statementCheckSurvey;
+
+            statementCheckSurvey = connection.prepareStatement(queryCheckSurvey);
+            statementCheckSurvey.setInt(1, surveyId);
+
+            if (!statementCheckSurvey.executeQuery().next()) {
+                throw new SurveyNotFoundException(surveyId);
+            }
+
+            PreparedStatement statementCheckUser;
+            if (userId != null) {
+                statementCheckUser = connection.prepareStatement(queryCheckUser);
+                statementCheckUser.setInt(1, userId);
+                if (!statementCheckUser.executeQuery().next()) {
+                    throw new UserNotFoundException(userId);
+                }
+            }
+
             PreparedStatement statement;
             if (userId != null) {
                 statement = connection.prepareStatement(query);

@@ -1,7 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.console.commands.survey.all;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.console.ConsoleAppContext;
-import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.Command;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandMenu;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.commands.foundation.CommandType;
 import ru.vsu.cs.pustylnik_i_v.surveys.console.util.ConsoleUtils;

@@ -112,7 +112,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
 
 
     @Override
-    public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException, DatabaseAccessException {
+    public void updateSurveyCategory(int id, Integer categoryId) throws SurveyNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM surveys WHERE id = ?";
         String updateQuery = "UPDATE surveys SET category_id = ? WHERE id = ?";
 
@@ -140,7 +140,7 @@ public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepo
     }
 
     @Override
-    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount)
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount)
             throws CategoryNotFoundException, DatabaseAccessException {
 
         List<Survey> surveys = new ArrayList<>();

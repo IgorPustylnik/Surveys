@@ -14,7 +14,7 @@ public interface UserRepository {
 
     User getUser(int id) throws UserNotFoundException, DatabaseAccessException;
 
-    PagedEntity<List<User>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException;
+    PagedEntity<List<User>> getUsersPagedList(int page, int perPageAmount) throws DatabaseAccessException;
 
     void addUser(String name, RoleType roleType, String password) throws DatabaseAccessException;
 

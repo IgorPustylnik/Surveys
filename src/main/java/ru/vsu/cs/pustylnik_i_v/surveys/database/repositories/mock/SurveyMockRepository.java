@@ -27,7 +27,7 @@ public class SurveyMockRepository extends BaseMockRepository implements SurveyRe
     }
 
     @Override
-    public void updateSurveyCategoryName(int id, Integer categoryId) throws SurveyNotFoundException {
+    public void updateSurveyCategory(int id, Integer categoryId) throws SurveyNotFoundException {
         List<DBTableSimulationFilter<Survey>> filters = new ArrayList<>();
         filters.add(DBTableSimulationFilter.of(s -> s.getId() == id));
 
@@ -41,7 +41,7 @@ public class SurveyMockRepository extends BaseMockRepository implements SurveyRe
     }
 
     @Override
-    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) {
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount) {
         List<Survey> filtered;
         int fromIndex = perPageAmount * page;
         if (categoryId == null && fromDate == null && toDate == null) {

@@ -20,7 +20,7 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
     }
 
     @Override
-    public List<Question> getQuestions(Integer surveyId) throws DatabaseAccessException {
+    public List<Question> getQuestions(int surveyId) throws DatabaseAccessException {
         List<Question> questions = new ArrayList<>();
 
         String query = "SELECT * FROM questions WHERE survey_id = ?";
