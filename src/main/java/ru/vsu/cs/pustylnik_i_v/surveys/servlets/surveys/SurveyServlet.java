@@ -102,7 +102,7 @@ public class SurveyServlet extends HttpServlet {
     }
 
     private void handleEdit(HttpServletRequest request, HttpServletResponse response, User user, Survey survey) throws IOException, ServletException {
-        if (!survey.getAuthorName().equals(user.getName()) && user.getRole() != RoleType.ADMIN) {
+        if (!survey.getAuthorName().equals(user.getName())) {
             request.setAttribute("errorMessage", "Access denied");
             request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
             return;

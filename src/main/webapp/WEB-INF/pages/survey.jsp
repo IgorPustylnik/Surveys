@@ -42,8 +42,10 @@
     <!-- Actions -->
     <div class="mt-4">
         <button id="startSurveyButton" class="btn btn-primary me-2" data-survey-id="<%= survey.getId() %>">Start</button>
-        <% if (user != null && (user.getRole() == RoleType.ADMIN || user.getName().equals(survey.getAuthorName()))) { %>
+        <% if (user != null && user.getName().equals(survey.getAuthorName())) { %>
         <button id="editSurveyButton" class="btn btn-secondary me-2">Edit</button>
+        <% } %>
+        <% if (user != null && (user.getRole() == RoleType.ADMIN || user.getName().equals(survey.getAuthorName()))) { %>
         <button id="deleteSurveyButton" class="btn btn-danger">Delete</button>
         <% } %>
     </div>
