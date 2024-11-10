@@ -30,12 +30,21 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    Integer userId;
+                    userId = resultSet.getInt("user_id");
+                    if (resultSet.wasNull()) {
+                        userId = null;
+                    }
+                    Timestamp finishedAt = resultSet.getTimestamp("finished_at");
+                    if (resultSet.wasNull()) {
+                        finishedAt = null;
+                    }
                     return new Session(resultSet.getInt("session_id"),
                             resultSet.getInt("survey_id"),
                             resultSet.getString("survey_name"),
-                            resultSet.getInt("user_id"),
+                            userId,
                             resultSet.getTimestamp("started_at"),
-                            resultSet.getTimestamp("finished_at"));
+                            finishedAt);
 
                 }
             } catch (SQLException e) {
@@ -116,7 +125,11 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
 
             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
                 updateStatement.setInt(1, s.getSurveyId());
-                updateStatement.setInt(2, s.getUserId());
+                if (s.getUserId() != null) {
+                    updateStatement.setInt(2, s.getUserId());
+                } else {
+                    updateStatement.setNull(2, java.sql.Types.INTEGER);
+                }
                 updateStatement.setTimestamp(3, new Timestamp(s.getStartedAt().getTime()));
                 updateStatement.setTimestamp(4, new Timestamp(s.getFinishedAt().getTime()));
                 updateStatement.setInt(5, s.getId());

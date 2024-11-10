@@ -25,7 +25,7 @@ async function handlePasswordChangeSubmit(event) {
             body: JSON.stringify({ oldPassword, newPassword })
         });
 
-        const result = await response.json();
+        const result = { message: await response.text() };
 
         if (response.ok) {
             successMessageDiv.style.display = "block";

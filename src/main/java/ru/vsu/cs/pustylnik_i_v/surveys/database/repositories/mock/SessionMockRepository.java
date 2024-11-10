@@ -14,7 +14,6 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class SessionMockRepository extends BaseMockRepository implements SessionRepository {
     public SessionMockRepository(MockDatabaseSource database) {

@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = "/")
+@WebFilter(urlPatterns = "/*")
 public class ActiveSessionFilter implements Filter {
 
     private ServletContext context;
@@ -18,7 +18,7 @@ public class ActiveSessionFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
 }
