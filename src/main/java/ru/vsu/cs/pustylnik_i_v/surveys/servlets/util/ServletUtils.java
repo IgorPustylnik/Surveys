@@ -82,4 +82,9 @@ public class ServletUtils {
         return gson.toJson(object);
     }
 
+    public static void sendError(HttpServletResponse response, int errorCode, String message) throws IOException {
+        response.setStatus(errorCode);
+        response.setContentType("text/plain; charset=UTF-8");
+        response.getWriter().write(message);
+    }
 }

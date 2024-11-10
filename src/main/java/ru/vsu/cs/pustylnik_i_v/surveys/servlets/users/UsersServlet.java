@@ -32,8 +32,7 @@ public class UsersServlet extends HttpServlet {
         if (params == null) return;
 
         if (params.user().getRole() != RoleType.ADMIN) {
-            request.setAttribute("errorMessage", "Access denied");
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }
 
@@ -42,8 +41,7 @@ public class UsersServlet extends HttpServlet {
         try {
             serviceResponse = userService.getUsersPagedList(params.currentPage() - 1, perPageAmount);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -55,8 +53,7 @@ public class UsersServlet extends HttpServlet {
         try {
             serviceResponse1 = surveyService.getCategoriesPagedList(0, perPageAmount);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/surveys_list.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -71,13 +68,12 @@ public class UsersServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return null;
         }
 
         if (user == null) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return null;
         }
 

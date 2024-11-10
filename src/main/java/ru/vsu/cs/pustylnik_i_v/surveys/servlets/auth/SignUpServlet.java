@@ -60,9 +60,7 @@ public class SignUpServlet extends HttpServlet {
             response.setStatus(serviceResponse.success() ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write(ServletUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setContentType("text/plain; charset=UTF-8");
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
     }
 }

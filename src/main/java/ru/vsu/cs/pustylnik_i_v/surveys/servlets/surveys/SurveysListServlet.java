@@ -40,8 +40,7 @@ public class SurveysListServlet extends HttpServlet {
         try {
             serviceResponse = surveyService.getSurveysPagedList(params.categoryId(), params.fromDate(), params.toDate(), params.currentPage() - 1, perPageAmount);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -53,8 +52,7 @@ public class SurveysListServlet extends HttpServlet {
         try {
             serviceResponse1 = surveyService.getCategoriesPagedList(0, perPageAmount);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/surveys_list.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -69,8 +67,7 @@ public class SurveysListServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return null;
         }
 

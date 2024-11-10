@@ -26,8 +26,7 @@ public class LoginServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -59,14 +58,10 @@ public class LoginServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write(ServletUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
             } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.setContentType("text/plain; charset=UTF-8");
-                response.getWriter().write(serviceResponse.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, serviceResponse.message());
             }
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setContentType("text/plain; charset=UTF-8");
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
     }
 }

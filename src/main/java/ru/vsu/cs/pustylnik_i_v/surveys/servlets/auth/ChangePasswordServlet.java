@@ -28,8 +28,7 @@ public class ChangePasswordServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -48,14 +47,12 @@ public class ChangePasswordServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
             return;
         }
 
         if (user == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized");
+            ServletUtils.sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
@@ -70,11 +67,13 @@ public class ChangePasswordServlet extends HttpServlet {
 
         try {
             serviceResponse = userService.updatePassword(user.getName(), oldPassword, newPassword);
-            response.setStatus(serviceResponse.success() ? HttpServletResponse.SC_OK : HttpServletResponse.SC_FORBIDDEN);
+            if (!serviceResponse.success()) {
+                ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, serviceResponse.message());
+                return;
+            }
             response.getWriter().write(serviceResponse.message());
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
     }
 }

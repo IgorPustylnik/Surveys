@@ -46,20 +46,17 @@ public class UserServlet extends HttpServlet {
         try {
             serviceResponseGet = userService.getUser(userId);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
         if (!serviceResponseGet.success()) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(serviceResponseGet.message());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseGet.message());
             return;
         }
         user = serviceResponseGet.body();
 
         if (user.getRole() == RoleType.ADMIN) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Admin role cannot be updated");
+            ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Admin role cannot be updated");
             return;
         }
 
@@ -67,13 +64,13 @@ public class UserServlet extends HttpServlet {
         try {
             serviceResponseSet = userService.setRole(user.getName(), newRole);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
 
         if (!serviceResponseSet.success()) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseSet.message());
+            return;
         }
 
         response.getWriter().write(serviceResponseSet.message());
@@ -86,20 +83,17 @@ public class UserServlet extends HttpServlet {
         try {
             serviceResponseGet = userService.getUser(userId);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
         if (!serviceResponseGet.success()) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(serviceResponseGet.message());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseGet.message());
             return;
         }
         user = serviceResponseGet.body();
 
         if (user.getRole() == RoleType.ADMIN) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Admin cannot be deleted");
+            ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Admin cannot be deleted");
             return;
         }
 
@@ -107,13 +101,13 @@ public class UserServlet extends HttpServlet {
         try {
             serviceResponseDelete = userService.deleteUser(user.getName());
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
 
         if (!serviceResponseDelete.success()) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseDelete.message());
+            return;
         }
 
         response.getWriter().write(serviceResponseDelete.message());
@@ -126,20 +120,17 @@ public class UserServlet extends HttpServlet {
         try {
             serviceResponseGet = userService.getUser(userId);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
         if (!serviceResponseGet.success()) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(serviceResponseGet.message());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseGet.message());
             return;
         }
         user = serviceResponseGet.body();
 
         if (user.getRole() == RoleType.ADMIN) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Admin cannot be banned");
+            ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Admin cannot be banned");
             return;
         }
 
@@ -147,13 +138,13 @@ public class UserServlet extends HttpServlet {
         try {
             serviceResponseDelete = userService.toggleBanUser(user.getName());
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
 
         if (!serviceResponseDelete.success()) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseDelete.message());
+            return;
         }
 
         response.getWriter().write(serviceResponseDelete.message());
@@ -162,8 +153,7 @@ public class UserServlet extends HttpServlet {
     private static Params getParams(HttpServletRequest request, HttpServletResponse response, UserService userService) throws IOException {
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.length() <= 1) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Survey ID is missing.");
+            ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Survey ID is missing.");
             return null;
         }
 
@@ -181,8 +171,7 @@ public class UserServlet extends HttpServlet {
                 return null;
             }
         } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Invalid user ID.");
+            ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID.");
             return null;
         }
 
@@ -190,14 +179,12 @@ public class UserServlet extends HttpServlet {
         try {
             userSelf = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return null;
         }
 
         if (userSelf == null || userSelf.getRole() != RoleType.ADMIN) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Access denied");
+            ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return null;
         }
         return new Params(userId, action);

@@ -34,14 +34,12 @@ public class CreateSurveyServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
         if (user == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized");
+            ServletUtils.sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
@@ -53,14 +51,12 @@ public class CreateSurveyServlet extends HttpServlet {
         try {
             serviceResponse = surveyService.getCategoriesPagedList(0, 100);
             if (!serviceResponse.success()) {
-                request.setAttribute("errorMessage", serviceResponse.message());
-                request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponse.message());
                 return;
             }
             categories = serviceResponse.body().page();
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -80,14 +76,12 @@ public class CreateSurveyServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
         if (user == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized");
+            ServletUtils.sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
@@ -97,16 +91,12 @@ public class CreateSurveyServlet extends HttpServlet {
         try {
             serviceResponse = addSurvey(surveyDTO, user, surveyService);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setContentType("text/plain; charset=utf-8");
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
         if (!serviceResponse.success()) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setContentType("text/plain; charset=utf-8");
-            response.getWriter().write(serviceResponse.message());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, serviceResponse.message());
             return;
         }
 

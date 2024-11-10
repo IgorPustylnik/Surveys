@@ -50,7 +50,8 @@
                 </li>
                 <% } %>
             </ul>
-            <form class="d-flex">
+            <% if (request.getAttribute("jakarta.servlet.error.status_code") == null) { %>
+                <form class="d-flex">
                 <% if (user != null) { %>
                 <% if (!request.getServletPath().equals("/WEB-INF/pages/create_survey.jsp")) { %>
                 <a href="/surveys/create" class="btn btn-outline-success me-2 btn-animated">
@@ -71,6 +72,7 @@
                 <a class="btn btn-primary" href="/signup">Sign Up</a>
                 <% } %>
             </form>
+            <% } %>
         </div>
     </div>
 </nav>

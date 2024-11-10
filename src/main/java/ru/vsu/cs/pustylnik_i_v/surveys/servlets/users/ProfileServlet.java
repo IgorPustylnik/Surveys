@@ -28,8 +28,7 @@ public class ProfileServlet extends HttpServlet {
         try {
             params = getProfileParams(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", "Access denied");
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
         if (params == null) return;
@@ -40,7 +39,7 @@ public class ProfileServlet extends HttpServlet {
         } else if (params.userSelf().getRole() == RoleType.ADMIN) {
             handleAdmin(request, response, params.userSelf(), params.user());
         } else {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
         }
     }
 
@@ -68,7 +67,7 @@ public class ProfileServlet extends HttpServlet {
         userSelf = ServletUtils.getUser(request, response, userService);
 
         if (userSelf == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Not logged in");
             return null;
         }
 
@@ -93,7 +92,7 @@ public class ProfileServlet extends HttpServlet {
         user = userService.getUser(userId).body();
 
         if (user == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
             return null;
         }
 

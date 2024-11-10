@@ -31,15 +31,14 @@ public class SurveyServlet extends HttpServlet {
 
         if ("edit".equals(params.action())) {
             if (params.user() == null) {
-                request.setAttribute("errorMessage", "Not logged in");
-                request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Not logged in");
                 return;
             }
             handleEdit(request, response, params.user(), params.survey());
         } else if (params.action() == null) {
             handleOpen(request, response, params.user(), params.survey());
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError( HttpServletResponse.SC_NOT_FOUND, "Unknown action");
         }
     }
 
@@ -51,8 +50,7 @@ public class SurveyServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.length() <= 1) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Survey ID is missing.");
+            ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Survey ID is missing.");
             return;
         }
 
@@ -67,8 +65,7 @@ public class SurveyServlet extends HttpServlet {
                 action = pathParts[1];
             }
         } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Invalid survey ID.");
+            ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid survey ID.");
             return;
         }
         User user;
@@ -76,8 +73,7 @@ public class SurveyServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -85,8 +81,7 @@ public class SurveyServlet extends HttpServlet {
             handleStart(request, response, user, surveyId, sessionService);
         } else if ("delete".equals(action)) {
             if (user == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Unauthorized");
+                ServletUtils.sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 return;
             }
             handleDelete(request, response, user, surveyId, surveyService);
@@ -103,8 +98,7 @@ public class SurveyServlet extends HttpServlet {
 
     private void handleEdit(HttpServletRequest request, HttpServletResponse response, User user, Survey survey) throws IOException, ServletException {
         if (!survey.getAuthorName().equals(user.getName())) {
-            request.setAttribute("errorMessage", "Access denied");
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }
         request.setAttribute("survey", survey);
@@ -125,17 +119,13 @@ public class SurveyServlet extends HttpServlet {
             serviceResponse = sessionService.startSessionAndGetId(user != null ? user.getId() : null, surveyId);
 
             if (!serviceResponse.success()) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.setContentType("text/plain; charset=UTF-8");
-                response.getWriter().write(serviceResponse.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponse.message());
                 return;
             }
 
             response.getWriter().write(ServletUtils.toJson(SessionIdDTO.of(serviceResponse.body())));
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setContentType("text/plain; charset=UTF-8");
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
     }
 
@@ -149,22 +139,19 @@ public class SurveyServlet extends HttpServlet {
             serviceResponseGet = surveyService.getSurvey(surveyId);
 
             if (!serviceResponseGet.success()) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write(serviceResponseGet.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseGet.message());
                 return;
             }
             survey = serviceResponseGet.body();
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
         request.setAttribute("user", user);
 
         if (!(survey.getAuthorName() != null && survey.getAuthorName().equals(user.getName())) && user.getRole() != RoleType.ADMIN) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Action denied");
+            ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Action denied");
             return;
         }
 
@@ -174,14 +161,12 @@ public class SurveyServlet extends HttpServlet {
             serviceResponseDelete = surveyService.deleteSurvey(survey.getId());
 
             if (!serviceResponseDelete.success()) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write(serviceResponseDelete.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseDelete.message());
             }
 
             response.getWriter().write(serviceResponseDelete.message());
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
     }
 
@@ -210,8 +195,7 @@ public class SurveyServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return null;
         }
 
@@ -219,14 +203,12 @@ public class SurveyServlet extends HttpServlet {
         try {
             ServiceResponse<Survey> surveyResponse = surveyService.getSurvey(surveyId);
             if (!surveyResponse.success()) {
-                request.setAttribute("errorMessage", surveyResponse.message());
-                request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, surveyResponse.message());
                 return null;
             }
             survey = surveyResponse.body();
         } catch (DatabaseAccessException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return null;
         }
 

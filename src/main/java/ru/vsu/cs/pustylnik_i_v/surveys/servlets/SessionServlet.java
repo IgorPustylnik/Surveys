@@ -36,7 +36,7 @@ public class SessionServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -69,9 +69,22 @@ public class SessionServlet extends HttpServlet {
             return;
         }
 
-        if (session.getUserId() != user.getId()) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied.");
-            return;
+        Integer cookieSessionId;
+        if (user != null) {
+            if (session.getUserId() != user.getId()) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied.");
+                return;
+            }
+        } else {
+            cookieSessionId = ServletUtils.getSurveySessionId(request);
+            if (cookieSessionId == null) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied.");
+                return;
+            }
+            if (cookieSessionId != session.getId()) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied.");
+                return;
+            }
         }
 
         if (session.getFinishedAt() != null) {
@@ -100,6 +113,7 @@ public class SessionServlet extends HttpServlet {
         request.setAttribute("user", user);
         request.setAttribute("questions", questions);
         request.setAttribute("sessionId", sessionId);
+        request.setAttribute("surveyName", session.getSurveyName());
         request.getRequestDispatcher("/WEB-INF/pages/survey_taking.jsp").forward(request, response);
     }
 
@@ -114,8 +128,7 @@ public class SessionServlet extends HttpServlet {
         try {
             user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -138,29 +151,39 @@ public class SessionServlet extends HttpServlet {
             serviceResponseCheckSession = sessionService.getSession(sessionId);
 
             if (!serviceResponseCheckSession.success()) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write(serviceResponseCheckSession.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_NOT_FOUND, serviceResponseCheckSession.message());
                 return;
             }
 
             session = serviceResponseCheckSession.body();
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
-        if (session.getUserId() != user.getId()) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Access denied.");
-            return;
+        Integer cookieSessionId;
+        if (user != null) {
+            if (session.getUserId() != user.getId()) {
+                ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied.");
+                return;
+            }
+        } else {
+            cookieSessionId = ServletUtils.getSurveySessionId(request);
+            if (cookieSessionId == null) {
+                ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied.");
+                return;
+            }
+            if (cookieSessionId != session.getId()) {
+                ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied.");
+                return;
+            }
         }
 
         String action;
         if (pathParts.length > 1) {
             action = pathParts[1];
             if (!action.equals("submit")) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
                 return;
             }
         }
@@ -168,8 +191,7 @@ public class SessionServlet extends HttpServlet {
         AnswersDTO answersDTO = ServletUtils.parseJson(request, AnswersDTO.class);
 
         if (answersDTO == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Invalid answers json.");
+            ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid answers json.");
             return;
         }
         List<Integer> options = answersDTO.options();
@@ -180,14 +202,12 @@ public class SessionServlet extends HttpServlet {
             serviceResponseSubmit = sessionService.submitAnswers(sessionId, options);
 
             if (!serviceResponseSubmit.success()) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write(serviceResponseSubmit.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseSubmit.message());
                 return;
             }
 
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
         }
 
@@ -196,13 +216,11 @@ public class SessionServlet extends HttpServlet {
             serviceResponseFinish = sessionService.finishSession(sessionId);
 
             if (!serviceResponseFinish.success()) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write(serviceResponseFinish.message());
+                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseFinish.message());
             }
 
         } catch (DatabaseAccessException e) {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.getWriter().write(e.getMessage());
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
 
         response.getWriter().write("Success");
