@@ -42,7 +42,7 @@ public class ChangePasswordServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = (UserService) getServletContext().getAttribute("userService");
 
-        response.setContentType("application/json; charset=UTF-8");
+        response.setContentType("text/plain; charset=UTF-8");
 
         User user;
         try {

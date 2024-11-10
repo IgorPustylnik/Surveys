@@ -61,6 +61,7 @@ public class SignUpServlet extends HttpServlet {
             response.getWriter().write(ServletsUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setContentType("text/plain; charset=UTF-8");
             response.getWriter().write(e.getMessage());
         }
     }

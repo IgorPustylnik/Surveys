@@ -182,7 +182,7 @@ public class UserServlet extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Invalid survey ID.");
+            response.getWriter().write("Invalid user ID.");
             return null;
         }
 

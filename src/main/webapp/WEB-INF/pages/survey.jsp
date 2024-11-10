@@ -24,7 +24,7 @@
     </h2>
 
     <!-- Survey info -->
-    <div class="card mt-3">
+    <div class="card mt-3 mb-3">
         <div class="card-body">
             <h5 class="card-title">About:</h5>
             <p><%= survey.getDescription() %>
@@ -36,7 +36,6 @@
         </div>
     </div>
 
-    <br>
     <p class="text-muted">Created by <%= survey.getAuthorName() %> on <%=DateUtil.formatFull(survey.getCreatedAt()) %>
     </p>
 

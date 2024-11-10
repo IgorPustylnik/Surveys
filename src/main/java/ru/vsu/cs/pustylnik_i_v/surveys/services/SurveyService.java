@@ -134,11 +134,14 @@ public class SurveyService {
     }
 
     public ServiceResponse<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException {
-        if (!categoryRepository.exists(categoryName)) {
+        if (categoryName != null && !categoryRepository.exists(categoryName)) {
             categoryRepository.addCategory(categoryName);
         }
 
-        Integer categoryId = categoryRepository.getCategoryByName(categoryName).getId();
+        Integer categoryId = null;
+        if (categoryName != null) {
+            categoryId = categoryRepository.getCategoryByName(categoryName).getId();
+        }
 
         String authorName;
         try {

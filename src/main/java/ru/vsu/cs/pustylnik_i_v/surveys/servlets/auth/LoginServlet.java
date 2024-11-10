@@ -60,10 +60,12 @@ public class LoginServlet extends HttpServlet {
                 response.getWriter().write(ServletsUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setContentType("text/plain; charset=UTF-8");
                 response.getWriter().write(serviceResponse.message());
             }
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setContentType("text/plain; charset=UTF-8");
             response.getWriter().write(e.getMessage());
         }
     }
