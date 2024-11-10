@@ -1,8 +1,8 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.CategoryDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
@@ -14,8 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategorySqlRepository extends BaseSqlRepository implements CategoryRepository {
-    public CategorySqlRepository(DatabaseSource dataSource) {
+public class CategorySqlDAO extends BaseSqlDAO implements CategoryDAO {
+    public CategorySqlDAO(DatabaseSource dataSource) {
         super(dataSource);
     }
 

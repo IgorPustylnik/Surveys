@@ -2,7 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.UserDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.RoleNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
@@ -17,10 +17,10 @@ import java.util.List;
 
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserDAO userDAO;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     public ServiceResponse<User> getUser(String token) throws DatabaseAccessException {
@@ -33,7 +33,7 @@ public class UserService {
             return new ServiceResponse<>(false, "Failed to decrypt token", null);
         }
         try {
-            user = userRepository.getUser(userId);
+            user = userDAO.getUser(userId);
         } catch (UserNotFoundException e) {
             return new ServiceResponse<>(false, "User not found", null);
         }
@@ -46,7 +46,7 @@ public class UserService {
             return new ServiceResponse<>(false, "User id provided is null", null);
         }
         try {
-            user = userRepository.getUser(id);
+            user = userDAO.getUser(id);
         } catch (UserNotFoundException e) {
             return new ServiceResponse<>(false, "User not found", null);
         }
@@ -55,7 +55,7 @@ public class UserService {
 
     public ServiceResponse<String> login(String name, String password) throws DatabaseAccessException {
         try {
-            User user = userRepository.getUser(name);
+            User user = userDAO.getUser(name);
             String hashedPassword = user.getPassword();
 
             if (!HashingUtil.passwordMatch(password, hashedPassword)) {
@@ -89,13 +89,13 @@ public class UserService {
             return new ServiceResponse<>(false, validation, null);
         }
         try {
-            userRepository.getUser(name);
+            userDAO.getUser(name);
             return new ServiceResponse<>(false, "Username is taken", null);
         } catch (UserNotFoundException e) {
-            userRepository.addUser(name, RoleType.USER, HashingUtil.hashPassword(password));
+            userDAO.addUser(name, RoleType.USER, HashingUtil.hashPassword(password));
             User user;
             try {
-                user = userRepository.getUser(name);
+                user = userDAO.getUser(name);
             } catch (UserNotFoundException ex) {
                 return new ServiceResponse<>(false, "Failed to add user", null);
             }
@@ -115,7 +115,7 @@ public class UserService {
 
     public ServiceResponse<?> updatePassword(String name, String oldPassword, String newPassword) throws DatabaseAccessException {
         try {
-            User user = userRepository.getUser(name);
+            User user = userDAO.getUser(name);
             String oldHashedPassword = user.getPassword();
             if (!HashingUtil.passwordMatch(oldPassword, oldHashedPassword)) {
                 return new ServiceResponse<>(false, "Old password is incorrect", null);
@@ -128,7 +128,7 @@ public class UserService {
 
             String newPasswordHashed = HashingUtil.hashPassword(newPassword);
             user.setPassword(newPasswordHashed);
-            userRepository.updateUser(user);
+            userDAO.updateUser(user);
             return new ServiceResponse<>(true, "Password changed", null);
         } catch (UserNotFoundException e) {
             return new ServiceResponse<>(false, "User doesn't exist", null);
@@ -137,9 +137,9 @@ public class UserService {
 
     public ServiceResponse<?> setRole(String userName, RoleType role) throws DatabaseAccessException {
         try {
-            User user = userRepository.getUser(userName);
+            User user = userDAO.getUser(userName);
             user.setRole(role);
-            userRepository.updateUser(user);
+            userDAO.updateUser(user);
             return new ServiceResponse<>(true, "Role set successfully", null);
         } catch (UserNotFoundException e) {
             return new ServiceResponse<>(false, "User doesn't exist", null);
@@ -147,7 +147,7 @@ public class UserService {
     }
 
     public ServiceResponse<PagedEntity<List<User>>> getUsersPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
-        PagedEntity<List<User>> usersPagedEntity = userRepository.getUsersPagedList(page, perPageAmount);
+        PagedEntity<List<User>> usersPagedEntity = userDAO.getUsersPagedList(page, perPageAmount);
         if (usersPagedEntity.page().isEmpty()) {
             return new ServiceResponse<>(false, "Users not found", usersPagedEntity);
         }
@@ -155,16 +155,16 @@ public class UserService {
     }
 
     public ServiceResponse<?> deleteUser(String userName) throws DatabaseAccessException {
-        userRepository.deleteUser(userName);
+        userDAO.deleteUser(userName);
         return new ServiceResponse<>(true, "User successfully deleted", null);
     }
 
     public ServiceResponse<?> toggleBanUser(String userName) throws DatabaseAccessException {
         try {
-            User user = userRepository.getUser(userName);
+            User user = userDAO.getUser(userName);
             boolean ban = user.getRole() != RoleType.BANNED;
             user.setRole(ban ? RoleType.BANNED : RoleType.USER);
-            userRepository.updateUser(user);
+            userDAO.updateUser(user);
             return new ServiceResponse<>(true, "User " + ((ban) ? "" : "un") + "banned successfully", null);
         } catch (UserNotFoundException e) {
             return new ServiceResponse<>(false, "User doesn't exist", null);
@@ -173,7 +173,7 @@ public class UserService {
 
     public ServiceResponse<RoleType> getUserRole(String userName) throws DatabaseAccessException {
         try {
-            User user = userRepository.getUser(userName);
+            User user = userDAO.getUser(userName);
             RoleType roleType = user.getRole();
             return new ServiceResponse<>(true, "Successfully found user's role", roleType);
 

@@ -1,11 +1,11 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Answer;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.AnswerRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.AnswerDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.base.BaseMockDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.OptionNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
@@ -13,9 +13,9 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnswerMockRepository extends BaseMockRepository implements AnswerRepository {
+public class AnswerMockDAO extends BaseMockDAO implements AnswerDAO {
 
-    public AnswerMockRepository(MockDatabaseSource database) {
+    public AnswerMockDAO(MockDatabaseSource database) {
         super(database);
     }
 

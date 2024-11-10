@@ -1,10 +1,10 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.QuestionRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.QuestionDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QuestionSqlRepository extends BaseSqlRepository implements QuestionRepository {
-    public QuestionSqlRepository(DatabaseSource dataSource) {
+public class QuestionSqlDAO extends BaseSqlDAO implements QuestionDAO {
+    public QuestionSqlDAO(DatabaseSource dataSource) {
         super(dataSource);
     }
 

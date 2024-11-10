@@ -1,7 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.provider.sql;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
@@ -17,17 +17,17 @@ public class SqlServiceProvider implements ServiceProvider {
     public SqlServiceProvider() {
         DatabaseSource dataSource = new DatabaseSource();
 
-        AnswerRepository answerRepository = new AnswerSqlRepository(dataSource);
-        CategoryRepository categoryRepository = new CategorySqlRepository(dataSource);
-        QuestionRepository questionRepository = new QuestionSqlRepository(dataSource);
-        SessionRepository sessionRepository = new SessionSqlRepository(dataSource);
-        SurveyRepository surveyRepository = new SurveySqlRepository(dataSource);
-        UserRepository userRepository = new UserSqlRepository(dataSource);
+        AnswerDAO answerDAO = new AnswerSqlDAO(dataSource);
+        CategoryDAO categoryDAO = new CategorySqlDAO(dataSource);
+        QuestionDAO questionDAO = new QuestionSqlDAO(dataSource);
+        SessionDAO sessionDAO = new SessionSqlDAO(dataSource);
+        SurveyDAO surveyDAO = new SurveySqlDAO(dataSource);
+        UserDAO userDAO = new UserSqlDAO(dataSource);
 
-        this.userService = new UserService(userRepository);
-        this.surveyService = new SurveyService(userRepository, surveyRepository, questionRepository,
-                answerRepository, categoryRepository, sessionRepository);
-        this.sessionService = new SessionService(userRepository, answerRepository, sessionRepository);
+        this.userService = new UserService(userDAO);
+        this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO,
+                answerDAO, categoryDAO, sessionDAO);
+        this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO);
     }
 
     @Override

@@ -1,9 +1,9 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.UserDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
@@ -16,8 +16,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserSqlRepository extends BaseSqlRepository implements UserRepository {
-    public UserSqlRepository(DatabaseSource dataSource) {
+public class UserSqlDAO extends BaseSqlDAO implements UserDAO {
+    public UserSqlDAO(DatabaseSource dataSource) {
         super(dataSource);
     }
 

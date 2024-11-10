@@ -1,4 +1,4 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
@@ -6,7 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 
 import java.util.List;
 
-public interface CategoryRepository {
+public interface CategoryDAO {
     Category getCategoryByName(String name) throws CategoryNotFoundException, DatabaseAccessException;
 
     List<Category> getAllCategories() throws DatabaseAccessException;

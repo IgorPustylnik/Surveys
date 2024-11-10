@@ -1,8 +1,8 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SessionRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.SessionDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SessionNotFoundException;
@@ -12,8 +12,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import java.sql.*;
 import java.util.Date;
 
-public class SessionSqlRepository extends BaseSqlRepository implements SessionRepository {
-    public SessionSqlRepository(DatabaseSource dataSource) {
+public class SessionSqlDAO extends BaseSqlDAO implements SessionDAO {
+    public SessionSqlDAO(DatabaseSource dataSource) {
         super(dataSource);
     }
 

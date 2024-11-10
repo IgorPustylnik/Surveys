@@ -1,7 +1,7 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.services;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
@@ -10,22 +10,22 @@ import java.util.List;
 
 public class SessionService {
 
-    private final UserRepository userRepository;
-    private final AnswerRepository answerRepository;
-    private final SessionRepository sessionRepository;
+    private final UserDAO userDAO;
+    private final AnswerDAO answerDAO;
+    private final SessionDAO sessionDAO;
 
-    public SessionService(UserRepository userRepository,
-                         AnswerRepository answerRepository,
-                         SessionRepository sessionRepository) {
-        this.userRepository = userRepository;
-        this.answerRepository = answerRepository;
-        this.sessionRepository = sessionRepository;
+    public SessionService(UserDAO userDAO,
+                          AnswerDAO answerDAO,
+                          SessionDAO sessionDAO) {
+        this.userDAO = userDAO;
+        this.answerDAO = answerDAO;
+        this.sessionDAO = sessionDAO;
     }
 
     public ServiceResponse<Integer> startSessionAndGetId(Integer userId, Integer surveyId) throws DatabaseAccessException {
         if (userId != null) {
             try {
-                userId = userRepository.getUser(userId).getId();
+                userId = userDAO.getUser(userId).getId();
             } catch (UserNotFoundException e) {
                 return new ServiceResponse<>(false, "User doesn't exist", null);
             }
@@ -33,7 +33,7 @@ public class SessionService {
 
         Integer sessionId;
         try {
-            sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
+            sessionId = sessionDAO.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
         } catch (SurveyNotFoundException e) {
             return new ServiceResponse<>(false, "Survey doesn't exist", null);
         } catch (UserNotFoundException e) {
@@ -46,7 +46,7 @@ public class SessionService {
         Session session;
 
         try {
-            session = sessionRepository.getSessionById(sessionId);
+            session = sessionDAO.getSessionById(sessionId);
             return new ServiceResponse<>(true, "Session found", session);
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
@@ -55,7 +55,7 @@ public class SessionService {
 
     public ServiceResponse<?> submitAnswer(Integer sessionId, Integer optionId) throws DatabaseAccessException {
         try {
-            answerRepository.addAnswer(sessionId, optionId);
+            answerDAO.addAnswer(sessionId, optionId);
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
         } catch (OptionNotFoundException e) {
@@ -67,7 +67,7 @@ public class SessionService {
     public ServiceResponse<?> submitAnswers(Integer sessionId, List<Integer> optionIds) throws DatabaseAccessException {
         try {
             for (Integer optionId : optionIds) {
-                answerRepository.addAnswer(sessionId, optionId);
+                answerDAO.addAnswer(sessionId, optionId);
             }
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
@@ -79,9 +79,9 @@ public class SessionService {
 
     public ServiceResponse<?> finishSession(Integer sessionId) throws DatabaseAccessException {
         try {
-            Session session = sessionRepository.getSessionById(sessionId);
+            Session session = sessionDAO.getSessionById(sessionId);
             session.setFinishedAt(Calendar.getInstance().getTime());
-            sessionRepository.updateSession(session);
+            sessionDAO.updateSession(session);
             return new ServiceResponse<>(true, "Session finished successfully", null);
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);

@@ -1,10 +1,10 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.UserRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.UserDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.base.BaseMockDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.UserNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
@@ -12,8 +12,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserMockRepository extends BaseMockRepository implements UserRepository {
-    public UserMockRepository(MockDatabaseSource database) {
+public class UserMockDAO extends BaseMockDAO implements UserDAO {
+    public UserMockDAO(MockDatabaseSource database) {
         super(database);
     }
 

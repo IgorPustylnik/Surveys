@@ -1,7 +1,7 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.AnswerRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.AnswerDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.OptionNotFoundException;
@@ -11,9 +11,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AnswerSqlRepository extends BaseSqlRepository implements AnswerRepository {
+public class AnswerSqlDAO extends BaseSqlDAO implements AnswerDAO {
 
-    public AnswerSqlRepository(DatabaseSource dataSource) {
+    public AnswerSqlDAO(DatabaseSource dataSource) {
         super(dataSource);
     }
 

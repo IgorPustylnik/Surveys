@@ -1,4 +1,4 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
@@ -9,7 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import java.util.Date;
 import java.util.List;
 
-public interface SurveyRepository {
+public interface SurveyDAO {
     Survey addSurvey(String name, String description, Integer categoryId, String authorName, Date createdAt) throws DatabaseAccessException;
 
     Survey getSurveyById(int id) throws SurveyNotFoundException, DatabaseAccessException;

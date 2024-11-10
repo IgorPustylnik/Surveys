@@ -4,8 +4,8 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
@@ -23,17 +23,17 @@ public class MockServiceProvider implements ServiceProvider {
 
     public MockServiceProvider() {
         MockDatabaseSource db = new MockDatabaseSource();
-        AnswerRepository answerRepository = new AnswerMockRepository(db);
-        CategoryRepository categoryRepository = new CategoryMockRepository(db);
-        QuestionRepository questionRepository = new QuestionMockRepository(db);
-        SessionRepository sessionRepository = new SessionMockRepository(db);
-        SurveyRepository surveyRepository = new SurveyMockRepository(db);
-        UserRepository userRepository = new UserMockRepository(db);
+        AnswerDAO answerDAO = new AnswerMockDAO(db);
+        CategoryDAO categoryDAO = new CategoryMockDAO(db);
+        QuestionDAO questionDAO = new QuestionMockDAO(db);
+        SessionDAO sessionDAO = new SessionMockDAO(db);
+        SurveyDAO surveyDAO = new SurveyMockDAO(db);
+        UserDAO userDAO = new UserMockDAO(db);
 
-        this.userService = new UserService(userRepository);
-        this.surveyService = new SurveyService(userRepository, surveyRepository, questionRepository,
-                answerRepository, categoryRepository, sessionRepository);
-        this.sessionService = new SessionService(userRepository, answerRepository, sessionRepository);
+        this.userService = new UserService(userDAO);
+        this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO,
+                answerDAO, categoryDAO, sessionDAO);
+        this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO);
 
         addMockData();
     }

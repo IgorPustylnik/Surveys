@@ -1,19 +1,19 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.QuestionRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.QuestionDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.base.BaseMockDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionMockRepository extends BaseMockRepository implements QuestionRepository {
-    public QuestionMockRepository(MockDatabaseSource database) {
+public class QuestionMockDAO extends BaseMockDAO implements QuestionDAO {
+    public QuestionMockDAO(MockDatabaseSource database) {
         super(database);
     }
 

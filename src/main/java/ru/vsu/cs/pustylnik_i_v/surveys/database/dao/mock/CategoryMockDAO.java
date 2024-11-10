@@ -1,18 +1,18 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.CategoryRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.CategoryDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.base.BaseMockDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryMockRepository extends BaseMockRepository implements CategoryRepository {
+public class CategoryMockDAO extends BaseMockDAO implements CategoryDAO {
 
-    public CategoryMockRepository(MockDatabaseSource database) {
+    public CategoryMockDAO(MockDatabaseSource database) {
         super(database);
     }
 

@@ -1,10 +1,10 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.base.BaseMockRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.SurveyDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.base.BaseMockDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SurveyMockRepository extends BaseMockRepository implements SurveyRepository {
-    public SurveyMockRepository(MockDatabaseSource database) {
+public class SurveyMockDAO extends BaseMockDAO implements SurveyDAO {
+    public SurveyMockDAO(MockDatabaseSource database) {
         super(database);
     }
 

@@ -1,8 +1,8 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.SurveyRepository;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.SurveyDAO;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.CategoryNotFoundException;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SurveySqlRepository extends BaseSqlRepository implements SurveyRepository {
-    public SurveySqlRepository(DatabaseSource dataSource) {
+public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
+    public SurveySqlDAO(DatabaseSource dataSource) {
         super(dataSource);
     }
 

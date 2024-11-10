@@ -1,14 +1,14 @@
-package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base;
+package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public abstract class BaseSqlRepository {
+public abstract class BaseSqlDAO {
     private final DatabaseSource dataSource;
 
-    public BaseSqlRepository(DatabaseSource dataSource) {
+    public BaseSqlDAO(DatabaseSource dataSource) {
         this.dataSource = dataSource;
     }
 
