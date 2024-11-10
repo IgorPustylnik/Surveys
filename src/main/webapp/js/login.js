@@ -17,7 +17,14 @@ document.getElementById("loginForm").addEventListener("submit", async function (
             body: JSON.stringify({ username, password })
         });
 
-        const result = await response.json();
+        let result;
+        const contentType = response.headers.get("Content-Type");
+
+        if (contentType && contentType.includes("application/json")) {
+            result = await response.json();
+        } else {
+            result = { message: await response.text() };
+        }
 
         if (response.ok) {
             document.cookie = `authToken=${result.token}; path=/; max-age=${60 * 60 * 24 * 14}`;

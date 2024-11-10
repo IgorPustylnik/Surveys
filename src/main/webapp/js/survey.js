@@ -13,11 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (response.ok) {
-                const result = await response.text();
-                displayMessage("success", result.message || "Survey started successfully.");
-                setTimeout(() => {
-                    window.location.href = `/survey/${surveyId}/session`;
-                }, 1000);
+                const result = await response.json();
+                window.location.href = `/session/${result.sessionId}`;
             } else {
                 const errorText = await response.text();
                 displayMessage("danger", `Failed to start survey: ${errorText}`);
