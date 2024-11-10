@@ -28,12 +28,12 @@
 
     <!-- Filters Button -->
     <div class="d-flex justify-content-end" style="position: relative;">
-        <button id="filtersButton" class="btn btn-secondary position-relative" style="margin-bottom: 20px; margin-top: 20px"
+        <button id="filtersButton" class="btn btn-outline-secondary position-relative mb-4"
                 data-bs-toggle="modal" data-bs-target="#filtersModal">
-            Filters
+            <i class="bi bi-funnel"></i> Filters
             <span id="filterCountBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            0
-        </span>
+                0
+            </span>
         </button>
     </div>
 

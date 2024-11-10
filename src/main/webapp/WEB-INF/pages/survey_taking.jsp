@@ -17,12 +17,14 @@
 <%@include file="../templates/navbar.jsp" %>
 
 <div class="container mt-4 mb-4">
-    <h2 class="mb-4">Survey</h2>
-
     <%
         List<Question> questions = (List<Question>) request.getAttribute("questions");
         Integer sessionId = (Integer) request.getAttribute("sessionId");
+        String surveyName = (String) request.getAttribute("surveyName");
     %>
+
+    <h2 class="mb-4"><%=surveyName%></h2>
+
     <form id="surveyForm" data-questions-amount="<%= questions.size() %>" data-session-id="<%= sessionId %>" onsubmit="submitAnswers(event)">
         <%
             int questionNumber = 1;

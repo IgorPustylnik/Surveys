@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (response.ok) {
                 const result = await response.json();
+                document.cookie = `surveySessionId=${result.sessionId}; path=/; max-age=${60 * 60 * 6}`;
                 window.location.href = `/session/${result.sessionId}`;
             } else {
                 const errorText = await response.text();
@@ -24,32 +25,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    editButton.addEventListener("click", function (e) {
-        e.preventDefault();
-        window.location.href = `/survey/${surveyId}/edit`;
-    });
+    if (editButton != null) {
+        editButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.location.href = `/survey/${surveyId}/edit`;
+        });
+    }
 
-    deleteButton.addEventListener("click", async function (e) {
-        e.preventDefault();
-        try {
-            const response = await fetch(`/survey/${surveyId}/delete`, {
-                method: "POST"
-            });
+    if (deleteButton != null) {
+        deleteButton.addEventListener("click", async function (e) {
+            e.preventDefault();
+            try {
+                const response = await fetch(`/survey/${surveyId}/delete`, {
+                    method: "POST"
+                });
 
-            if (response.ok) {
-                const result = await response.text();
-                displayMessage("success", result.message || "Survey deleted successfully.");
-                setTimeout(() => {
-                    window.location.href = "/surveys";
-                }, 1000);
-            } else {
-                const errorText = await response.text();
-                displayMessage("danger", `Failed to delete survey: ${errorText}`);
+                if (response.ok) {
+                    const result = await response.text();
+                    displayMessage("success", result.message || "Survey deleted successfully.");
+                    setTimeout(() => {
+                        window.location.href = "/surveys";
+                    }, 1000);
+                } else {
+                    const errorText = await response.text();
+                    displayMessage("danger", `Failed to delete survey: ${errorText}`);
+                }
+            } catch (error) {
+                displayMessage("danger", "An error occurred while deleting survey.");
             }
-        } catch (error) {
-            displayMessage("danger", "An error occurred while deleting survey.");
-        }
-    });
+        });
+    }
 });
 
 function displayMessage(type, message) {

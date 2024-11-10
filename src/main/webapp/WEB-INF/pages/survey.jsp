@@ -36,17 +36,19 @@
         </div>
     </div>
 
-    <p class="text-muted">Created by <%= survey.getAuthorName() %> on <%=DateUtil.formatFull(survey.getCreatedAt()) %>
+    <p class="text-muted text-start mb-4">Created by <%= survey.getAuthorName() %> on <%=DateUtil.formatFull(survey.getCreatedAt()) %>
     </p>
 
-    <!-- Actions -->
-    <div class="mt-4">
-        <button id="startSurveyButton" class="btn btn-primary me-2" data-survey-id="<%= survey.getId() %>">Start</button>
+    <!-- Actions Section -->
+    <div class="d-flex justify-content-start gap-3">
+        <button id="startSurveyButton" class="btn btn-md btn-primary" data-survey-id="<%= survey.getId() %>">Start</button>
+
         <% if (user != null && user.getName().equals(survey.getAuthorName())) { %>
-        <button id="editSurveyButton" class="btn btn-secondary me-2">Edit</button>
+        <button id="editSurveyButton" class="btn btn-md btn-secondary">Edit</button>
         <% } %>
+
         <% if (user != null && (user.getRole() == RoleType.ADMIN || user.getName().equals(survey.getAuthorName()))) { %>
-        <button id="deleteSurveyButton" class="btn btn-danger">Delete</button>
+        <button id="deleteSurveyButton" class="btn btn-md btn-danger">Delete</button>
         <% } %>
     </div>
 
