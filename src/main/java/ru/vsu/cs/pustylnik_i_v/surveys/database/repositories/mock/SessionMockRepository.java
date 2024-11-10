@@ -30,27 +30,6 @@ public class SessionMockRepository extends BaseMockRepository implements Session
     }
 
     @Override
-    public Session getUserSession(int userId) throws SessionNotFoundException, UserNotFoundException {
-        List<DBTableSimulationFilter<User>> filtersUser = new ArrayList<>();
-        filtersUser.add(DBTableSimulationFilter.of(u -> u.getId() == userId));
-
-        List<User> queryUser = database.users.get(filtersUser);
-        if (queryUser.isEmpty()) {
-            throw new UserNotFoundException(userId);
-        }
-
-        List<DBTableSimulationFilter<Session>> filters = new ArrayList<>();
-        filters.add(DBTableSimulationFilter.of(s -> Objects.equals(s.getUserId(), userId)));
-
-        List<Session> query = database.sessions.get(filters);
-        if (query.isEmpty()) {
-            throw new SessionNotFoundException(-1);
-        }
-
-        return query.get(0);
-    }
-
-    @Override
     public Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date finishedAt) throws UserNotFoundException, SurveyNotFoundException {
         List<DBTableSimulationFilter<Survey>> filtersSurvey = new ArrayList<>();
         filtersSurvey.add(DBTableSimulationFilter.of(s -> s.getId() == surveyId));
@@ -60,6 +39,8 @@ public class SessionMockRepository extends BaseMockRepository implements Session
             throw new SurveyNotFoundException(surveyId);
         }
 
+        String surveyName = query.get(0).getName();
+
         List<DBTableSimulationFilter<User>> filtersUser = new ArrayList<>();
         filtersSurvey.add(DBTableSimulationFilter.of(u -> u.getId() == userId));
 
@@ -68,7 +49,7 @@ public class SessionMockRepository extends BaseMockRepository implements Session
             throw new UserNotFoundException(userId);
         }
 
-        database.sessions.add(surveyId, userId, startedAt, finishedAt);
+        database.sessions.add(surveyId, surveyName, userId, startedAt, finishedAt);
 
         List<DBTableSimulationFilter<Session>> filtersSession = new ArrayList<>();
         filtersSession.add(DBTableSimulationFilter.of(s -> s.getStartedAt() == startedAt));
@@ -90,6 +71,7 @@ public class SessionMockRepository extends BaseMockRepository implements Session
         Session session = query.get(0);
 
         session.setSurveyId(s.getSurveyId());
+        session.setSurveyName(s.getSurveyName());
         session.setUserId(s.getUserId());
         session.setStartedAt(s.getStartedAt());
         session.setFinishedAt(s.getFinishedAt());

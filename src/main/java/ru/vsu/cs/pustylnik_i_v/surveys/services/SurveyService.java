@@ -94,17 +94,6 @@ public class SurveyService {
         return new ServiceResponse<>(true, "Categories successfully found", new PagedEntity<>(page, totalPages, sliced));
     }
 
-    public ServiceResponse<?> submitAnswer(Integer sessionId, Integer optionId) throws DatabaseAccessException {
-        try {
-            answerRepository.addAnswer(sessionId, optionId);
-        } catch (SessionNotFoundException e) {
-            return new ServiceResponse<>(false, "Session doesn't exist", null);
-        } catch (OptionNotFoundException e) {
-            return new ServiceResponse<>(false, "Option doesn't exist", null);
-        }
-        return new ServiceResponse<>(true, "Answer submitted successfully", null);
-    }
-
     public ServiceResponse<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException {
         try {
             questionRepository.addQuestion(surveyId, description, questionType, options);
@@ -179,46 +168,5 @@ public class SurveyService {
         }
 
         return new ServiceResponse<>(true, "Category set successfully", null);
-    }
-
-    public ServiceResponse<Integer> startSessionAndGetId(String userName, Integer surveyId) throws DatabaseAccessException {
-        Integer userId = null;
-
-        try {
-            userId = userRepository.getUser(userName).getId();
-        } catch (UserNotFoundException ignored) {
-        }
-
-        Integer sessionId;
-        try {
-            sessionId = sessionRepository.addSessionAndGetId(surveyId, userId, Calendar.getInstance().getTime(), null);
-        } catch (SurveyNotFoundException e) {
-            return new ServiceResponse<>(false, "Survey doesn't exist", null);
-        } catch (UserNotFoundException e) {
-            return new ServiceResponse<>(false, "User doesn't exist", null);
-        }
-        return new ServiceResponse<>(true, "Successfully created a session", sessionId);
-    }
-
-    public ServiceResponse<?> finishSession(Integer sessionId) throws DatabaseAccessException {
-        try {
-            Session session = sessionRepository.getSessionById(sessionId);
-            session.setFinishedAt(Calendar.getInstance().getTime());
-            sessionRepository.updateSession(session);
-            return new ServiceResponse<>(true, "Session finished successfully", null);
-        } catch (SessionNotFoundException e) {
-            return new ServiceResponse<>(false, "Session doesn't exist", null);
-        }
-    }
-
-    public ServiceResponse<?> hasActiveSession(Integer userId) throws DatabaseAccessException {
-        try {
-            sessionRepository.getUserSession(userId);
-        } catch (SessionNotFoundException e) {
-            return new ServiceResponse<>(false, "Session doesn't exist", null);
-        } catch (UserNotFoundException e) {
-            return new ServiceResponse<>(false, "User doesn't exist", null);
-        }
-        return new ServiceResponse<>(true, "User has active session", null);
     }
 }

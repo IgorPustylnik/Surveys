@@ -39,7 +39,7 @@ public class OpenQuestionCommand extends CommandMenu {
             ServiceResponse<Integer> response;
 
             try {
-                response = appContext.getSurveyService().startSessionAndGetId(localUser.getName(), currentSurvey.getId());
+                response = appContext.getSessionService().startSessionAndGetId(localUser != null ? localUser.getId() : null, currentSurvey.getId());
             } catch (DatabaseAccessException e) {
                 appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                 return;
@@ -108,7 +108,7 @@ public class OpenQuestionCommand extends CommandMenu {
         inputSet.forEach(index ->
                 {
                     try {
-                        appContext.getSurveyService().submitAnswer(appContext.currentSessionId, options.get(index).getId());
+                        appContext.getSessionService().submitAnswer(appContext.currentSessionId, options.get(index).getId());
                     } catch (DatabaseAccessException e) {
                         appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
                     }
@@ -122,7 +122,7 @@ public class OpenQuestionCommand extends CommandMenu {
 
     private void goBack() {
         try {
-            appContext.getSurveyService().finishSession(appContext.currentSessionId);
+            appContext.getSessionService().finishSession(appContext.currentSessionId);
             appContext.currentSessionId = null;
             appContext.currentQuestionIndex = 0;
             appContext.getCommandExecutor().getCommand(CommandType.OPEN_SURVEY).execute();

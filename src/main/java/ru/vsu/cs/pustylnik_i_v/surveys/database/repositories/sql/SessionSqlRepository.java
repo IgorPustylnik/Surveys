@@ -19,7 +19,10 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
 
     @Override
     public Session getSessionById(int id) throws SessionNotFoundException, DatabaseAccessException {
-        String query = "SELECT * FROM sessions WHERE id = ?";
+        String query = "SELECT ss.id as session_id, ss.survey_id as survey_id, sv.name as survey_name, ss.user_id as user_id, " +
+                "ss.started_at as started_at, ss.finished_at as finished_at FROM sessions ss " +
+                "JOIN surveys sv ON ss.survey_id = sv.id " +
+                "WHERE ss.id = ?";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -27,8 +30,9 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new Session(resultSet.getInt("id"),
+                    return new Session(resultSet.getInt("session_id"),
                             resultSet.getInt("survey_id"),
+                            resultSet.getString("survey_name"),
                             resultSet.getInt("user_id"),
                             resultSet.getTimestamp("started_at"),
                             resultSet.getTimestamp("finished_at"));
@@ -41,41 +45,6 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
             throw new DatabaseAccessException(e.getMessage());
         }
         throw new SessionNotFoundException(id);
-    }
-
-    @Override
-    public Session getUserSession(int userId) throws SessionNotFoundException, DatabaseAccessException, UserNotFoundException {
-        String queryCheckUser = "SELECT * FROM users WHERE id = ?";
-        String query = "SELECT * FROM sessions WHERE user_id = ?";
-
-        try (Connection connection = getConnection()) {
-
-            PreparedStatement statementCheckUser;
-            statementCheckUser = connection.prepareStatement(queryCheckUser);
-            statementCheckUser.setInt(1, userId);
-            if (!statementCheckUser.executeQuery().next()) {
-                throw new UserNotFoundException(userId);
-            }
-
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, userId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new Session(resultSet.getInt("id"),
-                            resultSet.getInt("survey_id"),
-                            resultSet.getInt("user_id"),
-                            resultSet.getTimestamp("started_at"),
-                            resultSet.getTimestamp("finished_at"));
-
-                }
-            } catch (SQLException e) {
-                throw new SessionNotFoundException(-1);
-            }
-        } catch (SQLException e) {
-            throw new DatabaseAccessException(e.getMessage());
-        }
-        throw new SessionNotFoundException(-1);
     }
 
     @Override
@@ -131,7 +100,7 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
     @Override
     public void updateSession(Session s) throws SessionNotFoundException, DatabaseAccessException {
         String checkQuery = "SELECT COUNT(*) FROM sessions WHERE id = ?";
-        String updateQuery = "UPDATE sessions SET finished_at = ? WHERE id = ?";
+        String updateQuery = "UPDATE sessions SET survey_id = ?, user_id = ?, started_at = ?, finished_at = ? WHERE id = ?";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
@@ -146,8 +115,11 @@ public class SessionSqlRepository extends BaseSqlRepository implements SessionRe
             }
 
             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
-                updateStatement.setTimestamp(1, new Timestamp(s.getFinishedAt().getTime()));
-                updateStatement.setInt(2, s.getId());
+                updateStatement.setInt(1, s.getSurveyId());
+                updateStatement.setInt(2, s.getUserId());
+                updateStatement.setTimestamp(3, new Timestamp(s.getStartedAt().getTime()));
+                updateStatement.setTimestamp(4, new Timestamp(s.getFinishedAt().getTime()));
+                updateStatement.setInt(5, s.getId());
 
                 updateStatement.executeUpdate();
             }

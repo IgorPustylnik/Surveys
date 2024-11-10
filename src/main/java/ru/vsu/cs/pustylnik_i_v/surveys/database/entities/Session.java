@@ -6,13 +6,15 @@ public class Session {
 
     private int id;
     private int surveyId;
+    private String surveyName;
     private Integer userId;
     private Date startedAt;
     private Date finishedAt;
 
-    public Session(int id, int surveyId, Integer userId, Date startedAt, Date finishedAt) {
+    public Session(int id, int surveyId, String surveyName, Integer userId, Date startedAt, Date finishedAt) {
         this.id = id;
         this.surveyId = surveyId;
+        this.surveyName = surveyName;
         this.userId = userId;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
@@ -32,6 +34,14 @@ public class Session {
 
     public void setSurveyId(int surveyId) {
         this.surveyId = surveyId;
+    }
+
+    public String getSurveyName() {
+        return surveyName;
+    }
+
+    public void setSurveyName(String surveyName) {
+        this.surveyName = surveyName;
     }
 
     public Integer getUserId() {

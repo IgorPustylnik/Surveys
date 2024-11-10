@@ -11,8 +11,6 @@ import java.util.Date;
 public interface SessionRepository {
     Session getSessionById(int id) throws SessionNotFoundException, DatabaseAccessException;
 
-    Session getUserSession(int userId) throws SessionNotFoundException, DatabaseAccessException, UserNotFoundException;
-
     Integer addSessionAndGetId(int surveyId, Integer userId, Date startedAt, Date endedAt) throws SurveyNotFoundException, DatabaseAccessException, UserNotFoundException;
 
     void updateSession(Session s) throws SessionNotFoundException, DatabaseAccessException;

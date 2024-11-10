@@ -10,6 +10,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.json.SessionIdDTO;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
@@ -46,6 +47,7 @@ public class SurveyServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = (UserService) getServletContext().getAttribute("userService");
         SurveyService surveyService = (SurveyService) getServletContext().getAttribute("surveyService");
+        SessionService sessionService = (SessionService) getServletContext().getAttribute("sessionService");
 
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.length() <= 1) {
@@ -73,11 +75,6 @@ public class SurveyServlet extends HttpServlet {
 
         try {
             user = ServletsUtils.getUser(request, response, userService);
-            if (user == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Unauthorized");
-                return;
-            }
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.getWriter().write(e.getMessage());
@@ -85,8 +82,13 @@ public class SurveyServlet extends HttpServlet {
         }
 
         if ("start".equals(action)) {
-            handleStart(request, response, user, surveyId, surveyService);
+            handleStart(request, response, user, surveyId, sessionService);
         } else if ("delete".equals(action)) {
+            if (user == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Unauthorized");
+                return;
+            }
             handleDelete(request, response, user, surveyId, surveyService);
         }
     }
@@ -112,16 +114,19 @@ public class SurveyServlet extends HttpServlet {
 
     // POST
 
-    private void handleStart(HttpServletRequest request, HttpServletResponse response, User user, Integer surveyId, SurveyService surveyService) throws IOException {
+    private void handleStart(HttpServletRequest request, HttpServletResponse response, User user, Integer surveyId, SessionService sessionService) throws IOException {
         request.setAttribute("user", user);
+
+        response.setContentType("application/json; charset=UTF-8");
 
         ServiceResponse<Integer> serviceResponse;
 
         try {
-            serviceResponse = surveyService.startSessionAndGetId(user.getName(), surveyId);
+            serviceResponse = sessionService.startSessionAndGetId(user != null ? user.getId() : null, surveyId);
 
             if (!serviceResponse.success()) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("text/plain; charset=UTF-8");
                 response.getWriter().write(serviceResponse.message());
                 return;
             }
@@ -129,6 +134,7 @@ public class SurveyServlet extends HttpServlet {
             response.getWriter().write(ServletsUtils.toJson(SessionIdDTO.of(serviceResponse.body())));
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setContentType("text/plain; charset=UTF-8");
             response.getWriter().write(e.getMessage());
         }
     }
@@ -136,6 +142,8 @@ public class SurveyServlet extends HttpServlet {
     private void handleDelete(HttpServletRequest request, HttpServletResponse response, User user, Integer surveyId, SurveyService surveyService) throws IOException {
         Survey survey;
         ServiceResponse<Survey> serviceResponseGet;
+
+        response.setContentType("text/plain; charset=UTF-8");
 
         try {
             serviceResponseGet = surveyService.getSurvey(surveyId);

@@ -9,7 +9,11 @@ import ru.vsu.cs.pustylnik_i_v.surveys.provider.sql.SqlServiceProvider;
 public class Application {
     public static void main(String[] args) {
         ServiceProvider provider = new SqlServiceProvider();
-        ConsoleAppContext consoleAppContext = new ConsoleAppContext(provider.getUserService(), provider.getSurveyService());
+        ConsoleAppContext consoleAppContext = new ConsoleAppContext(
+                provider.getUserService(),
+                provider.getSurveyService(),
+                provider.getSessionService()
+        );
         ConsoleView consoleView = new ConsoleView(consoleAppContext);
 
         ConsoleUtils.clear();

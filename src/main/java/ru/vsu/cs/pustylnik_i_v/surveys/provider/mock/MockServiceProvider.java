@@ -8,6 +8,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
@@ -18,6 +19,7 @@ public class MockServiceProvider implements ServiceProvider {
 
     private final UserService userService;
     private final SurveyService surveyService;
+    private final SessionService sessionService;
 
     public MockServiceProvider() {
         MockDatabaseSource db = new MockDatabaseSource();
@@ -31,6 +33,7 @@ public class MockServiceProvider implements ServiceProvider {
         this.userService = new UserService(userRepository);
         this.surveyService = new SurveyService(userRepository, surveyRepository, questionRepository,
                 answerRepository, categoryRepository, sessionRepository);
+        this.sessionService = new SessionService(userRepository, answerRepository, sessionRepository);
 
         addMockData();
     }
@@ -45,9 +48,14 @@ public class MockServiceProvider implements ServiceProvider {
         return surveyService;
     }
 
+    @Override
+    public SessionService getSessionService() {
+        return sessionService;
+    }
+
     private void addMockData() {
         try {
-            userService.register("admin", "admin");
+            userService.register("admin", "Admin123");
             userService.setRole("admin", RoleType.ADMIN);
 
             ServiceResponse<Survey> serviceResponse = surveyService.addSurveyAndGetSelf(

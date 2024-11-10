@@ -40,21 +40,22 @@ public class MockDatabaseSource {
     public final DBTableSimulation<Session> sessions = new DBTableSimulation<>(
             params -> new Session(0,
                     (Integer) params[0],
-                    (Integer) params[1],
-                    (Date) params[2],
-                    (Date) params[3])
+                    (String) params[1],
+                    (Integer) params[2],
+                    (Date) params[3],
+                    (Date) params[4])
     );
 
     public final DBTableSimulation<Survey> surveys = new DBTableSimulation<>(
             params -> new Survey(
-                        0,
-                        (String) params[0],
-                        (String) params[1],
-                        (Integer) params[2],
-                        (String) params[3],
-                        (String) params[4],
+                    0,
+                    (String) params[0],
+                    (String) params[1],
+                    (Integer) params[2],
+                    (String) params[3],
+                    (String) params[4],
                     (Integer) params[5],
-                        (Date) params[6]
+                    (Date) params[6]
             )
     );
 

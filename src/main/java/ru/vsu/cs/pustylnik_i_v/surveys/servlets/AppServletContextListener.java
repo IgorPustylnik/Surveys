@@ -13,6 +13,7 @@ public class AppServletContextListener implements ServletContextListener {
         ServiceProvider serviceProvider = new SqlServiceProvider();
         sce.getServletContext().setAttribute("userService", serviceProvider.getUserService());
         sce.getServletContext().setAttribute("surveyService", serviceProvider.getSurveyService());
+        sce.getServletContext().setAttribute("sessionService", serviceProvider.getSessionService());
     }
 
 }

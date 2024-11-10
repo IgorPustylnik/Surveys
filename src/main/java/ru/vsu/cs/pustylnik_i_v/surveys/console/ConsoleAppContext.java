@@ -6,6 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Category;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
@@ -21,6 +22,7 @@ public class ConsoleAppContext {
 
     private final UserService userService;
     private final SurveyService surveyService;
+    private final SessionService sessionService;
     private final CommandExecutor commandExecutor;
 
     // User info
@@ -43,9 +45,10 @@ public class ConsoleAppContext {
     // Session
     public Integer currentSessionId = null;
 
-    public ConsoleAppContext(UserService userService, SurveyService surveyService) {
+    public ConsoleAppContext(UserService userService, SurveyService surveyService, SessionService sessionService) {
         this.userService = userService;
         this.surveyService = surveyService;
+        this.sessionService = sessionService;
         this.commandExecutor = new CommandExecutor(this);
     }
 
@@ -55,6 +58,10 @@ public class ConsoleAppContext {
 
     public SurveyService getSurveyService() {
         return surveyService;
+    }
+
+    public SessionService getSessionService() {
+        return sessionService;
     }
 
     public CommandExecutor getCommandExecutor() {
