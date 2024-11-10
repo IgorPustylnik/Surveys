@@ -17,7 +17,6 @@ public class SurveyService {
     private final UserRepository userRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
-    private final OptionRepository optionRepository;
     private final AnswerRepository answerRepository;
     private final CategoryRepository categoryRepository;
     private final SessionRepository sessionRepository;
@@ -25,14 +24,12 @@ public class SurveyService {
     public SurveyService(UserRepository userRepository,
                          SurveyRepository surveyRepository,
                          QuestionRepository questionRepository,
-                         OptionRepository optionRepository,
                          AnswerRepository answerRepository,
                          CategoryRepository categoryRepository,
                          SessionRepository sessionRepository) {
         this.userRepository = userRepository;
         this.surveyRepository = surveyRepository;
         this.questionRepository = questionRepository;
-        this.optionRepository = optionRepository;
         this.answerRepository = answerRepository;
         this.categoryRepository = categoryRepository;
         this.sessionRepository = sessionRepository;
@@ -53,27 +50,28 @@ public class SurveyService {
     }
 
     public ServiceResponse<PagedEntity<Question>> getQuestionPagedEntity(Integer surveyId, Integer index) throws DatabaseAccessException {
-        List<Question> questions = questionRepository.getQuestions(surveyId);
+        try {
+            List<Question> questions = questionRepository.getQuestions(surveyId);
 
-        if (index >= questions.size()) {
-            return new ServiceResponse<>(false, "Survey completed successfully", null);
+            if (index >= questions.size()) {
+                return new ServiceResponse<>(false, "Survey completed successfully", null);
+            }
+            Question question = questions.get(index);
+
+            return new ServiceResponse<>(true, "Question successfully found", new PagedEntity<>(index, questions.size(), question));
+        } catch (SurveyNotFoundException e) {
+            return new ServiceResponse<>(false, "Survey not found", null);
         }
-        Question question = questions.get(index);
-        return new ServiceResponse<>(true, "Question successfully found", new PagedEntity<>(index, questions.size(), question));
     }
 
-    public ServiceResponse<List<Option>> getQuestionOptionList(Integer questionId) throws DatabaseAccessException {
-        List<Option> options;
+    public ServiceResponse<List<Question>> getQuestions(Integer surveyId) throws DatabaseAccessException {
+        List<Question> questions;
         try {
-            options = optionRepository.getOptions(questionId);
-        } catch (QuestionNotFoundException e) {
-            return new ServiceResponse<>(false, "Question doesn't exist", null);
+            questions = questionRepository.getQuestions(surveyId);
+            return new ServiceResponse<>(true, "Questions successfully found", questions);
+        } catch (SurveyNotFoundException e) {
+            return new ServiceResponse<>(false, "Survey not found", null);
         }
-
-        if (options.isEmpty()) {
-            return new ServiceResponse<>(true, "No options found", null);
-        }
-        return new ServiceResponse<>(true, "Options found successfully", options);
     }
 
     public ServiceResponse<PagedEntity<List<Category>>> getCategoriesPagedList(Integer page, Integer perPageAmount) throws DatabaseAccessException {
@@ -108,20 +106,16 @@ public class SurveyService {
     }
 
     public ServiceResponse<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException {
-        questionRepository.addQuestion(surveyId, description, questionType);
+        try {
+            questionRepository.addQuestion(surveyId, description, questionType, options);
 
-        List<Question> questions = questionRepository.getQuestions(surveyId);
-        if (questions.isEmpty()) {
-            return new ServiceResponse<>(false, "Error (couldn't create a question)", null);
-        }
-        Question question = questions.get(questions.size() - 1);
-
-        for (String option : options) {
-            try {
-                optionRepository.addOption(question.getId(), option);
-            } catch (QuestionNotFoundException e) {
-                return new ServiceResponse<>(false, "Question doesn't exist", null);
+            List<Question> questions = questionRepository.getQuestions(surveyId);
+            if (questions.isEmpty()) {
+                return new ServiceResponse<>(false, "Error (couldn't create a question)", null);
             }
+
+        } catch (SurveyNotFoundException e) {
+            return new ServiceResponse<>(true, "Survey doesn't exist", null);
         }
 
         return new ServiceResponse<>(true, "Question created successfully", null);

@@ -17,7 +17,6 @@ public class SqlServiceProvider implements ServiceProvider {
 
         AnswerRepository answerRepository = new AnswerSqlRepository(dataSource);
         CategoryRepository categoryRepository = new CategorySqlRepository(dataSource);
-        OptionRepository optionRepository = new OptionSqlRepository(dataSource);
         QuestionRepository questionRepository = new QuestionSqlRepository(dataSource);
         SessionRepository sessionRepository = new SessionSqlRepository(dataSource);
         SurveyRepository surveyRepository = new SurveySqlRepository(dataSource);
@@ -25,7 +24,7 @@ public class SqlServiceProvider implements ServiceProvider {
 
         this.userService = new UserService(userRepository);
         this.surveyService = new SurveyService(userRepository, surveyRepository, questionRepository,
-                optionRepository, answerRepository, categoryRepository, sessionRepository);
+                answerRepository, categoryRepository, sessionRepository);
     }
 
     @Override

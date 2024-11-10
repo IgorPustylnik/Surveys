@@ -6,6 +6,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 
 import java.util.Date;
+import java.util.List;
 
 public class MockDatabaseSource {
     public final DBTableSimulation<Answer> answers = new DBTableSimulation<>(
@@ -32,7 +33,8 @@ public class MockDatabaseSource {
                     0,
                     (Integer) params[0],
                     (String) params[1],
-                    (QuestionType) params[2])
+                    (QuestionType) params[2],
+                    (List<Option>) params[3])
     );
 
     public final DBTableSimulation<Session> sessions = new DBTableSimulation<>(

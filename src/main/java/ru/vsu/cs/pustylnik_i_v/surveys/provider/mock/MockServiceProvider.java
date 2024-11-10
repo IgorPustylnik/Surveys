@@ -23,7 +23,6 @@ public class MockServiceProvider implements ServiceProvider {
         MockDatabaseSource db = new MockDatabaseSource();
         AnswerRepository answerRepository = new AnswerMockRepository(db);
         CategoryRepository categoryRepository = new CategoryMockRepository(db);
-        OptionRepository optionRepository = new OptionMockRepository(db);
         QuestionRepository questionRepository = new QuestionMockRepository(db);
         SessionRepository sessionRepository = new SessionMockRepository(db);
         SurveyRepository surveyRepository = new SurveyMockRepository(db);
@@ -31,7 +30,7 @@ public class MockServiceProvider implements ServiceProvider {
 
         this.userService = new UserService(userRepository);
         this.surveyService = new SurveyService(userRepository, surveyRepository, questionRepository,
-                optionRepository, answerRepository, categoryRepository, sessionRepository);
+                answerRepository, categoryRepository, sessionRepository);
 
         addMockData();
     }

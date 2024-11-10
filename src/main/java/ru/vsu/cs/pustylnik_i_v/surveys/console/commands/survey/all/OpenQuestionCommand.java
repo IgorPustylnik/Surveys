@@ -76,26 +76,11 @@ public class OpenQuestionCommand extends CommandMenu {
 
         setTitle(String.format("%s", question.getText()));
 
-        ServiceResponse<List<Option>> response1;
 
-        try {
-            response1 = appContext.getSurveyService().getQuestionOptionList(question.getId());
-        } catch (DatabaseAccessException e) {
-            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
-            return;
-        }
-
-        if (!response1.success()) {
+        List<Option> options = question.getOptions();
+        if (options.isEmpty()) {
             ConsoleUtils.clear();
-            System.err.println(response1.message());
-            goBack();
-            return;
-        }
-
-        List<Option> options = response1.body();
-        if (options == null) {
-            ConsoleUtils.clear();
-            System.err.println(response1.message());
+            System.err.println("Error: question has no options");
             goBack();
             return;
         }

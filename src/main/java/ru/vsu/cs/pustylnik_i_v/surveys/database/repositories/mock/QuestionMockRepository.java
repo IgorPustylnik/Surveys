@@ -1,5 +1,6 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.mock;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
@@ -25,9 +26,7 @@ public class QuestionMockRepository extends BaseMockRepository implements Questi
     }
 
     @Override
-    public void addQuestion(int surveyId, String text, QuestionType type) {
-        database.questions.add(surveyId, text, type);
-
+    public void addQuestion(int surveyId, String text, QuestionType type, List<String> options) {
         List<DBTableSimulationFilter<Survey>> filtersSurvey = new ArrayList<>();
         filtersSurvey.add(DBTableSimulationFilter.of(s -> s.getId() == surveyId));
 
@@ -35,6 +34,14 @@ public class QuestionMockRepository extends BaseMockRepository implements Questi
         if (query.isEmpty()) {
             return;
         }
+
+        List<Option> optionsList = new ArrayList<>();
+        for (String optionString: options) {
+            int optionId = database.options.add(surveyId, optionString);
+            optionsList.add(new Option(optionId, surveyId, optionString));
+        }
+
+        database.questions.add(surveyId, text, type, optionsList);
 
         Survey survey = query.get(0);
         survey.setQuestionsAmount(survey.getQuestionsAmount() + 1);
@@ -56,6 +63,10 @@ public class QuestionMockRepository extends BaseMockRepository implements Questi
         }
         Survey survey = query.get(0);
         survey.setQuestionsAmount(survey.getQuestionsAmount() - 1);
+
+        List<DBTableSimulationFilter<Option>> filtersOption = new ArrayList<>();
+        filtersOption.add(DBTableSimulationFilter.of(o -> o.getQuestionId() == id));
+        database.options.remove(filtersOption);
 
         database.questions.remove(filterQuestion);
     }

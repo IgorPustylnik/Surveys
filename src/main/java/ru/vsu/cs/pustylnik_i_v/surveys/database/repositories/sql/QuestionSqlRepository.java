@@ -1,18 +1,21 @@
 package ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql;
 
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Option;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.QuestionRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.repositories.sql.base.BaseSqlRepository;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.sql.DatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.QuestionNotFoundException;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.SurveyNotFoundException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QuestionSqlRepository extends BaseSqlRepository implements QuestionRepository {
     public QuestionSqlRepository(DatabaseSource dataSource) {
@@ -21,9 +24,12 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
 
     @Override
     public List<Question> getQuestions(int surveyId) throws DatabaseAccessException {
-        List<Question> questions = new ArrayList<>();
+        Map<Integer, Question> questionsMap = new HashMap<>();
 
-        String query = "SELECT * FROM questions WHERE survey_id = ?";
+        String query = "SELECT q.id AS question_id, q.survey_id, q.text, q.type, o.id AS option_id, o.description AS option_description " +
+                "FROM questions q " +
+                "LEFT JOIN options o ON q.id = o.question_id " +
+                "WHERE q.survey_id = ?";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -31,30 +37,82 @@ public class QuestionSqlRepository extends BaseSqlRepository implements Question
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    questions.add(new Question(resultSet.getInt("id"),
-                            resultSet.getInt("id"),
-                            resultSet.getString("text"),
-                            QuestionType.valueOf(resultSet.getString("type").toUpperCase())));
+                    int questionId = resultSet.getInt("question_id");
+                    String questionText = resultSet.getString("text");
+                    String questionTypeString = resultSet.getString("type");
+                    QuestionType questionType = questionTypeString != null ? QuestionType.valueOf(questionTypeString.toUpperCase()) : null;
+
+                    Question question = questionsMap.computeIfAbsent(questionId, id ->
+                            new Question(
+                                    id,
+                                    surveyId,
+                                    questionText,
+                                    questionType,
+                                    new ArrayList<>()
+                            )
+                    );
+
+                    int optionId = resultSet.getInt("option_id");
+                    if (optionId > 0) {
+                        Option option = new Option(
+                                optionId,
+                                questionId,
+                                resultSet.getString("option_description")
+                        );
+                        question.getOptions().add(option);
+                    }
                 }
             }
         } catch (SQLException e) {
             throw new DatabaseAccessException(e.getMessage());
         }
-        return questions;
+
+        return new ArrayList<>(questionsMap.values());
     }
 
     @Override
-    public void addQuestion(int surveyId, String text, QuestionType type) throws DatabaseAccessException {
-        String query = "INSERT INTO questions (survey_id, text, type) VALUES (?, ?, ?)";
+    public void addQuestion(int surveyId, String text, QuestionType type, List<String> options) throws SurveyNotFoundException, DatabaseAccessException {
+        String queryCheckSurvey = "SELECT id FROM surveys WHERE id = ?";
+        String queryQuestion = "INSERT INTO questions (survey_id, text, type) VALUES (?, ?, ?) RETURNING id";
+        String queryOptions = "INSERT INTO options (question_id, description) VALUES (?, ?)";
 
         try (Connection connection = getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statementCheckSurvey = connection.prepareStatement(queryCheckSurvey);
+            statementCheckSurvey.setInt(1, surveyId);
 
-            statement.setInt(1, surveyId);
-            statement.setString(2, text);
-            statement.setObject(3, type.toString().toLowerCase(), java.sql.Types.OTHER);
+            try (ResultSet resultSet = statementCheckSurvey.executeQuery()) {
+                if (!resultSet.next()) {
+                    throw new SurveyNotFoundException(surveyId);
+                }
+            }
 
-            statement.execute();
+            PreparedStatement statementQuestion = connection.prepareStatement(queryQuestion);
+
+            statementQuestion.setInt(1, surveyId);
+            statementQuestion.setString(2, text);
+            statementQuestion.setObject(3, type.toString().toLowerCase(), Types.OTHER);
+
+            Integer questionId = null;
+
+            try (ResultSet resultSet = statementQuestion.executeQuery()) {
+                if (resultSet.next()) {
+                    questionId = resultSet.getInt("id");
+                }
+            }
+
+            if (questionId == null) {
+                throw new DatabaseAccessException("Failed to add question");
+            }
+
+            PreparedStatement statementOption;
+
+            for (String option : options) {
+                statementOption = connection.prepareStatement(queryOptions);
+                statementOption.setInt(1, questionId);
+                statementOption.setString(2, option);
+                statementOption.execute();
+            }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException(e.getMessage());
         }
