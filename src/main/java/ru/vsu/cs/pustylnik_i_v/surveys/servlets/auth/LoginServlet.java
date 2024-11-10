@@ -13,7 +13,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.json.AuthDTO;
 import ru.vsu.cs.pustylnik_i_v.surveys.json.TokenDTO;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 @WebServlet(urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
@@ -24,7 +24,7 @@ public class LoginServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
         String username;
         String password;
 
-        AuthDTO authDTO = ServletsUtils.parseJson(request, AuthDTO.class);
+        AuthDTO authDTO = ServletUtils.parseJson(request, AuthDTO.class);
         username = authDTO.username();
         password = authDTO.password();
 
@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet {
             serviceResponse = userService.login(username, password);
             if (serviceResponse.success()) {
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write(ServletsUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
+                response.getWriter().write(ServletUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.setContentType("text/plain; charset=UTF-8");

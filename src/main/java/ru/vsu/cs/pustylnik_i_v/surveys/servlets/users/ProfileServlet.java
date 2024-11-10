@@ -12,7 +12,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 @WebServlet(urlPatterns = "/profile/*")
 public class ProfileServlet extends HttpServlet {
@@ -65,7 +65,7 @@ public class ProfileServlet extends HttpServlet {
             response, UserService userService) throws IOException, DatabaseAccessException {
         User userSelf;
 
-        userSelf = ServletsUtils.getUser(request, response, userService);
+        userSelf = ServletUtils.getUser(request, response, userService);
 
         if (userSelf == null) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);

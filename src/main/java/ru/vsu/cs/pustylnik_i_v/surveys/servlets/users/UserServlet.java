@@ -9,7 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 import java.io.IOException;
 
@@ -188,7 +188,7 @@ public class UserServlet extends HttpServlet {
 
         User userSelf;
         try {
-            userSelf = ServletsUtils.getUser(request, response, userService);
+            userSelf = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write(e.getMessage());

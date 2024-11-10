@@ -11,7 +11,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.json.AuthDTO;
 import ru.vsu.cs.pustylnik_i_v.surveys.json.TokenDTO;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 import java.io.IOException;
 
@@ -49,7 +49,7 @@ public class SignUpServlet extends HttpServlet {
         String username;
         String password;
 
-        AuthDTO authDTO = ServletsUtils.parseJson(request, AuthDTO.class);
+        AuthDTO authDTO = ServletUtils.parseJson(request, AuthDTO.class);
         username = authDTO.username();
         password = authDTO.password();
 
@@ -58,7 +58,7 @@ public class SignUpServlet extends HttpServlet {
         try {
             serviceResponse = userService.register(username, password);
             response.setStatus(serviceResponse.success() ? HttpServletResponse.SC_OK : HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write(ServletsUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
+            response.getWriter().write(ServletUtils.toJson(TokenDTO.of(serviceResponse.message(), serviceResponse.body())));
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.setContentType("text/plain; charset=UTF-8");

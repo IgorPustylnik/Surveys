@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-public class ServletsUtils {
+public class ServletUtils {
 
     private static final Gson gson = new Gson();
 
@@ -81,4 +81,5 @@ public class ServletsUtils {
     public static String toJson(Object object) {
         return gson.toJson(object);
     }
+
 }

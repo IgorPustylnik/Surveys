@@ -14,7 +14,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 import java.io.IOException;
 
@@ -74,7 +74,7 @@ public class SurveyServlet extends HttpServlet {
         User user;
 
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.getWriter().write(e.getMessage());
@@ -131,7 +131,7 @@ public class SurveyServlet extends HttpServlet {
                 return;
             }
 
-            response.getWriter().write(ServletsUtils.toJson(SessionIdDTO.of(serviceResponse.body())));
+            response.getWriter().write(ServletUtils.toJson(SessionIdDTO.of(serviceResponse.body())));
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.setContentType("text/plain; charset=UTF-8");
@@ -208,7 +208,7 @@ public class SurveyServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);

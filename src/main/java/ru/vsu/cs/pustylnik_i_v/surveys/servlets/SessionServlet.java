@@ -14,7 +14,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +34,7 @@ public class SessionServlet extends HttpServlet {
         User user;
 
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             return;
@@ -112,7 +112,7 @@ public class SessionServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.getWriter().write(e.getMessage());
@@ -165,7 +165,7 @@ public class SessionServlet extends HttpServlet {
             }
         }
 
-        AnswersDTO answersDTO = ServletsUtils.parseJson(request, AnswersDTO.class);
+        AnswersDTO answersDTO = ServletUtils.parseJson(request, AnswersDTO.class);
 
         if (answersDTO == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

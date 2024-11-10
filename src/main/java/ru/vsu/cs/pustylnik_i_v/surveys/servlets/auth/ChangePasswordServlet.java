@@ -10,7 +10,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.json.ChangePasswordDTO;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
@@ -46,7 +46,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(e.getMessage());
@@ -62,7 +62,7 @@ public class ChangePasswordServlet extends HttpServlet {
         String oldPassword;
         String newPassword;
 
-        ChangePasswordDTO changePasswordDTO = ServletsUtils.parseJson(request, ChangePasswordDTO.class);
+        ChangePasswordDTO changePasswordDTO = ServletUtils.parseJson(request, ChangePasswordDTO.class);
         oldPassword = changePasswordDTO.oldPassword();
         newPassword = changePasswordDTO.newPassword();
 

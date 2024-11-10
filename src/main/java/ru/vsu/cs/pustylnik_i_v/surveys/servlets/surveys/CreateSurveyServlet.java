@@ -17,7 +17,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletsUtils;
+import ru.vsu.cs.pustylnik_i_v.surveys.servlets.util.ServletUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +32,7 @@ public class CreateSurveyServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
@@ -78,7 +78,7 @@ public class CreateSurveyServlet extends HttpServlet {
 
         User user;
         try {
-            user = ServletsUtils.getUser(request, response, userService);
+            user = ServletUtils.getUser(request, response, userService);
         } catch (DatabaseAccessException e) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.getWriter().write(e.getMessage());
@@ -91,7 +91,7 @@ public class CreateSurveyServlet extends HttpServlet {
             return;
         }
 
-        SurveyDTO surveyDTO = ServletsUtils.parseJson(request, SurveyDTO.class);
+        SurveyDTO surveyDTO = ServletUtils.parseJson(request, SurveyDTO.class);
 
         ServiceResponse<Integer> serviceResponse;
         try {
@@ -111,7 +111,7 @@ public class CreateSurveyServlet extends HttpServlet {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write(ServletsUtils.toJson(SurveyIdDTO.of(serviceResponse.body())));
+        response.getWriter().write(ServletUtils.toJson(SurveyIdDTO.of(serviceResponse.body())));
     }
 
     private ServiceResponse<Integer> addSurvey(SurveyDTO surveyDTO, User user, SurveyService surveyService) throws DatabaseAccessException {
