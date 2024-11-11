@@ -5,8 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Question;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.SessionQuestion;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.User;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.json.AnswersDTO;
@@ -71,7 +71,7 @@ public class SessionServlet extends HttpServlet {
 
         Integer cookieSessionId;
         if (user != null) {
-            if (session.getUserId() != user.getId()) {
+            if (session.getUserId() != null && session.getUserId() != user.getId()) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied.");
                 return;
             }
@@ -93,11 +93,11 @@ public class SessionServlet extends HttpServlet {
             return;
         }
 
-        List<Question> questions;
+        List<SessionQuestion> questions;
 
-        ServiceResponse<List<Question>> serviceResponseQuestions;
+        ServiceResponse<List<SessionQuestion>> serviceResponseQuestions;
         try {
-            serviceResponseQuestions = surveyService.getQuestions(session.getSurveyId());
+            serviceResponseQuestions = sessionService.getQuestions(session.getId());
 
             if (!serviceResponseQuestions.success()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Survey not found.");
@@ -110,8 +110,20 @@ public class SessionServlet extends HttpServlet {
             return;
         }
 
+        String questionIndexParam = request.getParameter("question");
+        Integer questionIndex = (questionIndexParam != null) ? Integer.parseInt(questionIndexParam) : null;
+        if (questionIndex == null) {
+            response.sendRedirect(String.format("/session/%d?question=1", sessionId));
+            return;
+        }
+        if (questionIndex > questions.size()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Question not found.");
+            return;
+        }
+
         request.setAttribute("user", user);
         request.setAttribute("questions", questions);
+        request.setAttribute("questionIndex", questionIndex);
         request.setAttribute("sessionId", sessionId);
         request.setAttribute("surveyName", session.getSurveyName());
         request.getRequestDispatcher("/WEB-INF/pages/survey_taking.jsp").forward(request, response);
@@ -163,7 +175,7 @@ public class SessionServlet extends HttpServlet {
 
         Integer cookieSessionId;
         if (user != null) {
-            if (session.getUserId() != user.getId()) {
+            if (session.getUserId() != null && session.getUserId() != user.getId()) {
                 ServletUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied.");
                 return;
             }
@@ -182,12 +194,36 @@ public class SessionServlet extends HttpServlet {
         String action;
         if (pathParts.length > 1) {
             action = pathParts[1];
-            if (!action.equals("submit")) {
+            if (action.equals("submit")) {
+                handleSubmit(request, response, sessionService, sessionId);
+                return;
+            } else if (action.equals("finish")) {
+                handleFinish(response, sessionService, sessionId);
+                return;
+            } else {
                 ServletUtils.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
                 return;
             }
         }
 
+        response.getWriter().write("Success");
+    }
+
+    private static void handleFinish(HttpServletResponse response, SessionService sessionService, int sessionId) throws IOException {
+        ServiceResponse<?> serviceResponseFinish;
+        try {
+            serviceResponseFinish = sessionService.finishSession(sessionId);
+
+            if (!serviceResponseFinish.success()) {
+                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseFinish.message());
+            }
+
+        } catch (DatabaseAccessException e) {
+            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
+        }
+    }
+
+    private static void handleSubmit(HttpServletRequest request, HttpServletResponse response, SessionService sessionService, int sessionId) throws IOException {
         AnswersDTO answersDTO = ServletUtils.parseJson(request, AnswersDTO.class);
 
         if (answersDTO == null) {
@@ -203,26 +239,10 @@ public class SessionServlet extends HttpServlet {
 
             if (!serviceResponseSubmit.success()) {
                 ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseSubmit.message());
-                return;
-            }
-
-        } catch (DatabaseAccessException e) {
-            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
-            return;
-        }
-
-        ServiceResponse<?> serviceResponseFinish;
-        try {
-            serviceResponseFinish = sessionService.finishSession(sessionId);
-
-            if (!serviceResponseFinish.success()) {
-                ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponseFinish.message());
             }
 
         } catch (DatabaseAccessException e) {
             ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         }
-
-        response.getWriter().write("Success");
     }
 }

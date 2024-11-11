@@ -1,28 +1,60 @@
-async function submitAnswers(event) {
+async function navigateToQuestion(event, targetQuestionIndex) {
     event.preventDefault();
 
-    const form = document.getElementById('surveyForm');
-    const questionsAmount = form.getAttribute('data-questions-amount');
-    const sessionId = form.getAttribute("data-session-id");
     const options = [];
+    const form = document.getElementById('surveyForm');
+    const optionsDiv = document.querySelectorAll(`input[name="question"]:checked`);
 
-    for (let i = 1; i <= questionsAmount; i++) {
-        const a = `question_${i}`;
-        const questionOptions = form.querySelectorAll(`[name="question_${i}"]`);
-        let selectedOptions = Array.from(questionOptions)
-            .filter(option => option.checked)
-            .map(option => parseInt(option.value));
+    optionsDiv.forEach(option => {
+        options.push(option.value);
+    });
 
-        if (selectedOptions.length === 0) {
-            displayMessage('danger', `Please, provide an answer for question ${i}.`);
-            return;
-        }
-        options.push(...selectedOptions);
+    if (options.length !== 0) {
+        const questionOptions = form.querySelectorAll(`[name="question"]`);
+        options.push(...Array.from(questionOptions).filter(option => option.checked).map(option => parseInt(option.value)));
+
+        const data = {options: options};
+
+        await submitAnswer(event, data);
     }
 
-    const data = {
-        options: options
-    };
+    const url = new URL(window.location);
+    url.searchParams.set('question', targetQuestionIndex);
+    window.location.href = url.toString();
+}
+
+async function nextQuestion(event, questionIndex) {
+    event.preventDefault();
+
+    const success = await submitAnswer(event);
+    if (success) {
+        const url = new URL(window.location);
+        url.searchParams.set('question', questionIndex + 1);
+        window.location.href = url.toString();
+    }
+}
+
+async function submitAnswer(event) {
+    event.preventDefault();
+
+    const options = [];
+    const form = document.getElementById('surveyForm');
+    const sessionId = form.getAttribute("data-session-id");
+    const optionsDiv = document.querySelectorAll(`input[name="question"]:checked`);
+
+    optionsDiv.forEach(option => {
+        options.push(option.value);
+    });
+
+    if (options.length === 0) {
+        displayMessage("danger", "Please, choose at least one answer.");
+        return;
+    }
+
+    const questionOptions = form.querySelectorAll(`[name="question"]`);
+    options.push(...Array.from(questionOptions).filter(option => option.checked).map(option => parseInt(option.value)));
+
+    const data = {options: options};
 
     try {
         const response = await fetch(`/session/${sessionId}/submit`, {
@@ -31,23 +63,67 @@ async function submitAnswers(event) {
             body: JSON.stringify(data)
         });
 
-        const message = await response.text();
-
-        if (response.ok) {
-            window.location.reload();
-        } else {
+        if (!response.ok) {
+            const message = await response.text();
             displayMessage('danger', message);
+            return false;
         }
     } catch (error) {
         displayMessage('danger', 'Error submitting session: ' + error.message);
+        return false;
     }
+
+    return true;
+}
+
+async function finishSurvey(event, allAnswered) {
+    event.preventDefault();
+    if (!allAnswered) {
+        displayMessage("danger", "Please answer all questions");
+        return;
+    }
+
+    const submission = await submitAnswer(event);
+    if (!submission) {
+        return;
+    }
+
+    const finished = await sendFinish(event);
+    if (finished) {
+        const url = new URL(window.location);
+        url.searchParams.delete("question");
+        window.location.href = url.toString();
+    }
+}
+
+async function sendFinish(event) {
+    event.preventDefault();
+
+    const form = document.getElementById('surveyForm');
+    const sessionId = form.getAttribute("data-session-id");
+
+    try {
+        const response = await fetch(`/session/${sessionId}/finish`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            const message = await response.text();
+            displayMessage('danger', message);
+            return false;
+        }
+    } catch (error) {
+        displayMessage('danger', 'Error submitting session: ' + error.message);
+        return false;
+    }
+
+    return true;
 }
 
 function displayMessage(type, message) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `alert alert-${type}`;
     messageDiv.textContent = message;
-
     Object.assign(messageDiv.style, {
         position: "fixed",
         top: "50%",

@@ -27,13 +27,14 @@ public class MockServiceProvider implements ServiceProvider {
         CategoryDAO categoryDAO = new CategoryMockDAO(db);
         QuestionDAO questionDAO = new QuestionMockDAO(db);
         SessionDAO sessionDAO = new SessionMockDAO(db);
+        SessionQuestionDAO sessionQuestionDAO = new SessionQuestionMockDAO(db);
         SurveyDAO surveyDAO = new SurveyMockDAO(db);
         UserDAO userDAO = new UserMockDAO(db);
 
         this.userService = new UserService(userDAO);
         this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO,
                 answerDAO, categoryDAO, sessionDAO);
-        this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO);
+        this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO, sessionQuestionDAO);
 
         addMockData();
     }

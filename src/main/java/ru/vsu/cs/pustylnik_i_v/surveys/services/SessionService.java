@@ -2,6 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.services;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.*;
+import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.SessionQuestion;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 
@@ -13,13 +14,16 @@ public class SessionService {
     private final UserDAO userDAO;
     private final AnswerDAO answerDAO;
     private final SessionDAO sessionDAO;
+    private final SessionQuestionDAO sessionQuestionDAO;
 
     public SessionService(UserDAO userDAO,
                           AnswerDAO answerDAO,
-                          SessionDAO sessionDAO) {
+                          SessionDAO sessionDAO,
+                          SessionQuestionDAO sessionQuestionDAO) {
         this.userDAO = userDAO;
         this.answerDAO = answerDAO;
         this.sessionDAO = sessionDAO;
+        this.sessionQuestionDAO = sessionQuestionDAO;
     }
 
     public ServiceResponse<Integer> startSessionAndGetId(Integer userId, Integer surveyId) throws DatabaseAccessException {
@@ -53,22 +57,18 @@ public class SessionService {
         }
     }
 
-    public ServiceResponse<?> submitAnswer(Integer sessionId, Integer optionId) throws DatabaseAccessException {
+    public ServiceResponse<List<SessionQuestion>> getQuestions(Integer sessionId) throws DatabaseAccessException {
         try {
-            answerDAO.addAnswer(sessionId, optionId);
+            List<SessionQuestion> questions = sessionQuestionDAO.getQuestions(sessionId);
+            return new ServiceResponse<>(true, "Questions successfully found", questions);
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
-        } catch (OptionNotFoundException e) {
-            return new ServiceResponse<>(false, "Option doesn't exist", null);
         }
-        return new ServiceResponse<>(true, "Answer submitted successfully", null);
     }
 
     public ServiceResponse<?> submitAnswers(Integer sessionId, List<Integer> optionIds) throws DatabaseAccessException {
         try {
-            for (Integer optionId : optionIds) {
-                answerDAO.addAnswer(sessionId, optionId);
-            }
+            answerDAO.putAnswersToQuestion(sessionId, optionIds);
         } catch (SessionNotFoundException e) {
             return new ServiceResponse<>(false, "Session doesn't exist", null);
         } catch (OptionNotFoundException e) {

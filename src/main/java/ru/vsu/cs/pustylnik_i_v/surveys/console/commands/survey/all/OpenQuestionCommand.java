@@ -105,16 +105,16 @@ public class OpenQuestionCommand extends CommandMenu {
         }
 
         Set<Integer> inputSet = new HashSet<>(input);
-        inputSet.forEach(index ->
-                {
-                    try {
-                        appContext.getSessionService().submitAnswer(appContext.currentSessionId, options.get(index).getId());
-                    } catch (DatabaseAccessException e) {
-                        appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
-                    }
-                }
-        );
+        try {
+            List<Integer> selectedOptionIds = new ArrayList<>();
+            inputSet.forEach(index -> selectedOptionIds.add(options.get(index).getId()));
+
+            appContext.getSessionService().submitAnswers(appContext.currentSessionId, selectedOptionIds);
+        } catch (DatabaseAccessException e) {
+            appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
+        }
         appContext.currentQuestionIndex += 1;
+
 
         ConsoleUtils.clear();
         this.execute();
