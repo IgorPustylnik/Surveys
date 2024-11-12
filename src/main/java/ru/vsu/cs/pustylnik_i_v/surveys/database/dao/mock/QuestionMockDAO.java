@@ -8,6 +8,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.mock.MockDatabaseSource;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.QuestionDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.base.BaseMockDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.simulation.DBTableSimulationFilter;
+import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.QuestionNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,18 @@ import java.util.List;
 public class QuestionMockDAO extends BaseMockDAO implements QuestionDAO {
     public QuestionMockDAO(MockDatabaseSource database) {
         super(database);
+    }
+
+    @Override
+    public Question getQuestion(int id) throws QuestionNotFoundException {
+        List<DBTableSimulationFilter<Question>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(q -> q.getId() == id));
+
+        List<Question> query = database.questions.get(filters);
+        if (query.isEmpty()) {
+            throw new QuestionNotFoundException(id);
+        }
+        return query.get(0);
     }
 
     @Override
@@ -45,6 +58,21 @@ public class QuestionMockDAO extends BaseMockDAO implements QuestionDAO {
 
         Survey survey = query.get(0);
         survey.setQuestionsAmount(survey.getQuestionsAmount() + 1);
+    }
+
+    @Override
+    public void updateQuestion(Question question) throws QuestionNotFoundException {
+        List<DBTableSimulationFilter<Question>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(q -> q.getId() == question.getId()));
+        List<Question> query = database.questions.get(filters);
+        if (query.isEmpty()) {
+            throw new QuestionNotFoundException(question.getId());
+        }
+
+        Question questionDb = query.get(0);
+        questionDb.setText(question.getText());
+        questionDb.setType(question.getType());
+        questionDb.setOptions(question.getOptions());
     }
 
     @Override

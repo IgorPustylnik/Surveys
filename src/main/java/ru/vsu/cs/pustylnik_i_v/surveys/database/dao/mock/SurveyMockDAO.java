@@ -41,6 +41,25 @@ public class SurveyMockDAO extends BaseMockDAO implements SurveyDAO {
     }
 
     @Override
+    public void updateSurvey(Survey survey) throws SurveyNotFoundException {
+        List<DBTableSimulationFilter<Survey>> filters = new ArrayList<>();
+        filters.add(DBTableSimulationFilter.of(s -> s.getId() == survey.getId()));
+
+        List<Survey> query = database.surveys.get(filters);
+
+        if (query.isEmpty()) {
+            throw new SurveyNotFoundException(survey.getId());
+        }
+
+        Survey surveyDb = query.get(0);
+        surveyDb.setName(survey.getName());
+        surveyDb.setDescription(survey.getDescription());
+        surveyDb.setCategoryId(survey.getCategoryId());
+        surveyDb.setCategoryName(survey.getCategoryName());
+        surveyDb.setQuestionsAmount(survey.getQuestionsAmount());
+    }
+
+    @Override
     public PagedEntity<List<Survey>> getSurveysPagedEntity(String authorName, Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount) {
         List<Survey> filtered;
         int fromIndex = perPageAmount * page;

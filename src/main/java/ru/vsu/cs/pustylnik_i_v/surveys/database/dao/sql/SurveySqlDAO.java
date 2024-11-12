@@ -51,7 +51,11 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
 
                     PreparedStatement statementCategoryName = connection.prepareStatement(queryGetCategoryName);
 
-                    statementCategoryName.setInt(1, categoryId);
+                    if (categoryId != null) {
+                        statementCategoryName.setInt(1, categoryId);
+                    } else {
+                        statementCategoryName.setNull(1, Types.INTEGER);
+                    }
 
                     try (ResultSet resultSet = statement.executeQuery()) {
                         if (resultSet.next()) {
@@ -135,6 +139,40 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
                 updateStatement.setInt(1, categoryId);
                 updateStatement.setInt(2, id);
+
+                updateStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateSurvey(Survey survey) throws SurveyNotFoundException, DatabaseAccessException {
+        String checkQuery = "SELECT COUNT(*) FROM surveys WHERE id = ?";
+        String updateQuery = "UPDATE surveys SET (name, category_id, description) = (?, ?, ?) WHERE id = ?";
+
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setInt(1, survey.getId());
+                try {
+                    if (!checkStatement.execute()) {
+                        throw new SurveyNotFoundException(survey.getId());
+                    }
+                } catch (SQLException e) {
+                    throw new SurveyNotFoundException(survey.getId());
+                }
+            }
+
+            try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                updateStatement.setString(1, survey.getName());
+                if (survey.getCategoryId() != null) {
+                    updateStatement.setInt(2, survey.getCategoryId());
+                } else {
+                    updateStatement.setNull(2, Types.INTEGER);
+                }
+                updateStatement.setString(3, survey.getDescription());
+                updateStatement.setInt(4, survey.getId());
 
                 updateStatement.executeUpdate();
             }
