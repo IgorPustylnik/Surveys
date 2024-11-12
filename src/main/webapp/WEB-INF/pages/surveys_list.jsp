@@ -27,15 +27,23 @@
     %>
 
     <!-- Filters Button -->
-    <div class="d-flex justify-content-end" style="position: relative;">
-        <button id="filtersButton" class="btn btn-outline-secondary position-relative mb-4"
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <% if (user != null) { %>
+        <a href="/surveys/create" class="btn btn-outline-success btn-animated">
+            <i class="bi bi-plus-lg"></i>
+            <span>Create a survey</span>
+        </a>
+        <% } %>
+        <button id="filtersButton"
+                class="btn btn-outline-secondary position-relative <%= user == null ? "ms-auto" : "" %>"
                 data-bs-toggle="modal" data-bs-target="#filtersModal">
             <i class="bi bi-funnel"></i> Filters
             <span id="filterCountBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                0
-            </span>
+            0
+        </span>
         </button>
     </div>
+
 
 
     <!-- Filters Modal -->
@@ -151,13 +159,6 @@
     <%
         }
     %>
-
-    <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
-    <% if (errorMessage != null) { %>
-    <div class="alert alert-danger text-center" role="alert">
-        <%= errorMessage %>
-    </div>
-    <% } %>
 
 </div>
 <script src="/static/js/surveys_list_filter.js"></script>
