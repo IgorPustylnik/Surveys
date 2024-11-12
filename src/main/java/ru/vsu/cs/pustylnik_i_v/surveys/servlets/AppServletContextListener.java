@@ -14,6 +14,7 @@ public class AppServletContextListener implements ServletContextListener {
         sce.getServletContext().setAttribute("userService", serviceProvider.getUserService());
         sce.getServletContext().setAttribute("surveyService", serviceProvider.getSurveyService());
         sce.getServletContext().setAttribute("sessionService", serviceProvider.getSessionService());
+        sce.getServletContext().setAttribute("statisticService", serviceProvider.getStatisticService());
     }
 
 }

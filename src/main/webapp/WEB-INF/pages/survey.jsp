@@ -1,6 +1,6 @@
-<%@ page import="ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Survey" %>
 <%@ page import="ru.vsu.cs.pustylnik_i_v.surveys.database.enums.RoleType" %>
 <%@ page import="ru.vsu.cs.pustylnik_i_v.surveys.util.DateUtil" %>
+<%@ page import="ru.vsu.cs.pustylnik_i_v.surveys.database.entities.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,22 +36,27 @@
         </div>
     </div>
 
-    <p class="text-muted text-start mb-4">Created by <%= survey.getAuthorName() %> on <%=DateUtil.formatFull(survey.getCreatedAt()) %>
+    <p class="text-muted text-start mb-4">Created by <%= survey.getAuthorName() %>
+        on <%=DateUtil.formatFull(survey.getCreatedAt()) %>
     </p>
 
     <!-- Actions Section -->
-    <div class="d-flex justify-content-start gap-3">
-        <button id="startSurveyButton" class="btn btn-md btn-primary" data-survey-id="<%= survey.getId() %>">Start</button>
+    <div class="d-flex justify-content-start gap-3 mb-3">
+        <button id="startSurveyButton" class="btn btn-md btn-primary" data-survey-id="<%= survey.getId() %>">Start
+        </button>
 
         <% if (user != null && user.getName().equals(survey.getAuthorName())) { %>
         <button id="editSurveyButton" class="btn btn-md btn-secondary">Edit</button>
         <% } %>
 
         <% if (user != null && (user.getRole() == RoleType.ADMIN || user.getName().equals(survey.getAuthorName()))) { %>
+        <button id="statisticsSurveyButton" class="btn btn-md btn-success">Statistics</button>
+        <% } %>
+
+        <% if (user != null && (user.getRole() == RoleType.ADMIN || user.getName().equals(survey.getAuthorName()))) { %>
         <button id="deleteSurveyButton" class="btn btn-md btn-danger">Delete</button>
         <% } %>
     </div>
-
 </div>
 </body>
 </html>

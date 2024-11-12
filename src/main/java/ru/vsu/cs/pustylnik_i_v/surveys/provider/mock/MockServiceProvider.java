@@ -9,6 +9,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.mock.*;
 import ru.vsu.cs.pustylnik_i_v.surveys.exceptions.DatabaseAccessException;
 import ru.vsu.cs.pustylnik_i_v.surveys.provider.ServiceProvider;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SessionService;
+import ru.vsu.cs.pustylnik_i_v.surveys.services.StatisticService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.SurveyService;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.UserService;
@@ -20,6 +21,7 @@ public class MockServiceProvider implements ServiceProvider {
     private final UserService userService;
     private final SurveyService surveyService;
     private final SessionService sessionService;
+    private final StatisticService statisticService;
 
     public MockServiceProvider() {
         MockDatabaseSource db = new MockDatabaseSource();
@@ -30,11 +32,13 @@ public class MockServiceProvider implements ServiceProvider {
         SessionQuestionDAO sessionQuestionDAO = new SessionQuestionMockDAO(db);
         SurveyDAO surveyDAO = new SurveyMockDAO(db);
         UserDAO userDAO = new UserMockDAO(db);
+        QuestionStatsDAO questionStatsDAO = new QuestionStatsMockDAO(db);
 
         this.userService = new UserService(userDAO);
         this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO,
                 answerDAO, categoryDAO, sessionDAO);
         this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO, sessionQuestionDAO);
+        this.statisticService = new StatisticService(questionStatsDAO);
 
         addMockData();
     }
@@ -52,6 +56,11 @@ public class MockServiceProvider implements ServiceProvider {
     @Override
     public SessionService getSessionService() {
         return sessionService;
+    }
+
+    @Override
+    public StatisticService getStatisticService() {
+        return statisticService;
     }
 
     private void addMockData() {
