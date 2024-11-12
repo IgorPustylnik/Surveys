@@ -82,5 +82,5 @@
     } %>
 </div>
 </body>
-<script src="/js/profile_admin.js"></script>
+<script src="/static/js/profile_admin.js"></script>
 </html>

@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const startButton = document.getElementById("startSurveyButton");
+    const statisticsButton = document.getElementById("statisticsSurveyButton")
     const editButton = document.getElementById("editSurveyButton");
     const deleteButton = document.getElementById("deleteSurveyButton");
 
@@ -29,6 +30,13 @@ document.addEventListener("DOMContentLoaded", function () {
         editButton.addEventListener("click", function (e) {
             e.preventDefault();
             window.location.href = `/survey/${surveyId}/edit`;
+        });
+    }
+
+    if (statisticsButton != null) {
+        statisticsButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.location.href = `/survey/${surveyId}/statistics`;
         });
     }
 

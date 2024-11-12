@@ -8,8 +8,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey details</title>
-    <%@include file="../templates/resources.jsp"%>
-    <script src="/js/survey.js"></script>
+    <%@include file="../templates/resources.jsp" %>
+    <script src="/static/js/survey.js"></script>
 </head>
 <body>
 

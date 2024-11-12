@@ -28,7 +28,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
         if (response.ok) {
             document.cookie = `authToken=${result.token}; path=/; max-age=${60 * 60 * 24 * 14}`;
-            window.location.href = "/";
+            window.location.href = "../..";
         } else {
             errorMessageDiv.style.display = "block";
             errorMessageDiv.textContent = result.message || "Login failed.";

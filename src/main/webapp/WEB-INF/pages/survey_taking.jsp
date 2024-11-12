@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey</title>
     <%@ include file="../templates/resources.jsp" %>
-    <script src="/js/survey_taking.js"></script>
+    <script src="/static/js/survey_taking.js"></script>
     <style>
         .question-button {
         }
@@ -19,7 +19,7 @@
         }
 
         .question-button.answered {
-            background-color: #d6dbea;
+            background-color: #e5eaef;
         }
     </style>
 </head>

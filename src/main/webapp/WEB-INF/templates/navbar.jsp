@@ -8,7 +8,7 @@
             User userView = (User) request.getAttribute("userView");
         %>
         <a class="navbar-brand" href="/">
-            <img src="/images/survey.png" alt="" width="30" height="30" class="d-inline-block align-text-top">
+            <img src="/static/images/survey.png" alt="" width="30" height="30" class="d-inline-block align-text-top">
             Surveys
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"

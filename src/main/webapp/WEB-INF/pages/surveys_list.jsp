@@ -160,6 +160,6 @@
     <% } %>
 
 </div>
-<script src="/js/surveys_list_filter.js"></script>
+<script src="/static/js/surveys_list_filter.js"></script>
 </body>
 </html>

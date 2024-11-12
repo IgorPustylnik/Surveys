@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <%@include file="../templates/resources.jsp"%>
-    <script src="/js/signup.js"></script>
+    <script src="/static/js/signup.js"></script>
 </head>
 <body>
 

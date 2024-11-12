@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Survey</title>
     <%@include file="../templates/resources.jsp" %>
-    <script src="/js/create_survey.js"></script>
+    <script src="/static/js/create_survey.js"></script>
 </head>
 <body>
 

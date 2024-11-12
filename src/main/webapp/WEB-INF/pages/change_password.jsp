@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change password</title>
     <%@include file="../templates/resources.jsp"%>
-    <script src="/js/change_password.js"></script>
+    <script src="/static/js/change_password.js"></script>
 </head>
 <body>
 

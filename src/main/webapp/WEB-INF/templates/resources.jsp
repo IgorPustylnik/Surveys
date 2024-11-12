@@ -4,5 +4,5 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<script src="/js/logout.js"></script>
-<link rel="icon" href="/images/survey.png">
+<script src="/static/js/logout.js"></script>
+<link rel="icon" href="/static/images/survey.png">
