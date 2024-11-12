@@ -28,6 +28,7 @@ public class MockServiceProvider implements ServiceProvider {
         AnswerDAO answerDAO = new AnswerMockDAO(db);
         CategoryDAO categoryDAO = new CategoryMockDAO(db);
         QuestionDAO questionDAO = new QuestionMockDAO(db);
+        OptionDAO optionDAO = new OptionMockDAO(db);
         SessionDAO sessionDAO = new SessionMockDAO(db);
         SessionQuestionDAO sessionQuestionDAO = new SessionQuestionMockDAO(db);
         SurveyDAO surveyDAO = new SurveyMockDAO(db);
@@ -35,7 +36,7 @@ public class MockServiceProvider implements ServiceProvider {
         QuestionStatsDAO questionStatsDAO = new QuestionStatsMockDAO(db);
 
         this.userService = new UserService(userDAO);
-        this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO, categoryDAO);
+        this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO, optionDAO, categoryDAO);
         this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO, sessionQuestionDAO);
         this.statisticService = new StatisticService(questionStatsDAO);
 

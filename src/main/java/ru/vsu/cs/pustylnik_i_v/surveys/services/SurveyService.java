@@ -17,15 +17,18 @@ public class SurveyService {
     private final UserDAO userDAO;
     private final SurveyDAO surveyDAO;
     private final QuestionDAO questionDAO;
+    private final OptionDAO optionDAO;
     private final CategoryDAO categoryDAO;
 
     public SurveyService(UserDAO userDAO,
                          SurveyDAO surveyDAO,
                          QuestionDAO questionDAO,
+                         OptionDAO optionDAO,
                          CategoryDAO categoryDAO) {
         this.userDAO = userDAO;
         this.surveyDAO = surveyDAO;
         this.questionDAO = questionDAO;
+        this.optionDAO = optionDAO;
         this.categoryDAO = categoryDAO;
     }
 
