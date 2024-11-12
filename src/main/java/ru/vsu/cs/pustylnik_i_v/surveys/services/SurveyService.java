@@ -17,22 +17,16 @@ public class SurveyService {
     private final UserDAO userDAO;
     private final SurveyDAO surveyDAO;
     private final QuestionDAO questionDAO;
-    private final AnswerDAO answerDAO;
     private final CategoryDAO categoryDAO;
-    private final SessionDAO sessionDAO;
 
     public SurveyService(UserDAO userDAO,
                          SurveyDAO surveyDAO,
                          QuestionDAO questionDAO,
-                         AnswerDAO answerDAO,
-                         CategoryDAO categoryDAO,
-                         SessionDAO sessionDAO) {
+                         CategoryDAO categoryDAO) {
         this.userDAO = userDAO;
         this.surveyDAO = surveyDAO;
         this.questionDAO = questionDAO;
-        this.answerDAO = answerDAO;
         this.categoryDAO = categoryDAO;
-        this.sessionDAO = sessionDAO;
     }
 
     public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(String authorName, Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws DatabaseAccessException {

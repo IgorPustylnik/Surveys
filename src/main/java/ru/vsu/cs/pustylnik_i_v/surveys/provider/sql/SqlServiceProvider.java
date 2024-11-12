@@ -32,8 +32,7 @@ public class SqlServiceProvider implements ServiceProvider {
 
 
         this.userService = new UserService(userDAO);
-        this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO,
-                answerDAO, categoryDAO, sessionDAO);
+        this.surveyService = new SurveyService(userDAO, surveyDAO, questionDAO, categoryDAO);
         this.sessionService = new SessionService(userDAO, answerDAO, sessionDAO, sessionQuestionDAO);
         this.statisticService = new StatisticService(questionStatsDAO);
     }
