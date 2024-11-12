@@ -35,13 +35,13 @@ public class SurveyService {
         this.sessionDAO = sessionDAO;
     }
 
-    public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws DatabaseAccessException {
+    public ServiceResponse<PagedEntity<List<Survey>>> getSurveysPagedList(String authorName, Integer categoryId, Date fromDate, Date toDate, Integer page, Integer perPageAmount) throws DatabaseAccessException {
         PagedEntity<List<Survey>> surveysPagedEntity;
 
         fromDate = fromDate == null ? null : DateUtil.setTimeToStartOfDay(fromDate);
         toDate = toDate == null ? null : DateUtil.setTimeToEndOfDay(toDate);
 
-        surveysPagedEntity = surveyDAO.getSurveysPagedEntity(categoryId, fromDate, toDate, page, perPageAmount);
+        surveysPagedEntity = surveyDAO.getSurveysPagedEntity(authorName, categoryId, fromDate, toDate, page, perPageAmount);
 
         if (surveysPagedEntity.page().isEmpty()) {
             return new ServiceResponse<>(false, "Nothing found", surveysPagedEntity);

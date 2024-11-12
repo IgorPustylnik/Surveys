@@ -41,13 +41,16 @@ public class SurveyMockDAO extends BaseMockDAO implements SurveyDAO {
     }
 
     @Override
-    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount) {
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(String authorName, Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount) {
         List<Survey> filtered;
         int fromIndex = perPageAmount * page;
         if (categoryId == null && fromDate == null && toDate == null) {
             filtered = database.surveys.getAll();
         } else {
             List<DBTableSimulationFilter<Survey>> filters = new ArrayList<>();
+            if (authorName != null) {
+                filters.add(DBTableSimulationFilter.of(survey -> survey.getAuthorName().equals(authorName)));
+            }
             if (categoryId != null) {
                 filters.add(DBTableSimulationFilter.of(survey -> survey.getCategoryId().equals(categoryId)));
             }

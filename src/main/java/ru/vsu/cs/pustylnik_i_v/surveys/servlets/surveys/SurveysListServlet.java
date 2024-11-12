@@ -34,11 +34,10 @@ public class SurveysListServlet extends HttpServlet {
 
         SurveyListParams params = getParams(request, response, userService);
         if (params == null) return;
-
         ServiceResponse<PagedEntity<List<Survey>>> serviceResponse;
 
         try {
-            serviceResponse = surveyService.getSurveysPagedList(params.categoryId(), params.fromDate(), params.toDate(), params.currentPage() - 1, perPageAmount);
+            serviceResponse = surveyService.getSurveysPagedList(null, params.categoryId(), params.fromDate(), params.toDate(), params.currentPage() - 1, perPageAmount);
         } catch (DatabaseAccessException e) {
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
             return;
@@ -61,7 +60,7 @@ public class SurveysListServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/pages/surveys_list.jsp").forward(request, response);
     }
 
-    private SurveyListParams getParams(HttpServletRequest request, HttpServletResponse response, UserService userService) throws ServletException, IOException {
+    private SurveyListParams getParams(HttpServletRequest request, HttpServletResponse response, UserService userService) throws IOException {
         User user;
 
         try {
@@ -102,7 +101,7 @@ public class SurveysListServlet extends HttpServlet {
                 .filter(param -> !param.isEmpty())
                 .map(Integer::parseInt)
                 .orElse(null);
-        return new SurveyListParams(user, fromDate, toDate, currentPage, categoryId);
+        return new SurveyListParams( user, fromDate, toDate, currentPage, categoryId);
     }
 
     private record SurveyListParams(User user, Date fromDate, Date toDate, int currentPage, Integer categoryId) {

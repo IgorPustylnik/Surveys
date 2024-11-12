@@ -140,7 +140,7 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
     }
 
     @Override
-    public PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount)
+    public PagedEntity<List<Survey>> getSurveysPagedEntity(String authorName, Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount)
             throws CategoryNotFoundException, DatabaseAccessException {
 
         List<Survey> surveys = new ArrayList<>();
@@ -155,6 +155,9 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
                 "LEFT JOIN questions q ON q.survey_id = s.id " +
                 "WHERE 1=1 ";
 
+        if (authorName != null) {
+            query += "AND u.name = ? ";
+        }
         if (categoryId != null) {
             query += "AND s.category_id = ? ";
         }
@@ -168,6 +171,9 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
         query += "GROUP BY s.id, c.name, u.name ORDER BY s.id LIMIT ? OFFSET ?";
 
         String queryTotalCount = "SELECT COUNT(*) FROM surveys WHERE 1=1 ";
+        if (authorName != null) {
+            queryTotalCount += "AND author_id = (SELECT id FROM users WHERE name = ?) ";
+        }
         if (categoryId != null) {
             queryTotalCount += "AND category_id = ? ";
         }
@@ -183,6 +189,12 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
             PreparedStatement statementTotalCount = connection.prepareStatement(queryTotalCount);
 
             int paramIndex = 1;
+
+            if (authorName != null) {
+                statement.setString(paramIndex, authorName);
+                statementTotalCount.setString(paramIndex, authorName);
+                paramIndex++;
+            }
 
             if (categoryId != null) {
                 statement.setInt(paramIndex, categoryId);

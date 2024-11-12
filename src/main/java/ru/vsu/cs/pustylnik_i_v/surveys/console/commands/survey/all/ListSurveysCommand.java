@@ -42,7 +42,7 @@ public class ListSurveysCommand extends CommandMenu {
         ServiceResponse<PagedEntity<List<Survey>>> response;
 
         try {
-            response = appContext.getSurveyService().getSurveysPagedList(currentCategoryId, null, null, currentPage, 5);
+            response = appContext.getSurveyService().getSurveysPagedList(null, currentCategoryId, null, null, currentPage, 5);
         } catch (DatabaseAccessException e) {
             appContext.getCommandExecutor().getCommand(CommandType.DATABASE_ERROR).execute();
             return;

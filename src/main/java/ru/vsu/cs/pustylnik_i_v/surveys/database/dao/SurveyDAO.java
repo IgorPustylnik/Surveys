@@ -16,7 +16,7 @@ public interface SurveyDAO {
 
     void updateSurveyCategory(int id, Integer categoryId) throws SurveyNotFoundException, DatabaseAccessException;
 
-    PagedEntity<List<Survey>> getSurveysPagedEntity(Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount) throws CategoryNotFoundException, DatabaseAccessException;
+    PagedEntity<List<Survey>> getSurveysPagedEntity(String authorName, Integer categoryId, Date fromDate, Date toDate, int page, int perPageAmount) throws CategoryNotFoundException, DatabaseAccessException;
 
     void deleteSurvey(int id) throws DatabaseAccessException;
 
