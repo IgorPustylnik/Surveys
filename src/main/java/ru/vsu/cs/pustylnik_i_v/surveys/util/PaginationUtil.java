@@ -18,11 +18,27 @@ public class PaginationUtil {
             }
         }
 
-        int[] rangeArray = new int[endPage - startPage + 1];
-        for (int i = 0; i < rangeArray.length; i++) {
-            rangeArray[i] = startPage + i;
+        boolean includeFirstPage = startPage > 1;
+        boolean includeLastPage = endPage < size;
+
+        int extraPages = (includeFirstPage ? 1 : 0) + (includeLastPage ? 1 : 0);
+        int[] rangeArray = new int[endPage - startPage + 1 + extraPages];
+        int index = 0;
+
+        if (includeFirstPage) {
+            rangeArray[index++] = 1;
         }
+
+        for (int i = startPage; i <= endPage; i++) {
+            rangeArray[index++] = i;
+        }
+
+        if (includeLastPage) {
+            rangeArray[index] = size;
+        }
+
         return rangeArray;
     }
+
 
 }
