@@ -41,7 +41,11 @@ public class SurveySqlDAO extends BaseSqlDAO implements SurveyDAO {
 
                     statement.setString(1, name);
                     statement.setString(2, description);
-                    statement.setInt(3, categoryId);
+                    if (categoryId != null) {
+                        statement.setInt(3, categoryId);
+                    } else {
+                        statement.setNull(3, Types.INTEGER);
+                    }
                     statement.setInt(4, authorId);
                     statement.setTimestamp(5, new Timestamp(createdAt.getTime()));
 
