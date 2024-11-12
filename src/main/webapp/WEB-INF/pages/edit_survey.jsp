@@ -27,12 +27,12 @@
         <input type="hidden" id="surveyId" value="<%= survey.getId() %>">
 
         <div class="mb-3">
-            <label for="surveyName" class="form-label">Survey Name</label>
+            <label for="surveyName" class="form-label">Survey name</label>
             <input type="text" class="form-control" id="surveyName" name="name" value="<%= survey.getName() %>" required>
         </div>
 
         <div class="mb-3">
-            <label for="surveyDescription" class="form-label">Survey Description</label>
+            <label for="surveyDescription" class="form-label">Survey description</label>
             <textarea class="form-control" id="surveyDescription" name="description" rows="3"><%= survey.getDescription() %></textarea>
         </div>
 
@@ -50,7 +50,7 @@
         </div>
 
         <div class="mb-3" id="customCategoryContainer" style="<%= survey.getCategoryId() == null ? "" : "display:none;" %>">
-            <label for="customCategory" class="form-label">Custom Category Name</label>
+            <label for="customCategory" class="form-label">New category name</label>
             <input type="text" class="form-control" id="customCategory" name="customCategory" value="">
         </div>
 
@@ -60,18 +60,18 @@
             <div class="card mt-3 p-3 question-card" data-question-id="<%= question.getId() %>">
                 <button type="button" class="delete-question btn btn-sm btn-outline-danger col position-absolute top-0 end-0 mt-2 me-2"><i class="bi bi-dash-lg"></i></button>
                 <div class="mb-3">
-                    <label class="form-label">Question Text</label>
+                    <label class="form-label">Question text</label>
                     <input type="text" class="form-control question-text" value="<%= question.getText() %>" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Question Type</label>
+                    <label class="form-label">Question type</label>
                     <select class="form-select question-type" required>
-                        <option value="SINGLE_CHOICE" <%= question.getType() == QuestionType.SINGLE_CHOICE ? "selected" : "" %>>Single Choice</option>
-                        <option value="MULTIPLE_CHOICE" <%= question.getType() == QuestionType.MULTIPLE_CHOICE ? "selected" : "" %>>Multiple Choice</option>
+                        <option value="SINGLE_CHOICE" <%= question.getType() == QuestionType.SINGLE_CHOICE ? "selected" : "" %>>Single choice</option>
+                        <option value="MULTIPLE_CHOICE" <%= question.getType() == QuestionType.MULTIPLE_CHOICE ? "selected" : "" %>>Multiple choice</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Answer Options</label>
+                    <label class="form-label">Answer options</label>
                     <div class="options-container">
                         <% for (Option option : question.getOptions()) { %>
                         <div class="input-group mt-2 mb-2 option-input">
@@ -88,7 +88,7 @@
         <button type="button" class="btn btn-outline-success btn-sm mt-2" id="addQuestionButton"><i class="bi-plus-lg"></i></button>
 
         <div class="mt-4 mb-4">
-            <button type="submit" class="btn btn-primary" id="saveSurveyButton">Save Changes</button>
+            <button type="submit" class="btn btn-primary" id="saveSurveyButton">Save changes</button>
         </div>
     </form>
 </div>

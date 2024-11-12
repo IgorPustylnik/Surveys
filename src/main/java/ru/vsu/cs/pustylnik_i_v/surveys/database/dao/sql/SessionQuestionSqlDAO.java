@@ -2,7 +2,6 @@ package ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql;
 
 import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.SessionQuestionDAO;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.dao.sql.base.BaseSqlDAO;
-import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.Session;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.SessionOption;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.entities.SessionQuestion;
 import ru.vsu.cs.pustylnik_i_v.surveys.database.enums.QuestionType;

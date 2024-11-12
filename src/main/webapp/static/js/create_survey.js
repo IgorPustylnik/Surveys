@@ -17,25 +17,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     addQuestionButton.addEventListener('click', function () {
-        const questionId = `question${Date.now()}`;
         const questionCard = document.createElement('div');
         questionCard.classList.add('card', 'mt-3', 'p-3', 'question-card', 'position-relative');
-        questionCard.setAttribute('data-question-id', questionId);
         questionCard.innerHTML = `
         <button type="button" class="delete-question btn btn-sm btn-outline-danger col position-absolute top-0 end-0 mt-2 me-2" aria-label="Close"><i class="bi bi-dash-lg"></i></button>
         <div class="mb-3">
-            <label class="form-label">Question Text</label>
+            <label class="form-label">Question text</label>
             <input type="text" class="form-control question-text" placeholder="Enter question text" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Question Type</label>
+            <label class="form-label">Question type</label>
             <select class="form-select question-type" required>
-                <option value="SINGLE_CHOICE">Single Choice</option>
-                <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+                <option value="SINGLE_CHOICE">Single choice</option>
+                <option value="MULTIPLE_CHOICE">Multiple choice</option>
             </select>
         </div>
         <div class="mb-3">
-            <label class="form-label">Answer Options</label>
+            <label class="form-label">Answer options</label>
             <div class="options-container"></div>
             <button type="button" class="btn btn-outline-success btn-sm add-option-button"><i class="bi-plus-lg"></i></button>
         </div>

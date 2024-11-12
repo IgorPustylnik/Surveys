@@ -96,7 +96,7 @@ public class CreateSurveyServlet extends HttpServlet {
         }
 
         if (!serviceResponse.success()) {
-            ServletUtils.sendError(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, serviceResponse.message());
+            ServletUtils.sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, serviceResponse.message());
             return;
         }
 

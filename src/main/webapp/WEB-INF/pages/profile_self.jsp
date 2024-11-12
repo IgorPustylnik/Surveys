@@ -24,7 +24,7 @@
     </div>
 
     <div class="mt-3">
-        <a href="/change-password" class="btn btn-primary">Change Password</a>
+        <a href="/change-password" class="btn btn-primary">Change password</a>
     </div>
 </div>
 </body>

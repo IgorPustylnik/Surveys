@@ -14,19 +14,19 @@
 <%@include file="../templates/navbar.jsp" %>
 
 <div class="container mt-4">
-    <h2>Create Survey</h2>
+    <h2>Create a survey</h2>
 
     <form id="createSurveyForm">
         <div class="mb-3">
-            <label for="surveyName" class="form-label">Survey Name</label>
+            <label for="surveyName" class="form-label">Survey name</label>
             <input type="text" class="form-control" id="surveyName" name="name" placeholder="Enter survey name"
                    required>
         </div>
 
         <div class="mb-3">
-            <label for="surveyDescription" class="form-label">Survey Description</label>
+            <label for="surveyDescription" class="form-label">Survey description</label>
             <textarea class="form-control" id="surveyDescription" name="description" rows="3"
-                      placeholder="Enter survey description" required></textarea>
+                      placeholder="Enter survey description"></textarea>
         </div>
 
         <div class="mb-3">
@@ -42,7 +42,7 @@
         </div>
 
         <div class="mb-3" id="customCategoryContainer" style="display: none;">
-            <label for="customCategory" class="form-label">Custom Category Name</label>
+            <label for="customCategory" class="form-label">Custom category name</label>
             <input type="text" class="form-control" id="customCategory" name="customCategory"
                    placeholder="Enter custom category name">
         </div>
@@ -53,7 +53,7 @@
                 class="bi-plus-lg"></i></button>
 
         <div class="mt-4 mb-4">
-            <button type="submit" class="btn btn-primary" id="saveSurveyButton">Save Survey</button>
+            <button type="submit" class="btn btn-primary" id="saveSurveyButton">Save survey</button>
         </div>
     </form>
 </div>
