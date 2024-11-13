@@ -153,15 +153,20 @@ public class SurveyService {
         if (validation != null) {
             return new ServiceResponse<>(false, validation, null);
         }
-        validation = ValidationUtils.isValidName(categoryName);
-        if (validation != null) {
-            return new ServiceResponse<>(false, validation, null);
-        }
-        if (!categoryDAO.exists(categoryName)) {
-            categoryDAO.addCategory(categoryName);
-        }
 
-        Integer categoryId = categoryDAO.getCategoryByName(categoryName).getId();
+        Integer categoryId = null;
+        if (!categoryName.isEmpty()) {
+
+            validation = ValidationUtils.isValidName(categoryName);
+            if (validation != null) {
+                return new ServiceResponse<>(false, validation, null);
+            }
+
+            if (!categoryDAO.exists(categoryName)) {
+                categoryDAO.addCategory(categoryName);
+            }
+            categoryId = categoryDAO.getCategoryByName(categoryName).getId();
+        }
 
         String authorName;
         try {
@@ -208,9 +213,11 @@ public class SurveyService {
         }
 
         String categoryName = editSurveyDTO.category();
-        validation = ValidationUtils.isValidName(categoryName);
-        if (validation != null) {
-            return new ServiceResponse<>(false, validation, null);
+        if (!categoryName.isEmpty()) {
+            validation = ValidationUtils.isValidName(categoryName);
+            if (validation != null) {
+                return new ServiceResponse<>(false, validation, null);
+            }
         }
 
         Survey survey;

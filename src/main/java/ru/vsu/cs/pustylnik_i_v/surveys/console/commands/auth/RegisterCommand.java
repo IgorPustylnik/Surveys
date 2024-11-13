@@ -24,7 +24,7 @@ public class RegisterCommand extends AppCommand {
         String name, password, validation;
         do {
             name = ConsoleUtils.inputString("your username");
-            validation = ValidationUtils.isValidName(name);
+            validation = ValidationUtils.isValidUserName(name);
             if (validation != null) {
                 System.err.println(validation);
             }

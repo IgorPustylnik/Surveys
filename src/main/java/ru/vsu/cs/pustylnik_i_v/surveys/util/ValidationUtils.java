@@ -2,7 +2,7 @@ package ru.vsu.cs.pustylnik_i_v.surveys.util;
 
 public class ValidationUtils {
 
-    public static String isValidName(String name) {
+    public static String isValidUserName(String name) {
         if (name == null || name.length() < 2) {
             return "The name must be at least 2 characters long";
         }
@@ -11,6 +11,16 @@ public class ValidationUtils {
         }
         if (!name.matches("^[a-zA-Z0-9]+$")) {
             return "The name can only contain latin letters and digits";
+        }
+        return null;
+    }
+
+    public static String isValidName(String name) {
+        if (name == null || name.length() < 2) {
+            return "The name must be at least 2 characters long";
+        }
+        if (name.length() > 255) {
+            return "The name is too long";
         }
         return null;
     }

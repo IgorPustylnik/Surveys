@@ -80,7 +80,7 @@ public class UserService {
     }
 
     public ServiceResponse<String> register(String name, String password) throws DatabaseAccessException {
-        String validation = ValidationUtils.isValidName(name);
+        String validation = ValidationUtils.isValidUserName(name);
         if (validation != null) {
             return new ServiceResponse<>(false, validation, null);
         }
