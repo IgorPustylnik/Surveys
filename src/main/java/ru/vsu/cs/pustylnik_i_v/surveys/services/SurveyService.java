@@ -13,6 +13,7 @@ import ru.vsu.cs.pustylnik_i_v.surveys.json.EditSurveyDTO;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.PagedEntity;
 import ru.vsu.cs.pustylnik_i_v.surveys.services.entities.ServiceResponse;
 import ru.vsu.cs.pustylnik_i_v.surveys.util.DateUtil;
+import ru.vsu.cs.pustylnik_i_v.surveys.util.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,7 +100,17 @@ public class SurveyService {
     }
 
     public ServiceResponse<?> addQuestionToSurvey(Integer surveyId, String description, List<String> options, QuestionType questionType) throws DatabaseAccessException {
+        String validation = ValidationUtils.isValidDescription(description);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
         try {
+            for (String option: options) {
+                validation = ValidationUtils.isValidDescription(option);
+                if (validation != null) {
+                    return new ServiceResponse<>(false, validation, null);
+                }
+            }
             questionDAO.addQuestion(surveyId, description, questionType, options);
 
             List<Question> questions = questionDAO.getQuestions(surveyId);
@@ -138,14 +149,19 @@ public class SurveyService {
     }
 
     public ServiceResponse<Survey> addSurveyAndGetSelf(String name, String description, String categoryName, Integer authorId) throws DatabaseAccessException {
-        if (categoryName != null && !categoryDAO.exists(categoryName)) {
+        String validation = ValidationUtils.isValidName(name);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
+        validation = ValidationUtils.isValidName(categoryName);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
+        if (!categoryDAO.exists(categoryName)) {
             categoryDAO.addCategory(categoryName);
         }
 
-        Integer categoryId = null;
-        if (categoryName != null) {
-            categoryId = categoryDAO.getCategoryByName(categoryName).getId();
-        }
+        Integer categoryId = categoryDAO.getCategoryByName(categoryName).getId();
 
         String authorName;
         try {
@@ -180,8 +196,22 @@ public class SurveyService {
     public ServiceResponse<?> updateSurvey(EditSurveyDTO editSurveyDTO) throws DatabaseAccessException {
         int surveyId = editSurveyDTO.id();
         String surveyName = editSurveyDTO.name();
+        String validation = ValidationUtils.isValidName(surveyName);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
+
         String surveyDescription = editSurveyDTO.description();
+        validation = ValidationUtils.isValidDescription(surveyDescription);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
+
         String categoryName = editSurveyDTO.category();
+        validation = ValidationUtils.isValidName(categoryName);
+        if (validation != null) {
+            return new ServiceResponse<>(false, validation, null);
+        }
 
         Survey survey;
         try {
@@ -211,6 +241,10 @@ public class SurveyService {
 
                 int questionId = editQuestion.id();
                 String questionText = editQuestion.text();
+                validation = ValidationUtils.isValidDescription(questionText);
+                if (validation != null) {
+                    return new ServiceResponse<>(false, validation, null);
+                }
                 QuestionType questionType = QuestionType.valueOf(editQuestion.type());
 
                 List<EditOptionDTO> editOptions = editQuestion.options();
@@ -230,6 +264,12 @@ public class SurveyService {
 
                         for (EditOptionDTO editOption : editOptions) {
                             int optionId = editOption.id();
+
+                            validation = ValidationUtils.isValidDescription(editOption.description());
+                            if (validation != null) {
+                                return new ServiceResponse<>(false, validation, null);
+                            }
+                            
                             if (optionId == -1) {
                                 optionDAO.addOption(questionId, editOption.description());
                             } else {
